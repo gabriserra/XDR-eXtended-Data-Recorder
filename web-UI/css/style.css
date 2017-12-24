@@ -156,6 +156,10 @@ MAIN CSS FILE
     font-weight: 600;
 }
 
+.resume-card {
+    min-height: 391px;
+}
+
 .resume-card-title {
     padding: 20px;
     position: relative;
@@ -185,6 +189,7 @@ MAIN CSS FILE
 
 .resume-data .col-sm-4 {
     padding: 10px 40px;
+    text-align: center;
 }
 
 .resume-data .unit {
@@ -207,4 +212,14 @@ MAIN CSS FILE
     letter-spacing: .15em;
     color: #78838e;
     text-transform: uppercase;
+}
+
+.resume-chart {
+    margin-top: 30px;
+    padding: 0 50px;
+}
+
+#chart-container {
+    text-align: center;
+    margin: 0 auto;
 }
