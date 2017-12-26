@@ -19,13 +19,19 @@ function homeChartDraw() {
         animationEnabled: true,
         axisX: {
             valueFormatString: "DDD",
+            titleFontFamily: "Roboto",
             minimum: new Date(2017, 1, 5, 23),
             maximum: new Date(2017, 1, 12, 1)
         },
         axisY: {
-            title: "Evaluation"
+            gridThickness: 0,
+            tickLength: 0,
+            margin: 0,
+            lineThickness: 0,
+            valueFormatString: " "
         },
         legend: {
+            fontFamily: "Roboto",
             verticalAlign: "top",
             horizontalAlign: "right",
             dockInsidePlotArea: true
@@ -35,7 +41,6 @@ function homeChartDraw() {
         },
         data: [{
             name: "Overall",
-            showInLegend: true,
             legendMarkerType: "square",
             type: "area",
             color: "rgba(40,175,101,0.6)",
@@ -52,7 +57,6 @@ function homeChartDraw() {
         },
         {
             name: "Kilometers driven",
-            showInLegend: true,
             legendMarkerType: "square",
             type: "area",
             color: "rgba(0,75,141,0.7)",

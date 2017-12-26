@@ -1,11 +1,11 @@
 /* 
--------------
-MAIN CSS FILE 
--------------
+------------------
+DASHBOARD CSS FILE 
+------------------
 
-1 - Lateral navbar
-2 - Containers and headings
-3 - Cards
+    1 - Lateral navbar
+    2 - Containers and headings
+    3 - Cards
 
 */
 
@@ -110,7 +110,7 @@ MAIN CSS FILE
 }
 
 .row-heading {
-    padding-bottom: 30px;
+    padding-bottom: 25px;
 }
 
 .title {
