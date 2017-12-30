@@ -3,14 +3,54 @@
 // It contains main js function
 // -----------------------
 
+get_user_data();
+
 $(document).ready(function(){
-    toggleTooltip();
+    toggle_tooltip();
     homeChartDraw();
 });
 
+// -------------------------------------
+// REDIRECT USER FUNCTION
+// -------------------------------------
+
+// Change navbar link if already logged in
+function get_user_data() {
+    ajax_req(
+        "php/redirect.php", 
+        "",     
+        get_succ, 
+        get_err
+    );
+}
+
+// Action done in case of success
+function get_succ(reply) {
+    if (reply.error == false)
+        prepare_page(reply.message);
+    else
+        window.location.replace("http://localhost/XDR/web-UI/frontend/");
+}
+
+// Action done in case of failure
+function get_err() {
+    alert("Server unreachable.");
+    window.location.replace("http://localhost/XDR/web-UI/frontend/");
+    // maybe something more in future...
+}
+
 // toggle on boostrap tooltip
-function toggleTooltip() {
+function toggle_tooltip() {
     $('[data-toggle="tooltip"]').tooltip(); 
+}
+
+function prepare_page(userdata) {
+    $('.nav-user-a').attr("title", "Signed in: " + userdata.username);
+    $('.nav-avatar').attr("src", "img/uploads/" + userdata.avatar);
+    $('.card-avatar').attr("src", "img/uploads/" + userdata.avatar);
+    $('.cover-img').css('background-image', 'url( img/uploads/' + userdata.cover + ')');
+    $('.card-name').html(userdata.name + " " + userdata.surname);
+    $('.card-text').html(userdata.bio);
 }
 
 // draw home chart
@@ -73,4 +113,19 @@ function homeChartDraw() {
         }]
     });
     chart.render();
+}
+
+// -------------------------------------
+// UTILITY
+// -------------------------------------
+
+function ajax_req(dest, info, succ, err) {
+    $.ajax({
+        type: "POST",
+        url: dest,
+        data: info,
+        dataType: "json",
+        success: succ,
+        error: err
+    });
 }

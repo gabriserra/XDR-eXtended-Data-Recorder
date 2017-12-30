@@ -222,6 +222,11 @@ section h2.section-heading {
     padding: 100px 1rem;
 }
 
+.container-footer .col-sm-6 {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
 .title-footer {
     font-size: 1rem;
     letter-spacing: 0.15em;
@@ -229,14 +234,24 @@ section h2.section-heading {
     color: white;
     font-weight: 500;
     line-height: 1.2;
-    margin-left: 40px;
 }
 
 .text-footer {
     font-family: 'Work Sans', sans-serif;
     color: rgba(255, 255, 255, .7);
-    margin-left: 40px;
     font-weight: 300;
     letter-spacing: -0.3px;
+}
+
+.text-footer a {
+    color: white;
+}
+
+.bibtex-code {
+    border: #495158 1px solid;
+    border-radius: .3rem;
+    color: #6EA4CF;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 12px;
 }
 

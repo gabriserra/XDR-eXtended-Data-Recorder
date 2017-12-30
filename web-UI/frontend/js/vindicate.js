@@ -74,9 +74,12 @@ function vindicateForm(options) {
   }, options);
 
   this.validate = function() {
+    success = true;
     for (index in this.fields) {
       var field = this.fields[index].validate(this.options);
+      success = success && field;
     }
+    return success;
   }
 
   this.findById = function(id) {
@@ -217,17 +220,20 @@ function vindicateField($element, formId, options) {
       this.element.addClass(this.options.validationStates.invalid.input);
       this.formGroup.addClass(this.options.validationStates.invalid.parent);
       this.formFeedback.text(this.validationMessage);
+      return false;
     }
     else {
       if (this.validationSoftFail) {
         this.element.addClass(this.options.validationStates.warning.input);
         this.formGroup.addClass(this.options.validationStates.warning.parent);
         this.formFeedback.text(this.validationMessage);
+        return false;
       }
       else {
         if (options.showSuccess) {
           this.element.addClass(this.options.validationStates.valid.input);
           this.formGroup.addClass(this.options.validationStates.valid.parent);
+          return true;
         }
       }
     }
@@ -401,6 +407,7 @@ function vindicateField($element, formId, options) {
       if (action == "validate") {
         var vin = window.vindicate[form_id];
         var validation = vin.validate();
+        return validation;
       }
     };
 

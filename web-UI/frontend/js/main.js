@@ -4,35 +4,39 @@
 // -----------------------
 
 $(document).ready(function(){
-    redirect_if_logged();
-    toggle_tooltip();
+    check_if_logged();
     $("#form-login").vindicate("init");
     $("#form-signup").vindicate("init");
 });
 
 // -------------------------------------
-// REDIRECT USER FUNCTION
+// CHECK USER FUNCTION
 // -------------------------------------
 
-// Redirect user to dashboard if already logged i
-function redirect_if_logged() {
+// Change navbar link if already logged in
+function check_if_logged() {
     ajax_req(
         "php/redirect.php", 
         "",     
-        redirect_succ, 
-        redirect_err
+        check_succ, 
+        check_err
     );
 }
 
 // Action done in case of success
-function redirect_succ(reply) {
-    if (reply.error == false)
-        window.location.replace("http://localhost/XDR/web-UI/dashboard/");
+function check_succ(reply) {
+    if (reply.error == false) {
+        $("#btn-login").hide();
+        $("#btn-signup").hide();
+    } else {
+        $("#btn-dashboard").hide();
+    }
 }
 
 // Action done in case of failure
-function redirect_err() {
-    // maybe something in future...
+function check_err() {
+    $("#btn-dashboard").hide();
+    // maybe something more in future...
 }
 
 // -------------------------------------
@@ -76,10 +80,11 @@ function login_err() {
 // Submit validation form sign up
 function submit_signup() {
     $("#form-signup").vindicate("validate");
-    
-    ajax_req(
+    data = new FormData(document.getElementById('form-signup'));
+
+    ajax_req_file(
         "php/signup.php", 
-        $("#form-signup").serialize(),     
+        data,     
         signup_succ, 
         signup_err
     );
@@ -88,7 +93,11 @@ function submit_signup() {
 // Action done in case of success
 function signup_succ(reply) {
     if (reply.error == false) {
-        alert(reply.message);
+        $(".signup-success-title").html("Success: ");
+        $(".signup-success-text").html(reply.message);
+        show_alert(".alert-signup-succ");
+        $("#form-signup :input").prop('disabled', true);
+        $(".btn-secondary").prop('disabled', false);
     } else {
         $(".signup-error-title").html("Error: ");
         $(".signup-error-text").html(reply.message);
@@ -118,9 +127,17 @@ function ajax_req(dest, info, succ, err) {
     });
 }
 
-// Toggle on boostrap tooltip
-function toggle_tooltip() {
-    $('[data-toggle="tooltip"]').tooltip(); 
+function ajax_req_file(dest, info, succ, err) {
+    $.ajax({
+        type: "POST",
+        url: dest,
+        data: info,
+        dataType: "json",
+        processData: false,
+        contentType: false,
+        success: succ,
+        error: err
+    });
 }
 
 function show_alert(htmlclass) {

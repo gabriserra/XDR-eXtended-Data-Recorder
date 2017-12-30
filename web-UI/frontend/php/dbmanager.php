@@ -10,7 +10,7 @@
 // -------------------------------------
 $db_username = "root";
 $db_password = "password";
-$db_name = "XDR";
+$db_name = "XDR_DB";
 $db_host = "localhost";
 
 // -------------------------------------
@@ -53,11 +53,16 @@ class db_manager {
             return $this->my_connection->ping();
     }
 
+    function get_last_error() {
+        return $this->my_connection->error;
+    }
+
     // send query string to db
     function send_query($query_string) {
         if (!$this->is_connected()) {
             $this->new_connection();
         }
+
         return $this->my_connection->query($query_string);
     }
         

@@ -168,7 +168,7 @@ function send_data_to_db(&$data) {
     $my_database->close_connection();
 
     if (!$my_result)
-        launch_error("There are some problem with your registration.");    
+        launch_error("There are some problem with your registration.");
 }
 
 
