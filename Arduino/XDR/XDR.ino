@@ -24,7 +24,6 @@ uint32_t MY_PORT = 9000;
 uint32_t SERVER_PORT = 8000;
 char SERVER_ADDRESS[16];
 char BROADCAST_ADDRESS[16];
-String s;
 
 SoftwareSerial mySerial(10, 11);
 ESP8266 wifi(mySerial);

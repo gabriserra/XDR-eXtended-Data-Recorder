@@ -411,7 +411,7 @@ sensor_data_g_t GY521::getAllDouble() {
 	acc2g();
 	gy2g();
 	all_d.ax = acc_d.ax;
-	all_d.ay = acc_d.ax;
+	all_d.ay = acc_d.ay;
 	all_d.az = acc_d.az;
 	all_d.v = computeVelocity();
 	all_d.gx = gy_d.gx;
