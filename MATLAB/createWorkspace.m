@@ -1,10 +1,10 @@
 function createWorkspace()
-    files = dir('../server/log/ACC+FREN/*');
+    files = dir('../server/log/URTO/*');
     
     for file = files'
         if(contains(file.name,'log') == 1)
             filename = erase(strrep(file.name, '-','_'),'.csv');
-            cmd = [filename '=readFile(strcat(''../server/log/ACC+FREN/'',file.name));'];
+            cmd = [filename '=readFile(strcat(''../server/log/URTO/'',file.name));'];
             eval(cmd);
             
             if ~exist('dataset.mat','file')

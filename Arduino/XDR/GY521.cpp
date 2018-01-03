@@ -62,9 +62,9 @@ float GY521::computeVelocity() {
 	
 	vx += acc_d.ax * GRAVITY * dt;
 	vy += acc_d.ay * GRAVITY * dt;
-	vz += (acc_d.az - 1) * GRAVITY * dt;
-	
-	return sqrt(pow(vx,2) + pow(vy,2) + pow(vz,2));
+	vz += acc_d.az * GRAVITY * dt;
+  
+  return sqrt(pow(vx,2) + pow(vy,2) + pow(vz,2));
 }
 
 //------------------------------------------------------------------------------
@@ -413,7 +413,7 @@ sensor_data_g_t GY521::getAllDouble() {
 	all_d.ax = acc_d.ax;
 	all_d.ay = acc_d.ay;
 	all_d.az = acc_d.az;
-	all_d.v = computeVelocity();
+	all_d.v = 0;
 	all_d.gx = gy_d.gx;
 	all_d.gy = gy_d.gy;
 	all_d.gz = gy_d.gz;
@@ -428,7 +428,7 @@ sensor_data_g_t GY521::getAllDouble() {
 acc_g_t GY521::getAccDouble() {
 	readAcc();
 	acc2g();
-	acc_d.v = computeVelocity();
+	acc_d.v = 0;
 	return acc_d;
 }
 

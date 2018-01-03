@@ -481,11 +481,6 @@ bool ESP8266::init(const String &ssid, const String &pwd, uint32_t baudRateSet)
 		return false;
 	}
 	
-	//if (!restart()) {
-    //Serial.println(F("sono qui 2"));
-   //return false;
-  //}
-	
 	if (!setOprToStation()) {
     Serial.println(F("sono qui 3"));
    return false;
