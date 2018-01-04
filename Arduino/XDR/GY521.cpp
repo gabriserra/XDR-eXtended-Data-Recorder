@@ -31,6 +31,17 @@ GY521::GY521(const int mpu){
 }
 
 //------------------------------------------------------------------------------
+// RAW TO G:
+//------------------------------------------------------------------------------
+
+void GY521::raw2g(uint32_t seq_num) {
+    all_d.seq_num = seq_num;
+    all_d.ax = all.ax / ACC_SENSITIVITY;
+    all_d.ay = all.ay / ACC_SENSITIVITY;
+    all_d.gz = all.gz / GY_SENSITIVITY;
+}
+
+//------------------------------------------------------------------------------
 // ACC TO G:
 //------------------------------------------------------------------------------
 
@@ -77,13 +88,13 @@ void GY521::readAll() {
 	Wire.endTransmission(false);
 	Wire.requestFrom(MPU, 14, true);
 	
-	acc.ax = Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)
-	acc.ay = Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
-	acc.az = Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
-	tmp = Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
-	gy.gx = Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-	gy.gy = Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-	gy.gz = Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+	all.ax = Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)
+	all.ay = Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
+	//acc.az = Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
+	//tmp = Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
+	//gy.gx = Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
+	//gy.gy = Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
+	all.gz = Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
 }
 
 //------------------------------------------------------------------------------
@@ -94,11 +105,11 @@ void GY521::readAcc() {
 	Wire.beginTransmission(MPU);
 	Wire.write(0x3B);
 	Wire.endTransmission(false);
-	Wire.requestFrom(MPU, 6, true);
+	Wire.requestFrom(MPU, 4, true);
 	
-	acc.ax = Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)
-	acc.ay = Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
-	acc.az = Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
+	all.ax = Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)
+	all.ay = Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
+	//acc.az = Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
 }
 
 //------------------------------------------------------------------------------
@@ -107,13 +118,13 @@ void GY521::readAcc() {
 
 void GY521::readGy() {
 	Wire.beginTransmission(MPU);
-	Wire.write(0x43);
+	Wire.write(0x47);
 	Wire.endTransmission(false);
-	Wire.requestFrom(MPU, 6, true);
+	Wire.requestFrom(MPU, 2, true);
 	
-	gy.gx = Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-	gy.gy = Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-	gy.gz = Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+	//gy.gx = Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
+	//gy.gy = Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
+	all.gz = Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
 }
 
 //------------------------------------------------------------------------------
@@ -406,17 +417,13 @@ int16_t GY521::getTmp() {
 // GET ALL DOUBLE: Get data from all the sensors
 //------------------------------------------------------------------------------
 
-sensor_data_g_t GY521::getAllDouble() {
-	readAll();
-	acc2g();
-	gy2g();
-	all_d.ax = acc_d.ax;
-	all_d.ay = acc_d.ay;
-	all_d.az = acc_d.az;
-	all_d.v = 0;
-	all_d.gx = gy_d.gx;
-	all_d.gy = gy_d.gy;
-	all_d.gz = gy_d.gz;
+sensor_data_g_t GY521::getAllDouble(uint32_t seq_num) {
+	//readAll();
+	//acc2g();
+	//gy2g();
+  readAcc();
+  readGy();
+  raw2g(seq_num);
   
 	return all_d;
 }

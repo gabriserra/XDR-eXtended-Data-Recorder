@@ -60,28 +60,11 @@ void computeBroadcastAddress() {
 }
 
 //------------------------------------------------------------------------------
-// SEND QUERY: Send a MySQL query to the server
-//------------------------------------------------------------------------------
-
-void sendQuery() {
-  acc_gy.previous_t = millis();
-	all_d = acc_gy.getAllDouble();
-	String query = "INSERT INTO table_name (timestamp, acc_x, acc_y, acc_z, gy_x, gy_y, gy_z) VALUES (" + String(all_d.ax,DEC) + "," + String(all_d.ay,DEC) + "," + String(all_d.az,DEC) + "," + String(all_d.gx,DEC) + "," + String(all_d.gy,DEC) + "," + String(all_d.gz,DEC) + ")";
-	Serial.println(query);
-	char mes[query.length()+1];
-	query.toCharArray(mes, query.length()+1);
-	Serial.println(mes);
-	wifi.send(0, mes, sizeof(mes));
-}
-
-//------------------------------------------------------------------------------
 // SEND STRUCT: Send a struct to the server with acc/gy data
 //------------------------------------------------------------------------------
 
 void sendStruct() {
-  
-	all_d = acc_gy.getAllDouble();
-	all_d.seq_num = seq_num;
+  all_d = acc_gy.getAllDouble(seq_num++);
 	wifi.send(0, (char*)&all_d, sizeof(all_d));
 }
 
@@ -97,15 +80,7 @@ void printAll(){
   Serial.print(all_d.ax, 4);
   Serial.print(F("\t| Y = "));
   Serial.print(all_d.ay, 4);
-  Serial.print(F("\t| Z = "));
-  Serial.println(all_d.az, 4);
-  Serial.print(F("Velocity :\t"));
-  Serial.println(all_d.v, 4);
   Serial.print(F("Gyroscope (g):\t\t"));
-  Serial.print(F("X = "));
-  Serial.print(all_d.gx, 4);
-  Serial.print(F("\t| Y = "));
-  Serial.print(all_d.gy, 4);
   Serial.print(F("\t| Z = "));
   Serial.println(all_d.gz, 4);
   Serial.println();
@@ -205,5 +180,4 @@ void setup(void) {
 
 void loop(void) {
 	sendStruct();
-	seq_num++;
 }

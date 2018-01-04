@@ -67,9 +67,9 @@ address	carAddress;
 				fp = fopen(filename,"a");
 			}
 			else{
-				if (recvBytes == 32) {
+				if (recvBytes == 16) {
 					printf("DATA\n");
-					fprintf(fp,"%d\t %f\t %f\t %f\t %f\t %f\t %f\t %f\n", all_d.seq_num, all_d.ax, all_d.ay, all_d.az, all_d.v, all_d.gx, all_d.gy, all_d.gz);
+					fprintf(fp,"%d\t %f\t %f\t %f\t\n", all_d.seq_num, all_d.ax, all_d.ay, all_d.gz);
 				}
 				else
 					printf("ERROR\n");

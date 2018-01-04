@@ -47,10 +47,10 @@ typedef struct sensor_data_g {
 	uint32_t seq_num;
 	float ax;
 	float ay;
-	float az;
-	float v;
-	float gx;
-	float gy;
+	//float az;
+	//float v;
+	//float gx;
+	//float gy;
 	float gz;
 } sensor_data_g_t;
 
@@ -96,6 +96,12 @@ class GY521 {
 		//----------------------------------------------------------------------
 		// PRIVATE FUNCTIONS
 		//----------------------------------------------------------------------
+
+    //----------------------------------------------------------------------
+    // ACC TO G:
+    //----------------------------------------------------------------------
+
+    void raw2g(uint32_t);
 
 		//----------------------------------------------------------------------
 		// ACC TO G:
@@ -259,7 +265,7 @@ class GY521 {
 		// GET ALL DOUBLE: Get data from all the sensors
 		//----------------------------------------------------------------------
 	
-		sensor_data_g_t GY521::getAllDouble();
+		sensor_data_g_t GY521::getAllDouble(uint32_t seq_num);
 	
 		//----------------------------------------------------------------------
 		// GET ACC DOUBLE: Get data from accelerometer sensor

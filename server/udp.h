@@ -11,10 +11,10 @@ typedef struct sensor_data_g {
 	uint32_t seq_num;
 	float ax;
 	float ay;
-	float az;
-	float v;
-	float gx;
-	float gy;
+	//float az;
+	//float v;
+	//float gx;
+	//float gy;
 	float gz;
 } sensor_data_g_t;
 
