@@ -1,12 +1,14 @@
 #ifndef UDP_H
 #define UDP_H
 
+#include <stdint.h>
+
 //------------------------------------------------------------------------------
 // GLOBAL AND EXTERN STRUCTURES
 //------------------------------------------------------------------------------
 
 typedef struct sensor_data_g {
-	int seq_num;
+	uint32_t seq_num;
 	float ax;
 	float ay;
 	float az;

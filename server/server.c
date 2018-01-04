@@ -66,9 +66,13 @@ address	carAddress;
 					fclose(fp);
 				fp = fopen(filename,"a");
 			}
-			else {
-				printf("DATA\n");
-				fprintf(fp,"%d\t %f\t %f\t %f\t %f\t %f\t %f\t %f\n", all_d.seq_num, all_d.ax, all_d.ay, all_d.az, all_d.v, all_d.gx, all_d.gy, all_d.gz);
+			else{
+				if (recvBytes == 32) {
+					printf("DATA\n");
+					fprintf(fp,"%d\t %f\t %f\t %f\t %f\t %f\t %f\t %f\n", all_d.seq_num, all_d.ax, all_d.ay, all_d.az, all_d.v, all_d.gx, all_d.gy, all_d.gz);
+				}
+				else
+					printf("ERROR\n");
 			}
 		}
 }
