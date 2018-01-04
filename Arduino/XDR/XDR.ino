@@ -79,10 +79,36 @@ void sendQuery() {
 //------------------------------------------------------------------------------
 
 void sendStruct() {
-  acc_gy.previous_t = millis();
+  
 	all_d = acc_gy.getAllDouble();
 	all_d.seq_num = seq_num;
 	wifi.send(0, (char*)&all_d, sizeof(all_d));
+}
+
+//------------------------------------------------------------------------------
+// PRINT ALL: Print all sent acc/gy data
+//------------------------------------------------------------------------------
+
+void printAll(){
+  Serial.print(F("SEQUENCE NUMBER:\t"));
+  Serial.println(all_d.seq_num);
+  Serial.print(F("Accelerometer (g):\t"));
+  Serial.print(F("X = "));
+  Serial.print(all_d.ax, 4);
+  Serial.print(F("\t| Y = "));
+  Serial.print(all_d.ay, 4);
+  Serial.print(F("\t| Z = "));
+  Serial.println(all_d.az, 4);
+  Serial.print(F("Velocity :\t"));
+  Serial.println(all_d.v, 4);
+  Serial.print(F("Gyroscope (g):\t\t"));
+  Serial.print(F("X = "));
+  Serial.print(all_d.gx, 4);
+  Serial.print(F("\t| Y = "));
+  Serial.print(all_d.gy, 4);
+  Serial.print(F("\t| Z = "));
+  Serial.println(all_d.gz, 4);
+  Serial.println();
 }
 
 //------------------------------------------------------------------------------
@@ -170,6 +196,7 @@ void setup(void) {
 	acc_gy.init();
 	acc_gy.calibrate();
   digitalWrite(DEFUALT_LED_PIN, LOW);
+  //acc_gy.previous_t = millis();
 }
 
 //------------------------------------------------------------------------------

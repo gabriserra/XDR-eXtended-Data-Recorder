@@ -393,11 +393,11 @@ bool ESP8266::AT_CIPSEND_MULTIPLE(uint8_t mux_id, const uint8_t *buffer, uint32_
 	m_puart->print(mux_id);
 	m_puart->print(F(","));
 	m_puart->println(len);
-	if (recvFind(">", 5000)) {
+	if (recvFind(">", 50)) {
 		rx_empty();
 		for (uint32_t i = 0; i < len; i++)
 			m_puart->write(buffer[i]);
-		return recvFind("SEND OK", 10000);
+		return recvFind("SEND OK", 10);
 	}
 	return false;
 }
