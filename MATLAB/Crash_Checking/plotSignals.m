@@ -2,7 +2,7 @@ figure;
 plot(var(:,1),var(:,2));
 figure;
 plot(var(:,1),var(:,3));
-output(1,:)=brakings(1,:);output(1,:)=brakings(1,:);figure;
+figure;
 plot(var(:,1),var(:,4));
 % figure;
 % plot(var(:,1),var(:,5));
