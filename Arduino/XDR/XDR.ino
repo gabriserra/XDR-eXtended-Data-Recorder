@@ -5,17 +5,19 @@
 // GLOBAL CONSTANTS
 //------------------------------------------------------------------------------
 
-#define DEFUALT_LED_PIN    13  // Predefined board's led pin
+#define	SERIAL_BAUDRATE		9600
+#define ESP_BAUDRATE 		57600
+#define	PERIOD				25
 
 //------------------------------------------------------------------------------
 // GLOBAL VARIABLES
 //------------------------------------------------------------------------------
 
-//const char *SSID     = "TIM-90340813_2.4Hz";
-//const char *PASSWORD = "bJMzBlXdf10x3E8RfgTG98oE";
+const char *SSID     = "TIM-90340813_2.4Hz";
+const char *PASSWORD = "bJMzBlXdf10x3E8RfgTG98oE";
 
-const char *SSID     = "Alice-73100401";
-const char *PASSWORD = "u3b1kz4btdvt4gzokiik6eff";
+//const char *SSID     = "Alice-73100401";
+//const char *PASSWORD = "u3b1kz4btdvt4gzokiik6eff";
 
 //const char *SSID     = "XDR";
 //const char *PASSWORD = "BSBXDRBSB";
@@ -26,14 +28,17 @@ char SERVER_ADDRESS[16];
 char BROADCAST_ADDRESS[16];
 
 SoftwareSerial mySerial(10, 11);
-ESP8266 wifi(mySerial);
+ESP8266 wifi(mySerial, ESP_BAUDRATE);
 
 const int MPU = 0x68;
 GY521 acc_gy(MPU);
 
-sensor_data_g_t all_d;
-
 uint32_t seq_num;
+
+data_t all_d;
+
+//uint32_t t;
+//int32_t d;
 
 //------------------------------------------------------------------------------
 // COMPUTE BROADCAST ADDRESS: 	Given the local IP compute the brodcast address
@@ -42,11 +47,11 @@ uint32_t seq_num;
 
 void computeBroadcastAddress() {
 	int n_dots = 0;
-  String IP = wifi.getLocalIP();
-  char myIP[IP.length()+1];
+	String IP = wifi.getLocalIP();
+	char myIP[IP.length()+1];
 	IP.toCharArray(myIP, IP.length()+1);
 	for(int i=0; n_dots < 3; i++) {
-    BROADCAST_ADDRESS[i] = myIP[i];
+		BROADCAST_ADDRESS[i] = myIP[i];
 		if (myIP[i] == '.') {
 			n_dots++;
 			if (n_dots == 3) {
@@ -56,7 +61,6 @@ void computeBroadcastAddress() {
 			}
 		}
 	}
-
 }
 
 //------------------------------------------------------------------------------
@@ -64,83 +68,69 @@ void computeBroadcastAddress() {
 //------------------------------------------------------------------------------
 
 void sendStruct() {
-  all_d = acc_gy.getAllDouble(seq_num++);
+	all_d = acc_gy.getData(t, seq_num++);
 	wifi.send(0, (char*)&all_d, sizeof(all_d));
-}
-
-//------------------------------------------------------------------------------
-// PRINT ALL: Print all sent acc/gy data
-//------------------------------------------------------------------------------
-
-void printAll(){
-  Serial.print(F("SEQUENCE NUMBER:\t"));
-  Serial.println(all_d.seq_num);
-  Serial.print(F("Accelerometer (g):\t"));
-  Serial.print(F("X = "));
-  Serial.print(all_d.ax, 4);
-  Serial.print(F("\t| Y = "));
-  Serial.print(all_d.ay, 4);
-  Serial.print(F("Gyroscope (g):\t\t"));
-  Serial.print(F("\t| Z = "));
-  Serial.println(all_d.gz, 4);
-  Serial.println();
 }
 
 //------------------------------------------------------------------------------
 // CONNECT TO AP: Connect ESP8266 module to the access point
 //------------------------------------------------------------------------------
 
-void connectToAP(){
-	if (!wifi.init(SSID, PASSWORD)) {
+bool connectToAP(){
+	if (!wifi.init(SSID, PASSWORD, ESP_BAUDRATE)) {
 		Serial.println(F("WI-FI CONNECTION FAILED."));
-    digitalWrite(DEFUALT_LED_PIN, LOW);
-		while (true);
+		return false;
 	}
     
 	Serial.print(F("CONNECTION ESTABLISHED: "));
 	Serial.println(wifi.getLocalIP().c_str());
+	return true;
 }
 
 //------------------------------------------------------------------------------
 // CONNECT TO SERVER: Create UDP connection with the server
 //------------------------------------------------------------------------------
 
-void connectToServer(){
+bool connectToServer(){
 	if (!wifi.registerUDP(1,wifi.getLocalIP().c_str(), MY_PORT, MY_PORT, 2)) {
 		Serial.println(F("UDP RECV CONNECTION ERROR"));
-    digitalWrite(DEFUALT_LED_PIN, LOW);
-		while (true);
+		return false;
 	}
-  else
-  	Serial.println(F("UDP RECV CONNECTION OK"));
-	
+	else
+		Serial.println(F("UDP RECV CONNECTION OK"));
+
 	computeBroadcastAddress();
-  Serial.print(F("BROADCAST ADDRESS: "));
-  Serial.println(BROADCAST_ADDRESS);
+	Serial.print(F("BROADCAST ADDRESS: "));
+	Serial.println(BROADCAST_ADDRESS);
 
 	if (!wifi.registerUDP(0,BROADCAST_ADDRESS, SERVER_PORT)) {
 		Serial.println(F("UDP SEND BROADCAST CONNECTION ERROR"));
-    digitalWrite(DEFUALT_LED_PIN, LOW);
-		while (true);
+		return false;
 	}
- 	else
- 		Serial.println(F("UDP SEND BROADCAST CONNECTION OK"));
+	else
+		Serial.println(F("UDP SEND BROADCAST CONNECTION OK"));
 
 	wifi.send(0, (char *)&MY_PORT, sizeof(MY_PORT));
 
+	String IP = wifi.getLocalIP();
+	char myIP[16];
+	IP.toCharArray(myIP, IP.length()+1);
+
+	wifi.send(0, myIP, 16);
+
 	int recvBytes = wifi.recv(1, SERVER_ADDRESS, sizeof(SERVER_ADDRESS), 5000);
-    SERVER_ADDRESS[recvBytes+1] = "\0";
-    Serial.print(F("SERVER ADDRESS: "));
-    Serial.println(SERVER_ADDRESS);
+	SERVER_ADDRESS[recvBytes+1] = "\0";
+	Serial.print(F("SERVER ADDRESS: "));
+	Serial.println(SERVER_ADDRESS);
 
 	if (!wifi.registerUDP(0,SERVER_ADDRESS, SERVER_PORT)) {
-  
 		Serial.println(F("UDP SEND TO SERVER CONNECTION ERROR"));
-    digitalWrite(DEFUALT_LED_PIN, LOW);
-		while (true);
+		return false;
 	}
- 	else
-  		Serial.println(F("UDP SEND TO SERVER CONNECTION OK"));
+	else
+		Serial.println(F("UDP SEND TO SERVER CONNECTION OK"));
+	
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -148,36 +138,29 @@ void connectToServer(){
 //------------------------------------------------------------------------------
 
 void setup(void) {
-  delay(1000);
-  digitalWrite(DEFUALT_LED_PIN, LOW);
-	seq_num = 0;
+	pinMode(LED_BUILTIN, OUTPUT);
+	digitalWrite(LED_BUILTIN, LOW);
 	Serial.begin(9600);
-
-  delay(1000);
-
-  digitalWrite(DEFUALT_LED_PIN, HIGH);
-	connectToAP();
-  digitalWrite(DEFUALT_LED_PIN, LOW);
-
-  delay(1000);
-
-  digitalWrite(DEFUALT_LED_PIN, HIGH);
-	connectToServer();
-  digitalWrite(DEFUALT_LED_PIN, LOW);
-
-  delay(1000);
-
-  digitalWrite(DEFUALT_LED_PIN, HIGH);
+	delay(1000);
+	Serial.println(F("STARTING APPLICATION"));
+	seq_num = 0;
+	while (!connectToAP()) {delay(1000);}
+	delay(1000);
+	while (!connectToServer()) {delay(1000);}
 	acc_gy.init();
-	acc_gy.calibrate();
-  digitalWrite(DEFUALT_LED_PIN, LOW);
-  //acc_gy.previous_t = millis();
+	//digitalWrite(LED_BUILTIN, HIGH);
+	//acc_gy.calibrate();
+	//digitalWrite(LED_BUILTIN, LOW);
 }
 
 //------------------------------------------------------------------------------
-// LOOP:	
+// LOOP: Body of the application running in the car
 //------------------------------------------------------------------------------
 
 void loop(void) {
+	//t = millis();
 	sendStruct();
+  	//d = PERIOD - millis() + t;
+  	//if (d > 0)
+	//	delay(d);
 }

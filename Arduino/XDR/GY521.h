@@ -44,15 +44,23 @@ typedef struct sensor_data_raw {
 } sensor_data_raw_t;
 
 typedef struct sensor_data_g {
+  	uint32_t seq_num;
+	float ax;
+	float ay;
+	float az;
+	float v;
+	float gx;
+	float gy;
+	float gz;
+} sensor_data_g_t;
+
+typedef struct data {
+	unsigned long m;
 	uint32_t seq_num;
 	float ax;
 	float ay;
-	//float az;
-	//float v;
-	//float gx;
-	//float gy;
 	float gz;
-} sensor_data_g_t;
+} data_t;
 
 //------------------------------------------------------------------------------
 // GLOBAL CONSTANTS
@@ -69,7 +77,9 @@ class GY521 {
 	//--------------------------------------------------------------------------
 	// PRIVATE MEMBERS AND FUNCTIONS
 	//--------------------------------------------------------------------------
+	
 	private:
+	
 		//----------------------------------------------------------------------
 		// PRIVATE MEMBERS
 		//----------------------------------------------------------------------
@@ -81,6 +91,8 @@ class GY521 {
    
 		sensor_data_raw_t all;
 		sensor_data_g_t all_d;
+	
+		data_t d;
 
 		acc_raw_t acc;
 		acc_g_t acc_d;
@@ -97,29 +109,29 @@ class GY521 {
 		// PRIVATE FUNCTIONS
 		//----------------------------------------------------------------------
 
-    //----------------------------------------------------------------------
-    // ACC TO G:
-    //----------------------------------------------------------------------
+		//----------------------------------------------------------------------
+		// RAW TO G: Convert raw data to g accelerations
+		//----------------------------------------------------------------------
 
-    void raw2g(uint32_t);
+		void raw2g(unsigned long m, uint32_t seq_num);
 
 		//----------------------------------------------------------------------
-		// ACC TO G:
+		// ACC TO G: Convert raw data to g accelerations
 		//----------------------------------------------------------------------
 
 		void acc2g();
 
 		//----------------------------------------------------------------------
-		// GY TO G:
+		// GY TO G: Convert raw data to g angular accelerations
 		//----------------------------------------------------------------------
 
 		void gy2g();
 	
 		//----------------------------------------------------------------------
-		// COMPUTE VELOCITY: Compute velocity from accelerometer data
+		// READ DATA: Read data from useful sensors
 		//----------------------------------------------------------------------
 	
-		float computeVelocity();
+		void readData();
 
 		//----------------------------------------------------------------------
 		// READ ALL: Read data from all the sensors
@@ -160,12 +172,8 @@ class GY521 {
 	//--------------------------------------------------------------------------
 	// PUBLIC MEMBERS AND FUNCTIONS
 	//--------------------------------------------------------------------------
+	
 	public:
-    //----------------------------------------------------------------------
-    // PUBLIC MEMBERS
-    //----------------------------------------------------------------------
-    
-    unsigned long previous_t;
 
 		//----------------------------------------------------------------------
 		// PUBLIC FUNCTIONS
@@ -188,6 +196,12 @@ class GY521 {
 		//----------------------------------------------------------------------
 	
 		void calibrate();
+	
+		//----------------------------------------------------------------------
+		// PRINT DATA: Print data from all useful sensors
+		//----------------------------------------------------------------------
+	
+		void printData();
 	
 		//----------------------------------------------------------------------
 		// PRINT ALL: Print data from all the sensors
@@ -238,6 +252,12 @@ class GY521 {
 		void printTmpDouble();
 	
 		//----------------------------------------------------------------------
+		// GET DATA: Get data from accelerometer sensor
+		//----------------------------------------------------------------------
+		
+		data_t getData(unsigned long m, uint32_t seq_num);
+	
+		//----------------------------------------------------------------------
 		// GET ALL: Get data from all the sensors
 		//----------------------------------------------------------------------
 	
@@ -265,7 +285,7 @@ class GY521 {
 		// GET ALL DOUBLE: Get data from all the sensors
 		//----------------------------------------------------------------------
 	
-		sensor_data_g_t GY521::getAllDouble(uint32_t seq_num);
+		sensor_data_g_t GY521::getAllDouble();
 	
 		//----------------------------------------------------------------------
 		// GET ACC DOUBLE: Get data from accelerometer sensor

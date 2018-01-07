@@ -17,7 +17,7 @@ ESP8266::ESP8266(SoftwareSerial &uart, uint32_t baud) : m_puart(&uart) {}
 
 void ESP8266::rx_empty(void) {
 	while (m_puart->available() > 0)
-	  m_puart->read();
+		m_puart->read();
 }
 
 //------------------------------------------------------------------------------
@@ -46,14 +46,13 @@ String ESP8266::recvString(String target1, String target2, uint32_t timeout) {
 	unsigned long start = millis();
 	while (millis() - start < timeout) {
 		while (m_puart->available() > 0) {
-			a = m_puart->read();
-			if (a == '\0') continue;
-			data += a;
+				a = m_puart->read();
+				if (a == '\0') continue;
+				data += a;
 		}
 		if (data.indexOf(target1) != -1)
 			break;
-		else
-			if (data.indexOf(target2) != -1)
+		else if (data.indexOf(target2) != -1)
 			break;
 	}
 	return data;
@@ -67,17 +66,16 @@ String ESP8266::recvString(String target1, String target2, String target3, uint3
 		while (m_puart->available() > 0) {
 			a = m_puart->read();
 			if (a == '\0') continue;
-			data += a;
+				data += a;
 		}
 		if (data.indexOf(target1) != -1)
-			break;
+				break;
 		else {
 			if (data.indexOf(target2) != -1)
 				break;
-			else
-				if (data.indexOf(target3) != -1)
-					break;
-			}
+			else if (data.indexOf(target3) != -1)
+				break;
+		}
 	}
 	return data;
 }
@@ -135,22 +133,22 @@ uint32_t ESP8266::recvPkg(uint8_t *buffer, uint32_t buffer_size, uint32_t *data_
 	uint32_t ret;
 	unsigned long start;
 	uint32_t i;
-	
+
 	if (buffer == NULL)
 		return 0;
-	
+
 	start = millis();
-	
+
 	while (millis() - start < timeout) {
 		if (m_puart->available() > 0) {
 			a = m_puart->read();
 			data += a;
 		}
-		
+
 		index_PIPDcomma = data.indexOf("+IPD,");
 		if (index_PIPDcomma != -1) {
 			index_colon = data.indexOf(':', index_PIPDcomma + 5);
-			
+
 			if (index_colon != -1) {
 				index_comma = data.indexOf(',', index_PIPDcomma + 5);
 
@@ -158,7 +156,7 @@ uint32_t ESP8266::recvPkg(uint8_t *buffer, uint32_t buffer_size, uint32_t *data_
 					id = data.substring(index_PIPDcomma + 5, index_comma).toInt();
 					if (id < 0 || id > 4)
 						return 0;
-					
+
 					len = data.substring(index_comma + 1, index_colon).toInt();
 					if (len <= 0)
 						return 0;
@@ -168,38 +166,38 @@ uint32_t ESP8266::recvPkg(uint8_t *buffer, uint32_t buffer_size, uint32_t *data_
 					if (len <= 0)
 						return 0;
 				}
-				
+
 				has_data = true;
 				break;
 			}
 		}
 	}
-	
+
 	if (has_data) {
 		i = 0;
 		ret = len > buffer_size ? buffer_size : len;
 		start = millis();
-		
+
 		while (millis() - start < 3000) {
 			while (m_puart->available() > 0 && i < ret) {
 				a = m_puart->read();
 				buffer[i++] = a;
 			}
-			
+
 			if (i == ret) {
 				rx_empty();
-				
+
 				if (data_len)
 					*data_len = len;
-				
+
 				if (index_comma != -1 && coming_mux_id)
 					*coming_mux_id = id;
-				
+
 				return ret;
 			}
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -230,7 +228,7 @@ bool ESP8266::AT_CWMODE(uint8_t mode) {
 	rx_empty();
 	m_puart->print(F("AT+CWMODE="));
 	m_puart->println(mode);
-	
+
 	data = recvString("OK", "no change");
 	if (data.indexOf("OK") != -1 || data.indexOf("no change") != -1)
 		return true;
@@ -242,10 +240,11 @@ bool ESP8266::AT_CWMODE(uint8_t *mode) {
 	bool ret;
 	if (!mode)
 		return false;
-	
+
 	rx_empty();
 	m_puart->println(F("AT+CWMODE?"));
 	ret = recvFindAndFilter("OK", "+CWMODE:", "\r\n\r\nOK", str_mode);
+
 	if (ret) {
 		*mode = (uint8_t)str_mode.toInt();
 		return true;
@@ -262,7 +261,7 @@ bool ESP8266::AT_CWJAP(String ssid, String pwd) {
 	m_puart->print(F("\",\""));
 	m_puart->print(pwd);
 	m_puart->println(F("\""));
-	
+
 	data = recvString("OK", "FAIL", 10000);
 	if (data.indexOf("OK") != -1)
 		return true;
@@ -294,7 +293,7 @@ bool ESP8266::AT_CWSAP(String ssid, String pwd, uint8_t chl, uint8_t ecn) {
 	m_puart->print(chl);
 	m_puart->print(F(","));
 	m_puart->println(ecn);
-	
+
 	data = recvString("OK", "ERROR", 5000);
 	if (data.indexOf("OK") != -1)
 		return true;
@@ -325,7 +324,7 @@ bool ESP8266::AT_CIPSTART_SINGLE(String type, String addr, uint32_t port) {
 	m_puart->print(addr);
 	m_puart->print(F("\","));
 	m_puart->println(port);
-	
+
 	data = recvString("OK", "ERROR", "ALREADY CONNECT", 500);
 	if (data.indexOf("OK") != -1 || data.indexOf("ALREADY CONNECT") != -1)
 		return true;
@@ -344,7 +343,7 @@ bool ESP8266::AT_CIPSTART_MULTIPLE(uint8_t mux_id, String type, String addr, uin
 	m_puart->print(addr);
 	m_puart->print(F("\","));
 	m_puart->println(port);
-	
+
 	data = recvString("OK", "ERROR", "ALREADY CONNECT", 10000);
 	if (data.indexOf("OK") != -1 || data.indexOf("ALREADY CONNECT") != -1)
 		return true;
@@ -393,11 +392,11 @@ bool ESP8266::AT_CIPSEND_MULTIPLE(uint8_t mux_id, const uint8_t *buffer, uint32_
 	m_puart->print(mux_id);
 	m_puart->print(F(","));
 	m_puart->println(len);
-	if (recvFind(">", 50)) {
+	if (recvFind(">", 15)) {
 		rx_empty();
 		for (uint32_t i = 0; i < len; i++)
 			m_puart->write(buffer[i]);
-		return recvFind("SEND OK", 10);
+		return recvString("O","K","S", 50);
 	}
 	return false;
 }
@@ -408,12 +407,12 @@ bool ESP8266::AT_CIPCLOSE_SINGLE(void) {
 	return recvFind("OK", 5000);
 }
 
-bool ESP8266::AT_CIPCLOSE_MULTIPLE(uint8_t mux_id){
+bool ESP8266::AT_CIPCLOSE_MULTIPLE(uint8_t mux_id) {
 	String data;
 	rx_empty();
 	m_puart->print(F("AT+CIPCLOSE="));
 	m_puart->println(mux_id);
-	
+
 	data = recvString("OK", "link is not", 5000);
 	if (data.indexOf("OK") != -1 || data.indexOf("link is not") != -1)
 		return true;
@@ -428,12 +427,12 @@ bool ESP8266::AT_CIFSR(String & list) {
 
 bool ESP8266::AT_CIPMUX(uint8_t mode) {
 	String data;
-	
+
 	rx_empty();
 	delay(100);
 	m_puart->print(F("AT+CIPMUX="));
 	m_puart->println(mode);
-	
+
 	data = recvString("OK", "Link is builded");
 	if (data.indexOf("OK") != -1) {
 		delay(100);
@@ -448,13 +447,13 @@ bool ESP8266::AT_CIPSERVER(uint8_t mode, uint32_t port) {
 		rx_empty();
 		m_puart->print(F("AT+CIPSERVER=1,"));
 		m_puart->println(port);
-		
+
 		data = recvString("OK", "no change");
-		if (data.indexOf("OK") != -1 || data.indexOf("no change") != -1) {
+		if (data.indexOf("OK") != -1 || data.indexOf("no change") != -1)
 			return true;
-		}
 		return false;
-	} else {
+	}
+	else {
 		rx_empty();
 		m_puart->println(F("AT+CIPSERVER=0"));
 		return recvFind("\r\r\n");
@@ -474,27 +473,26 @@ bool ESP8266::AT_CIPSTO(uint32_t timeout) {
 //			9600
 //------------------------------------------------------------------------------
 
-bool ESP8266::init(const String &ssid, const String &pwd, uint32_t baudRateSet)
-{
+bool ESP8266::init(const String &ssid, const String &pwd, uint32_t baudRateSet) {
 	if (!autoSetBaud(baudRateSet)) {
-    Serial.println(F("sono qui 1"));
+		Serial.print(F("AUTO SET BAUDRATE: "));
 		return false;
 	}
-	
+
 	if (!setOprToStation()) {
-    Serial.println(F("sono qui 3"));
-   return false;
-  }
-	
+		Serial.print(F("SET STATION OPTION: "));
+		return false;
+	}
+
 	if (!joinAP(ssid, pwd)) {
-    Serial.println(F("sono qui 4"));
-   return false;
-  }
-	
+		Serial.print(F("JOIN AP: "));
+		return false;
+	}
+
 	if (!enableMUX()) {
-    Serial.println(F("sono qui 5"));
-   return false;
-  }
+		Serial.print(F("ENABLE MUX: "));
+		return false;
+	}
 
 	return true;
 }
@@ -503,20 +501,20 @@ bool ESP8266::init(const String &ssid, const String &pwd, uint32_t baudRateSet)
 // AUTO SET BAUD: 	Detect ESP8266 baudrate and reset it to baudRateSet
 //------------------------------------------------------------------------------
 
-bool ESP8266::autoSetBaud(uint32_t baudRateSet){
+bool ESP8266::autoSetBaud(uint32_t baudRateSet) {
 	rx_empty();
 	long time0 = millis();
 	long baudRateArray[] = {9600, 19200, 57600, 115200};
 	const int attempts = 5;
 	bool baudFlag = 0;
-	
+
 	for (int j = 0 ; j < attempts ; j++) {
 		for (int i = 0; i < sizeof(baudRateArray) ; i++) {
 			m_puart->begin(baudRateArray[i]);
-			
+
 			m_puart->println(F("AT"));
 			delay(20);
-			
+
 			while (m_puart->available()) {
 				String inData = m_puart->readStringUntil('\n');
 				if (inData.indexOf("OK") != -1) {
@@ -528,11 +526,11 @@ bool ESP8266::autoSetBaud(uint32_t baudRateSet){
 			if (baudFlag)
 				break;
 		}
-		
+
 		if (baudFlag) {
 			baudFlag = 0;
 			for (int j = 0; j < attempts; j++) {
-				m_puart->print(F("AT+CIOBAUD="));
+				m_puart->print(F("AT+IPR="));
 				m_puart->println(baudRateSet);
 				delay(20);
 				while (m_puart->available()) {
@@ -548,7 +546,7 @@ bool ESP8266::autoSetBaud(uint32_t baudRateSet){
 					break;
 			}
 		}
-		
+
 		if (baudFlag)
 			break;
 	}
@@ -560,7 +558,7 @@ bool ESP8266::autoSetBaud(uint32_t baudRateSet){
 //			will send command "AT" to ESP8266 and waiting for "OK"
 //------------------------------------------------------------------------------
 
-bool ESP8266::kick(void){
+bool ESP8266::kick(void) {
 	return AT();
 }
 
@@ -589,9 +587,9 @@ bool ESP8266::restart(void) {
 // GET VERSION: 	Get the version of AT Command Set
 //------------------------------------------------------------------------------
 
-String ESP8266::getVersion(void){
+String ESP8266::getVersion(void) {
 	rx_empty();
-	
+
 	String inData;
 	m_puart->println(F("AT+GMR"));
 	delay(50);
@@ -602,7 +600,7 @@ String ESP8266::getVersion(void){
 			return inData.substring(6);
 	}
 	return inData;
-	
+
 	String version;
 	AT_GMR(version);
 	return version;
@@ -612,11 +610,11 @@ String ESP8266::getVersion(void){
 // SET OPR TO STATION: 	Set operation mode to staion
 //------------------------------------------------------------------------------
 
-bool ESP8266::setOprToStation(void){
+bool ESP8266::setOprToStation(void) {
 	uint8_t mode;
 	if (!AT_CWMODE(&mode))
 		return false;
-	
+
 	if (mode == 1)
 		return true;
 	else {
@@ -631,18 +629,18 @@ bool ESP8266::setOprToStation(void){
 // SET OPR TO SOFT AP: 	Set operation mode to softap
 //------------------------------------------------------------------------------
 
-bool ESP8266::setOprToSoftAP(void){
+bool ESP8266::setOprToSoftAP(void) {
 	uint8_t mode;
 	if (!AT_CWMODE(&mode))
-	return false;
-	
+		return false;
+
 	if (mode == 2)
-	return true;
+		return true;
 	else {
 		if (AT_CWMODE(2) && restart())
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 }
 
@@ -653,15 +651,15 @@ bool ESP8266::setOprToSoftAP(void){
 bool ESP8266::setOprToStationSoftAP(void) {
 	uint8_t mode;
 	if (!AT_CWMODE(&mode))
-	return false;
-	
+		return false;
+
 	if (mode == 3)
-	return true;
+		return true;
 	else {
 		if (AT_CWMODE(3) && restart())
-		return true;
+			return true;
 		else
-		return false;
+			return false;
 	}
 }
 
@@ -725,7 +723,7 @@ String ESP8266::getIPStatus(void) {
 
 String ESP8266::getLocalIP(void) {
 	String inData;
-	
+
 	rx_empty();
 	m_puart->println(F("AT+CIFSR"));
 	delay(50);
@@ -755,7 +753,7 @@ bool ESP8266::enableMUX(void) {
 
 bool ESP8266::disableMUX(void) {
 	String inData;
-	
+
 	rx_empty();
 	m_puart->println(F("AT+CIPMUX=0"));
 	delay(50);
@@ -833,7 +831,7 @@ bool ESP8266::registerUDP(uint8_t mux_id, String addr, uint32_t port) {
 //------------------------------------------------------------------------------
 
 bool ESP8266::registerUDP(uint8_t mux_id, String addr, uint32_t port, uint32_t local_port, uint8_t mode) {
-  return AT_CIPSTART_MULTIPLE(mux_id, "UDP", addr, port, local_port, mode);
+	return AT_CIPSTART_MULTIPLE(mux_id, "UDP", addr, port, local_port, mode);
 }
 
 //------------------------------------------------------------------------------
