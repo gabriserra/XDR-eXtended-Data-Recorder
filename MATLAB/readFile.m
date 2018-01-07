@@ -1,4 +1,4 @@
-function var = readFile(filename, startRow, endRow)
+function [var, del] = readFile(filename, startRow, endRow)
 delimiter = {'\t'};
 if nargin<=2
     startRow = 1;
@@ -44,20 +44,45 @@ if size(data,2) == 8
     [index, ~] = find(isnan(var));
     var = removerows(var,'ind',index);
 else
-    timestamp = data{:, 1};
-    acc_x = data{:, 2};
-    acc_y = data{:, 3};
-    gy_z = data{:, 4};
-    
-    index = find(timestamp > 10000);
+    if size(data,2) == 4
+        timestamp = data{:, 1};
+        acc_x = data{:, 2};
+        acc_y = data{:, 3};
+        gy_z = data{:, 4};
 
-    timestamp = removerows(timestamp,'ind',index);
-    acc_x = removerows(acc_x,'ind',index);
-    acc_y = removerows(acc_y,'ind',index);
-    gy_z = removerows(gy_z,'ind',index);
+        index = find(timestamp > 1000000);
 
-    dim = min([size(timestamp,1), size(acc_x,1), size(acc_y,1), size(gy_z,1)]);
-    var = [timestamp(1:dim), acc_x(1:dim), acc_y(1:dim), gy_z(1:dim)];
-    [index, ~] = find(isnan(var));
-    var = removerows(var,'ind',index);
+        timestamp = removerows(timestamp,'ind',index);
+        acc_x = removerows(acc_x,'ind',index);
+        acc_y = removerows(acc_y,'ind',index);
+        gy_z = removerows(gy_z,'ind',index);
+
+        del = index;
+
+        dim = min([size(timestamp,1), size(acc_x,1), size(acc_y,1), size(gy_z,1)]);
+        var = [timestamp(1:dim), acc_x(1:dim), acc_y(1:dim), gy_z(1:dim)];
+        [index, ~] = find(isnan(var));
+        var = removerows(var,'ind',index);
+    else
+        timestamp = data{:, 1};
+        seq_num = data{:,2};
+        acc_x = data{:, 3};
+        acc_y = data{:, 4};
+        gy_z = data{:, 5};
+
+        index = find(seq_num > 1000000);
+
+        timestamp = removerows(timestamp,'ind',index);
+        seq_num = removerows(seq_num,'ind',index);
+        acc_x = removerows(acc_x,'ind',index);
+        acc_y = removerows(acc_y,'ind',index);
+        gy_z = removerows(gy_z,'ind',index);
+
+        del = index;
+
+        dim = min([size(timestamp,1), size(seq_num,1), size(acc_x,1), size(acc_y,1), size(gy_z,1)]);
+        var = [timestamp(1:dim), seq_num(1:dim), acc_x(1:dim), acc_y(1:dim), gy_z(1:dim)];
+        [index, ~] = find(isnan(var));
+        var = removerows(var,'ind',index);
+    end
 end
