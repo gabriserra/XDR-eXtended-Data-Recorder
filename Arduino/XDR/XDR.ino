@@ -5,7 +5,7 @@
 // GLOBAL CONSTANTS
 //------------------------------------------------------------------------------
 
-#define	SERIAL_BAUDRATE		9600
+#define	SERIAL_BAUDRATE		2000000
 #define ESP_BAUDRATE 		57600
 #define	PERIOD				25
 
@@ -68,7 +68,7 @@ void computeBroadcastAddress() {
 //------------------------------------------------------------------------------
 
 void sendStruct() {
-	all_d = acc_gy.getData(t, seq_num++);
+	all_d = acc_gy.getData(millis(), seq_num++);
 	wifi.send(0, (char*)&all_d, sizeof(all_d));
 }
 
@@ -79,6 +79,7 @@ void sendStruct() {
 bool connectToAP(){
 	if (!wifi.init(SSID, PASSWORD, ESP_BAUDRATE)) {
 		Serial.println(F("WI-FI CONNECTION FAILED."));
+    digitalWrite(LED_BUILTIN, HIGH);
 		return false;
 	}
     
@@ -94,6 +95,7 @@ bool connectToAP(){
 bool connectToServer(){
 	if (!wifi.registerUDP(1,wifi.getLocalIP().c_str(), MY_PORT, MY_PORT, 2)) {
 		Serial.println(F("UDP RECV CONNECTION ERROR"));
+    digitalWrite(LED_BUILTIN, HIGH);
 		return false;
 	}
 	else
@@ -105,6 +107,7 @@ bool connectToServer(){
 
 	if (!wifi.registerUDP(0,BROADCAST_ADDRESS, SERVER_PORT)) {
 		Serial.println(F("UDP SEND BROADCAST CONNECTION ERROR"));
+    digitalWrite(LED_BUILTIN, HIGH);
 		return false;
 	}
 	else
@@ -125,6 +128,7 @@ bool connectToServer(){
 
 	if (!wifi.registerUDP(0,SERVER_ADDRESS, SERVER_PORT)) {
 		Serial.println(F("UDP SEND TO SERVER CONNECTION ERROR"));
+    digitalWrite(LED_BUILTIN, HIGH);
 		return false;
 	}
 	else
@@ -140,17 +144,17 @@ bool connectToServer(){
 void setup(void) {
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, LOW);
-	Serial.begin(9600);
+	Serial.begin(SERIAL_BAUDRATE);
 	delay(1000);
 	Serial.println(F("STARTING APPLICATION"));
 	seq_num = 0;
-	while (!connectToAP()) {delay(1000);}
+	while (!connectToAP()) {delay(1000); digitalWrite(LED_BUILTIN, LOW); delay(1000);}
 	delay(1000);
-	while (!connectToServer()) {delay(1000);}
+	while (!connectToServer()) {delay(1000); digitalWrite(LED_BUILTIN, LOW); delay(1000);}
 	acc_gy.init();
-	//digitalWrite(LED_BUILTIN, HIGH);
-	//acc_gy.calibrate();
-	//digitalWrite(LED_BUILTIN, LOW);
+	digitalWrite(LED_BUILTIN, HIGH);
+	acc_gy.calibrate();
+	digitalWrite(LED_BUILTIN, LOW);
 }
 
 //------------------------------------------------------------------------------

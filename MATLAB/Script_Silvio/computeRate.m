@@ -2,7 +2,15 @@ function [AV, MAX, MIN] = computeRate(filename)
     % [var, d] = readFile('../server/log/log_2018-01-06_18-35-50.csv');
     unfilled = readFile(filename);
     
-    filled = filler(unfilled);
+    unfilled(:,3) = denoise(unfilled(:,3));
+    unfilled(:,4) = denoise(unfilled(:,4));
+    unfilled(:,5) = denoise(unfilled(:,5));
+    
+    var = filler(unfilled);
+    
+    figure;
+    plot(var(:,3));
+    title('Questo');
     
     % t = filled(:,1)./1000;
     % unfiltered = filled(:,3);
@@ -34,15 +42,15 @@ function [AV, MAX, MIN] = computeRate(filename)
 %     xlabel('f (Hz)')
 %     ylabel('|P1(f)|')
     
-    var = denoise(filled(:,3));
+    % var = denoise(filled(:,3));
     %var = filterData(filled);
     %figure;
     %plot(var(:,3));
     
-    vel = iomega(var, 0.02, 3, 2);
+    % vel = iomega(var, 0.02, 3, 2);
     
-    figure;
-    plot(vel);
+    % figure;
+    % plot(vel);
 
     diff = zeros(size(var,1), 1);
     counter = 0;

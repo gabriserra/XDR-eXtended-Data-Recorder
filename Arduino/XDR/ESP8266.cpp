@@ -230,7 +230,7 @@ bool ESP8266::AT_CWMODE(uint8_t mode) {
 	m_puart->println(mode);
 
 	data = recvString("OK", "no change");
-	if (data.indexOf("OK") != -1 || data.indexOf("no change") != -1)
+	if (data.indexOf("O") != -1 || data.indexOf("no change") != -1)
 		return true;
 	return false;
 }
@@ -262,7 +262,7 @@ bool ESP8266::AT_CWJAP(String ssid, String pwd) {
 	m_puart->print(pwd);
 	m_puart->println(F("\""));
 
-	data = recvString("OK", "FAIL", 10000);
+	data = recvString("OK", 10000);
 	if (data.indexOf("OK") != -1)
 		return true;
 	return false;
@@ -512,9 +512,8 @@ bool ESP8266::autoSetBaud(uint32_t baudRateSet) {
 		for (int i = 0; i < sizeof(baudRateArray) ; i++) {
 			m_puart->begin(baudRateArray[i]);
 
-			m_puart->println(F("AT"));
+			m_puart->println("AT");
 			delay(20);
-
 			while (m_puart->available()) {
 				String inData = m_puart->readStringUntil('\n');
 				if (inData.indexOf("OK") != -1) {
@@ -522,6 +521,7 @@ bool ESP8266::autoSetBaud(uint32_t baudRateSet) {
 					delay(15);
 					break;
 				}
+
 			}
 			if (baudFlag)
 				break;
@@ -530,7 +530,7 @@ bool ESP8266::autoSetBaud(uint32_t baudRateSet) {
 		if (baudFlag) {
 			baudFlag = 0;
 			for (int j = 0; j < attempts; j++) {
-				m_puart->print(F("AT+IPR="));
+				m_puart->print("AT+CIOBAUD=");
 				m_puart->println(baudRateSet);
 				delay(20);
 				while (m_puart->available()) {
@@ -546,7 +546,6 @@ bool ESP8266::autoSetBaud(uint32_t baudRateSet) {
 					break;
 			}
 		}
-
 		if (baudFlag)
 			break;
 	}
