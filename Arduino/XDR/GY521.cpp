@@ -11,14 +11,13 @@
 // GLOBAL CONSTANTS
 //------------------------------------------------------------------------------
 
-#define	BUFFERSIZE		1000	//Amount of readings used to average, make it higher to get more precision but sketch will be slower  (default:1000)
-#define ACC_DEADZONE	8     	//Acelerometer error allowed, make it lower to get more precision, but sketch may not converge  (default:8)
-#define GY_DEADZONE		1     	//Giro error allowed, make it lower to get more precision, but sketch may not converge  (default:1)
+#define	BUFFERSIZE			1000	//Amount of readings used to average, make it higher to get more precision but sketch will be slower  (default:1000)
+#define ACC_DEADZONE		8     	//Acelerometer error allowed, make it lower to get more precision, but sketch may not converge  (default:8)
+#define GY_DEADZONE			1     	//Giro error allowed, make it lower to get more precision, but sketch may not converge  (default:1)
 
-#define GRAVITY       9.81
-
-float	ACC_SENSITIVITY	= 16384;
-float	GY_SENSITIVITY	= 131;
+#define GRAVITY       		9.81
+#define	ACC_SENSITIVITY		16384.00
+#define	GY_SENSITIVITY		131.00
 
 //------------------------------------------------------------------------------
 // GY521: Constructors of the class
@@ -31,7 +30,19 @@ GY521::GY521(const int mpu){
 }
 
 //------------------------------------------------------------------------------
-// ACC TO G:
+// RAW TO G: Convert raw data to g accelerations
+//------------------------------------------------------------------------------
+
+void GY521::raw2g(unsigned long m, uint32_t seq_num) {
+    d.m = m;
+    d.seq_num = seq_num;
+    d.ax = all.ax / ACC_SENSITIVITY;
+    d.ay = all.ay / ACC_SENSITIVITY;
+    d.gz = all.gz / GY_SENSITIVITY;
+}
+
+//------------------------------------------------------------------------------
+// ACC TO G: Convert raw data to g accelerations
 //------------------------------------------------------------------------------
 
 void GY521::acc2g() {
@@ -41,7 +52,7 @@ void GY521::acc2g() {
 }
 
 //------------------------------------------------------------------------------
-// GY TO G:
+// GY TO G: Convert raw data to g angular accelerations
 //------------------------------------------------------------------------------
 
 void GY521::gy2g() {
@@ -51,20 +62,24 @@ void GY521::gy2g() {
 }
 
 //----------------------------------------------------------------------
-// COMPUTE VELOCITY: Compute velocity from accelerometer data
+// READ DATA: Read data from useful sensors
 //----------------------------------------------------------------------
 
-float GY521::computeVelocity() {
-	unsigned long current_t = millis();
-	unsigned long delta = current_t - previous_t;
-	previous_t = current_t;
-  float dt = delta/1000.00;
+void GY521::readData() {
+	Wire.beginTransmission(MPU);
+	Wire.write(0x3B);
+	Wire.endTransmission(false);
+	Wire.requestFrom(MPU, 4, true);
 	
-	vx += acc_d.ax * GRAVITY * dt;
-	vy += acc_d.ay * GRAVITY * dt;
-	vz += (acc_d.az - 1) * GRAVITY * dt;
+	all.ax = Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)
+	all.ay = Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
 	
-	return sqrt(pow(vx,2) + pow(vy,2) + pow(vz,2));
+	Wire.beginTransmission(MPU);
+	Wire.write(0x47);
+	Wire.endTransmission(false);
+	Wire.requestFrom(MPU, 2, true);
+	
+	all.gz = Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
 }
 
 //------------------------------------------------------------------------------
@@ -107,7 +122,7 @@ void GY521::readAcc() {
 
 void GY521::readGy() {
 	Wire.beginTransmission(MPU);
-	Wire.write(0x43);
+	Wire.write(0x47);
 	Wire.endTransmission(false);
 	Wire.requestFrom(MPU, 6, true);
 	
@@ -234,7 +249,7 @@ void GY521::init() {
 //------------------------------------------------------------------------------
 
 void GY521::calibrate() {
-  Serial.println(F("CALIBRATION STARTED"));
+	Serial.println(F("CALIBRATION STARTED"));
 	delay(2000);
 	acc_gy.setXAccelOffset(0);
 	acc_gy.setYAccelOffset(0);
@@ -242,19 +257,39 @@ void GY521::calibrate() {
 	acc_gy.setXGyroOffset(0);
 	acc_gy.setYGyroOffset(0);
 	acc_gy.setZGyroOffset(0);
-	
+
 	if (state==0){
 		meansensors();
 		state++;
 		delay(1000);
 	}
-	
+
 	if (state==1) {
 		calibration();
 		state++;
 		delay(1000);
 	}
- Serial.println(F("CALIBRATION DONE"));
+	Serial.println(F("CALIBRATION DONE"));
+}
+
+//----------------------------------------------------------------------
+// PRINT DATA: Print data from all useful sensors
+//----------------------------------------------------------------------
+
+void GY521::printData() {
+	Serial.print(F("Timestamp (ms):\t\t"));
+	Serial.println(d.m);
+	Serial.print(F("Sequence Number:\t\t"));
+	Serial.println(d.seq_num);
+	Serial.print(F("Accelerometer:\t\t"));
+	Serial.print(F("X = "));
+	Serial.print(d.ax);
+	Serial.print(F("\t| Y = "));
+	Serial.print(d.ay);
+	Serial.print(F("Gyroscope:\t\t"));
+	Serial.print(F("Z = "));
+	Serial.print(d.gz);
+	Serial.println();
 }
 
 //------------------------------------------------------------------------------
@@ -312,8 +347,8 @@ void GY521::printTmp() {
 
 void GY521::printAllDouble(){
 	//readAll();
-  //acc2g();
-  //gy2g();
+  	//acc2g();
+  	//gy2g();
 	printAccDouble();
 	printGyDouble();
 	Serial.println();
@@ -331,8 +366,6 @@ void GY521::printAccDouble() {
 	Serial.print(acc_d.ay, 4);
 	Serial.print(F("\t| Z = "));
 	Serial.println(acc_d.az, 4);
-  Serial.print(F("Velocity :\t"));
-  Serial.println(acc_d.v, 4);
 }
 
 //------------------------------------------------------------------------------
@@ -357,6 +390,17 @@ void GY521::printTmpDouble() {
 	Serial.print(F("Temperature:\t\t"));
 	Serial.print(tmp_d / 340.00 + 36.53,4);
 	Serial.println(F(" C "));
+}
+
+//------------------------------------------------------------------------------
+// GET DATA: Get data from accelerometer sensor
+//------------------------------------------------------------------------------
+
+data_t GY521::getData(unsigned long m, uint32_t seq_num) {
+	readData();
+	raw2g(m,seq_num);
+	
+	return d;
 }
 
 //------------------------------------------------------------------------------
@@ -410,13 +454,6 @@ sensor_data_g_t GY521::getAllDouble() {
 	readAll();
 	acc2g();
 	gy2g();
-	all_d.ax = acc_d.ax;
-	all_d.ay = acc_d.ay;
-	all_d.az = acc_d.az;
-	all_d.v = computeVelocity();
-	all_d.gx = gy_d.gx;
-	all_d.gy = gy_d.gy;
-	all_d.gz = gy_d.gz;
   
 	return all_d;
 }
@@ -428,7 +465,7 @@ sensor_data_g_t GY521::getAllDouble() {
 acc_g_t GY521::getAccDouble() {
 	readAcc();
 	acc2g();
-	acc_d.v = computeVelocity();
+	acc_d.v = 0;
 	return acc_d;
 }
 

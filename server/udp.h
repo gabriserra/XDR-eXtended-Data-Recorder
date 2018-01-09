@@ -1,18 +1,17 @@
 #ifndef UDP_H
 #define UDP_H
 
+#include <stdint.h>
+
 //------------------------------------------------------------------------------
-// GLOBAL AND EXTERN STRUCTURES
+// GLOBAL STRUCTURES
 //------------------------------------------------------------------------------
 
 typedef struct sensor_data_g {
-	int seq_num;
+	uint32_t m;
+	uint32_t seq_num;
 	float ax;
 	float ay;
-	float az;
-	float v;
-	float gx;
-	float gy;
 	float gz;
 } sensor_data_g_t;
 
@@ -33,27 +32,27 @@ typedef struct in_addr		addr;
 char*  	getMyIP();
 
 //------------------------------------------------------------------------------
-// UDP SEND INIT: Creation of the connection to send
+// CREATE CAR ADDRESS: Initialization of the structure carAddress
 //------------------------------------------------------------------------------
 
-int UDPsend_init(char * ip, int port);
+void createCarAddress(char * ip, int port);
 
 //------------------------------------------------------------------------------
 // UDP RECV INIT: Creation of the connection to receive
 //------------------------------------------------------------------------------
 
-int UDPrecv_init(void);
+int UDPrecv_init(int port);
 
 //------------------------------------------------------------------------------
 // UDP SEND: 	Send the server IP to the car
 //------------------------------------------------------------------------------
 
-void UDPsend(char * ip);
+ssize_t UDPsend(char * ip);
 
 //------------------------------------------------------------------------------
 // UDP RECV: 	Receive sensor's data from the car
 //------------------------------------------------------------------------------
 
-int	UDPrecv(sensor_data_g_t * all_d, address * addr);
+ssize_t	UDPrecv(sensor_data_g_t * all_d);
 
 #endif

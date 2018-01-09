@@ -2,7 +2,14 @@
 #define __ESP8266_H__
 
 #include "SoftwareSerial.h"
-#define MAX_BUFFER_SIZE  300
+
+//------------------------------------------------------------------------------
+// GLOBAL CONSTANTS
+//------------------------------------------------------------------------------
+
+#define MAX_BUFFER_SIZE 	300
+#define DEF_BAUDRATE     	9600
+#define	DEF_TIMEOUT			1000
 
 //------------------------------------------------------------------------------
 // CLASS DEFINITION
@@ -34,16 +41,16 @@ class ESP8266 {
 		// RECV STRING: 	Recvive data from uart. Return all received data
 		//----------------------------------------------------------------------
 	
-		String recvString(String target, uint32_t timeout = 1000);
-		String recvString(String target1, String target2, uint32_t timeout = 1000);
-		String recvString(String target, String target2, String target3, uint32_t timeout = 1000);
+		String recvString(String target, uint32_t timeout = DEF_TIMEOUT);
+		String recvString(String target1, String target2, uint32_t timeout = DEF_TIMEOUT);
+		String recvString(String target, String target2, String target3, uint32_t timeout = DEF_TIMEOUT);
 	
 		//----------------------------------------------------------------------
 		// RECV FIND: 	Recvive data from uart and search first target. Return
 		//				true if target found, false for timeout.
 		//----------------------------------------------------------------------
 	
-		bool recvFind(String target, uint32_t timeout = 1000);
+		bool recvFind(String target, uint32_t timeout = DEF_TIMEOUT);
 	
 		//----------------------------------------------------------------------
 		// RECV FIND AND FILTER: 	Recvive data from uart and search first
@@ -53,7 +60,7 @@ class ESP8266 {
 		//							timeout
 		//----------------------------------------------------------------------
 
-		bool recvFindAndFilter(String target, String begin, String end, String &data, uint32_t timeout = 1000);
+		bool recvFindAndFilter(String target, String begin, String end, String &data, uint32_t timeout = DEF_TIMEOUT);
 	
 		//----------------------------------------------------------------------
 		// RECV PKG: 	Receive a package from uart
@@ -79,7 +86,7 @@ class ESP8266 {
 		bool AT_CIPSTATUS(String &list);
 		bool AT_CIPSTART_SINGLE(String type, String addr, uint32_t port);
 		bool AT_CIPSTART_MULTIPLE(uint8_t mux_id, String type, String addr, uint32_t port);
-    bool AT_CIPSTART_MULTIPLE(uint8_t mux_id, String type, String addr, uint32_t port, uint32_t local_port, uint8_t mode);
+    	bool AT_CIPSTART_MULTIPLE(uint8_t mux_id, String type, String addr, uint32_t port, uint32_t local_port, uint8_t mode);
 		bool AT_CIPSEND_SINGLE( const uint8_t *buffer, uint32_t len);
 		bool AT_CIPSEND_MULTIPLE(uint8_t mux_id, const uint8_t *buffer, uint32_t len);
 		bool AT_CIPCLOSE_SINGLE(void);
@@ -92,7 +99,9 @@ class ESP8266 {
 	//--------------------------------------------------------------------------
 	// PUBLIC MEMBERS AND FUNCTIONS
 	//--------------------------------------------------------------------------
+	
 	public:
+	
 		//----------------------------------------------------------------------
 		// PUBLIC FUNCTIONS
 		//----------------------------------------------------------------------
@@ -101,7 +110,7 @@ class ESP8266 {
 		// ESP8266: Constructor of the class
 		//----------------------------------------------------------------------
 
-		ESP8266(SoftwareSerial &uart, uint32_t baud = 9600);
+		ESP8266(SoftwareSerial &uart, uint32_t baud = DEF_BAUDRATE);
 	
 		//----------------------------------------------------------------------
 		// INIT: 	Establish a successful connection with network in STATION
@@ -109,13 +118,13 @@ class ESP8266 {
 		//			9600
 		//----------------------------------------------------------------------
 	
-		bool init(const String &ssid, const String &pwd, uint32_t baudRateSet = 9600);
+		bool init(const String &ssid, const String &pwd, uint32_t baudRateSet = DEF_BAUDRATE);
 	
 		//----------------------------------------------------------------------
 		// AUTO SET BAUD: 	Detect ESP8266 baudrate and reset it to baudRateSet
 		//----------------------------------------------------------------------
 	
-		bool autoSetBaud(uint32_t baudRateSet = 9600);
+		bool autoSetBaud(uint32_t baudRateSet = DEF_BAUDRATE);
 	
 		//----------------------------------------------------------------------
 		// KICK: 	Verify ESP8266 whether live or not. Actually, this method
@@ -320,14 +329,14 @@ class ESP8266 {
 		// RECV: 	Receive data from TCP or UDP builded already in single mode
 		//----------------------------------------------------------------------
 	
-		uint32_t recv(uint8_t *buffer, uint32_t buffer_size, uint32_t timeout = 1000);
+		uint32_t recv(uint8_t *buffer, uint32_t buffer_size, uint32_t timeout = DEF_TIMEOUT);
 	
 		//----------------------------------------------------------------------
 		// RECV: 	Receive data from one of TCP or UDP builded already in
 		//			multiple mode
 		//----------------------------------------------------------------------
 	
-		uint32_t recv(uint8_t mux_id, uint8_t *buffer, uint32_t buffer_size, uint32_t timeout = 1000);
+		uint32_t recv(uint8_t mux_id, uint8_t *buffer, uint32_t buffer_size, uint32_t timeout = DEF_TIMEOUT);
 	
 		//----------------------------------------------------------------------
 		// RECV: 	Receive data from TCP or UDP builded already in multple mode
@@ -335,7 +344,7 @@ class ESP8266 {
 		//			from which data coming
 		//----------------------------------------------------------------------
 	
-		uint32_t recv(uint8_t *coming_mux_id, uint8_t *buffer, uint32_t buffer_size, uint32_t timeout = 1000);
+		uint32_t recv(uint8_t *coming_mux_id, uint8_t *buffer, uint32_t buffer_size, uint32_t timeout = DEF_TIMEOUT);
 };
 
 #endif
