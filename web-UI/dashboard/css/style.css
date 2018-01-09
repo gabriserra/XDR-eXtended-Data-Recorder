@@ -3,9 +3,24 @@
 DASHBOARD CSS FILE 
 ------------------
 
+GENERAL:
     1 - Lateral navbar
     2 - Containers and headings
-    3 - Cards
+
+HOME:
+    3 - Bio card
+    4 - Resume card
+
+EVALUATION:
+    5 - Full card
+
+STATS:
+    6 - Calendar card
+    7 - Stat card
+
+CRASH:
+    7 - Crash calendar card
+    8 - Crash table card
 
 */
 
@@ -95,8 +110,6 @@ DASHBOARD CSS FILE
 @media (min-width: 768px) {
     .main-container {
         margin-left: 70px;
-    }
-    .main-container {
         padding: 50px 70px;
     }
 }
@@ -123,13 +136,33 @@ DASHBOARD CSS FILE
     color: #777;
 }
 
+.full-height {
+    min-height: 100vh;
+}
+
+#preview-textfield {
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .secondary-container {
+        box-sizing: border-box;
+        margin-left: 70px;
+        padding: 0px 70px;
+    }
+}
+
+@media (max-width: 767px) {
+    .secondary-container {
+        padding: 30px 20px;
+    }
+}
+
 /* 
 // ---------------------------
-// 3 - CARDS
+// 3 - BIO CARD
 // ---------------------------
 */
-
-/* BIO-ABOUT */
 
 .cover-img {
     height: 150px;
@@ -158,6 +191,12 @@ DASHBOARD CSS FILE
     margin: 15px auto;
     font-weight: 600;
 }
+
+/* 
+// ---------------------------
+// 4 - RESUME CARD
+// ---------------------------
+*/
 
 .resume-card {
     min-height: 402px;
@@ -225,4 +264,98 @@ DASHBOARD CSS FILE
 #chart-container {
     text-align: center;
     margin: 0 auto;
+}
+
+.resume-gauge-container {
+    margin-top: 50px;
+}
+
+.reset {
+    text-align: center;
+}
+
+.col-sm-2 canvas {
+    width: 100px;
+    height: 50px;
+}
+
+/* 
+// ---------------------------
+// 5 - FULL CARD
+// ---------------------------
+*/
+
+.card-full {
+    height: calc(100vh - 90px);
+}
+
+/* 
+// ---------------------------
+// 7 - CRASH CALENDAR CARD
+// ---------------------------
+*/
+
+.calendar-card {
+    min-height: 402px;
+}
+
+.calendar-container {
+    overflow: hidden;
+    padding: 25px;
+    font-size: 0.9rem;
+}
+
+.bootstrap-datetimepicker-widget table td.day {
+    height: 40px;
+}
+
+.bootstrap-datetimepicker-widget table td.notify {
+    position: relative;
+}
+
+.bootstrap-datetimepicker-widget table td.notify:before {
+    content: '';
+    display: inline-block;
+    border: solid transparent;
+    border-width: 7px 0 0 7px;
+    border-top-color: #b73333;
+    border-bottom-color: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 4px;
+    right: 4px;
+}
+
+.crashes-card {
+    text-align: center;
+    min-height: 419px;
+}
+
+/* 
+// ---------------------------
+// 8 - CRASH TABLE CARD
+// ---------------------------
+*/
+
+.crash-table {
+    width: 90%;
+    margin: 1rem auto;
+}
+
+@media (max-width: 767px) {
+    .crash-table {
+        font-size: 14px;
+    }
+}
+
+th {
+    text-align: center;
+}
+
+.pagination-container {
+    padding: 20px;
+}
+
+.pagination {
+    float: right;
+    margin-bottom: 0px;
 }

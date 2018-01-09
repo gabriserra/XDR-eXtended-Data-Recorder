@@ -6,7 +6,8 @@
 // -------------------------------------
 
 // Set $_SESSION array with logged user data
-function set_session_array($username, $name, $surname, $bio, $avatar, $cover) {
+function set_session_array($email, $username, $name, $surname, $bio, $avatar, $cover) {
+    $_SESSION['email'] = $email;
     $_SESSION['username'] = $username;
     $_SESSION['name'] = $name;
     $_SESSION['surname'] = $surname;
@@ -21,6 +22,11 @@ function is_user_logged() {
         return true;
     else
         return false;
+}
+
+// Return email of logged user
+function get_user_email() {
+    return $_SESSION['email'];
 }
 
 // Return username of logged user

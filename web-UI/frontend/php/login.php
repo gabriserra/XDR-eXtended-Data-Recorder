@@ -63,6 +63,7 @@ function encrypt_password(&$data) {
 function session_data_init(&$user) {
     session_start();
     set_session_array(
+        $user['email'],
         $user['username'], 
         $user['name'], 
         $user['surname'], 
