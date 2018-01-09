@@ -1,4 +1,4 @@
-lengfunction createWorkspace()
+function createWorkspace()
     path = '../server/log/';
     folder = dir(strcat(path,'*'));
     for sub_folder = folder'
@@ -20,4 +20,3 @@ lengfunction createWorkspace()
             end
         end
     end
-end
