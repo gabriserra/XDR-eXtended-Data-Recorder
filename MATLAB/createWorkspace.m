@@ -1,5 +1,5 @@
 function createWorkspace()
-    path = '../server/log/';
+    path = '../server/log/50_Hz/';
     folder = dir(strcat(path,'*'));
     for sub_folder = folder'
         if(~strcmp(sub_folder.name,'..')==1)

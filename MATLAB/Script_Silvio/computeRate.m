@@ -1,21 +1,21 @@
-function [AV, MAX, MIN] = computeRate(filename)
-    % [var, d] = readFile('../server/log/log_2018-01-06_18-35-50.csv');
-    unfilled = readFile(filename);
-    
+function [AV, MAX, MIN] = computeRate(unfilled)
+    %unfilled = readFile(filename);
     %unfilled(:,3) = denoise(unfilled(:,3));
     %unfilled(:,4) = denoise(unfilled(:,4));
     %unfilled(:,5) = denoise(unfilled(:,5));
     
-    unfilled(:,3) = ara_filter(unfilled(:,3));
-    unfilled(:,4) = ara_filter(unfilled(:,4));
-    unfilled(:,5) = ara_filter(unfilled(:,5));
+    loss = computeLossPackets(unfilled)
+    
+    unfilled(:,3) = denoise(unfilled(:,3));
+    unfilled(:,4) = denoise(unfilled(:,4));
+    unfilled(:,5) = denoise(unfilled(:,5));
     
     filled = filler(unfilled);
     
-    % vel = iomega(filled, 0.02, 3, 2);
+    %vel = iomega(filled, 0.02, 3, 2);
     
-    % figure;
-    % plot(vel);
+    %figure;
+    %plot(vel);
     
     var = filled;
 
