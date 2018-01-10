@@ -189,7 +189,7 @@ int main() {
 						}
 						break;
 					default:
-						if (recvFromCar() < 0) {
+						if (STARTED == TRUE && recvFromCar() < 0) {
 							if (fp != NULL)
 								fclose(fp);
 							return -1;
