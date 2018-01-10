@@ -17,7 +17,6 @@ function filtered = denoise(unfiltered)
     end
 
     figure;
-    figure;
     plot(unfiltered);
     axis([1 l min(min(unfiltered),min(filtered)) max(max(unfiltered),max(filtered))]);
     title('Filter');

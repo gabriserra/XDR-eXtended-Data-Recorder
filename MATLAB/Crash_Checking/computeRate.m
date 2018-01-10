@@ -11,11 +11,12 @@ function [AV, MAX, MIN] = computeRate(unfilled)
     unfilled(:,5) = denoise(unfilled(:,5));
     
     filled = filler(unfilled);
+    figure;
+    plot(filled(:,3));
+     vel = iomega(filled(:,3), 0.02, 3, 2);
     
-    % vel = iomega(filled, 0.02, 3, 2);
-    
-    % figure;
-    % plot(vel);
+     figure;
+     plot(vel);
     
     var = filled;
 
