@@ -1,7 +1,6 @@
 function filtered = denoise(unfiltered)
     rho = 10;
     mu = 0.5;
- 
     l = length(unfiltered);
     
     filtered = zeros(l,1);

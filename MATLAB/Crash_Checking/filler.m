@@ -1,8 +1,6 @@
 function filled = filler(unfilled)
     n_elements = size(unfilled,1);
     
-    unfilled(n_elements,2) - unfilled(1,2) + 1
-    
     filled = zeros(unfilled(n_elements,2) - unfilled(1,2) + 1,size(unfilled,2));
     
     index = 1;

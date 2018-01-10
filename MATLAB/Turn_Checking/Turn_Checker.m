@@ -1,3 +1,11 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Prende come input le tre grandezze ricevute, per testarla:
+%           1) Caricare la workspace turns.mat
+%           2) Lanciare prepare (denoise+filler)
+%           3) eseguire Turn_Checker(var(:,2),var(:,3),var(:,4));
+%
+% L'output restituito è:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [data]=Turn_Checker(accx,accy,giroz)
       if(size(accx,1) == 1)
         accx=accx';
@@ -8,33 +16,45 @@ function [data]=Turn_Checker(accx,accy,giroz)
       if(size(giroz,1) == 1)
         accx=accx';
       end
-    
-      turns = find(giroz > 10);
-      turns(1,1)
-      i=1;
+      
+      turning = 0;
       j=1;
-      next_index=turns(1,1);
-
-     while (~isempty(next_index))
-          end_turn = find(giroz(next_index:size(giroz,1),1)< 0) -1;
-          end_turn =end_turn(1,1);
-          next = next_index+end_turn(1,1)                                     %indice fine curva
-               
-          data(j,1) = next_index;                                             %starting point
-          data(j,2) = end_turn(1,1);                                          %interval
-          data(j,3) = mean(abs(accx(next_index:next,1)));       
-          data(j,4) = mean(abs(accy(next_index:next,1)));       
-          data(j,5) = var(abs(accy(next_index:next,1)));  
-          
-          next_index = find(turns > next);                                    %prossimo punto iniziale
-       
-          if(~isempty(next_index))
-            next_index = next_index(1,1)
-            next_index = turns(next_index,1);                                               %punto di partenza nuovo        
-          end       
-          j=j+1;
-
-     end
-
-
+      start =0;
+       candidates=0;
+      for i=1:1:size(giroz,1)
+      
+        if(turning == 0 && abs(giroz(i,1)) > 4)
+            start=i;
+            if(giroz(i,1) > 0)
+               directions(j,1) = 1;
+            else
+                
+               directions(j,1) = -1;
+            end
+                candidates(j,1) = i;
+                j =j+1;
+                turning=1;
+        end
+         
+         if(j>1 && candidates(j-1,1) == 1859)
+             turning
+             giroz(i,1)
+             directions
+         end
+        if(turning == 1 && ( (giroz(i,1) < 0 && directions(j-1,1) == 1) || ((giroz(i,1) > 0 && directions(j-1,1) == -1) )))
+            interval(j-1,1) = i-start;
+            turning = 0;
+        end
+        
+        
+      end
+ 
+      [candidates interval]
+      for i=1:1:size(candidates,1)
+        %qui è necessario considerare ogni intervallo in cui si curve e scegliere se:
+        %       1) basarsi su accx 
+        %       2) basarsi su la velocità ottenuta con iomega (attendibile?)
+      end
+      
+     
 end
