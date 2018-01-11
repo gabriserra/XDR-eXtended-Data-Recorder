@@ -4,15 +4,26 @@
 // fill up evaluation page
 // -----------------------
 
-const MAX_CRASH_PER_PAGE = 4;
-const CAL_FIRST_DAY = 0;
-const CAL_LAST_DAY = 41;
+// ----------------------------
+// GLOBAL GAUGES VARIABLE
+// ----------------------------
+
+var gauge_tot;
+var gauge_acc;
+var gauge_bra;
+var gauge_ste;
+var gauge_ovr;
+
+// ----------------------------
+// PAGE CODE
+// ----------------------------
 
 get_user_data();
 
 $(document).ready(function(){
+    gauge_build();
+    get_evaluation_data();
     toggle_tooltip();
-    homeChartDraw();
 });
 
 // -------------------------------------
@@ -23,7 +34,7 @@ $(document).ready(function(){
 // Change navbar link if already logged in
 function get_user_data() {
     ajax_req(
-        "php/redirect.php", 
+        php_redir,
         "",     
         get_succ, 
         get_err
@@ -35,256 +46,177 @@ function get_user_data() {
 function get_succ(reply) {
     if (reply.error == false)
         prepare_page(reply.message);
-    //else
-        //window.location.replace("http://localhost/XDR/web-UI/frontend/");
+    else
+        window.location.replace(rel_fron_path);
 }
 
 // AJAX-ERR
 // Action done in case of failure
 function get_err() {
     alert("Server unreachable.");
-    window.location.replace("http://localhost/XDR/web-UI/frontend/");
-    // maybe something more in future...
+    window.location.replace(rel_fron_path);
 }
 
 // Build page with user data
 function prepare_page(userdata) {
+    $('.nav-user-a').attr("href", php_logout);
     $('.nav-user-a').attr("title", userdata.username + " - Logout");
-    $('.nav-avatar').attr("src", "img/uploads/" + userdata.avatar);
+    $('.nav-avatar').attr("src", img_svr_path + userdata.avatar);
 }
 
 // -----------------------------
-// DATE PICKER BUILDER FUNCTION
-// -----------------------------
-
-// build the datepicker
-function datepicker_build() {
-    $('#datetimepicker').datetimepicker({
-        format: 'DD/MM/YYYY',
-        inline: true
-    });
-}
-
-// -----------------------------
-// DATE PICKER AJAX FUNCTION
+// GET EVALUATION DATA FUNCTIONS
 // -----------------------------
 
 // AJAX-REQ
-// register event function
-function datepickerview_event_register() {
-    $('#datetimepicker').on('dp.update', function(e){
-        if(e.change == 'M' || e.change == null) {
-            var initdata = $('.datepicker-days tbody td').eq(CAL_FIRST_DAY).attr("data-day");
-            var lastdata = $('.datepicker-days tbody td').eq(CAL_LAST_DAY).attr("data-day");
-            var serialized = "init="+initdata+"&last="+lastdata;
-            ajax_req("php/getcrash.php", serialized, datepicker_fill, datepicker_fill_error);
-        }
-    });
-}
-
-// trigger datepicker update event
-function datepickerupdate_event_trigger() {
-    $('#datetimepicker').trigger('dp.update');
+// Get evaluation data from server
+function get_evaluation_data() {
+    ajax_req(
+        php_eval, 
+        "",     
+        get_evaluation_data_succ, 
+        get_evaluation_data_err
+    );
 }
 
 // AJAX-REP
-// fill with notify icon after user view change
-function datepicker_fill(reply) {
-    if(reply.error == true)
-        alert(reply.message);
-    else
-        for(var i = 0; i < $('.datepicker-days tbody td').length; i++)
-            if(reply.crashdates.includes($('.datepicker-days tbody td').eq(i).attr("data-day")))   
-                $( ".datepicker-days tbody td" ).eq(i).addClass( "notify");
+// In case of success prepare chart and gauge
+function get_evaluation_data_succ(reply) {
+    if (reply.error == false) {
+        eval_data = reply.evaluationdata;
+        gauge_set(eval_data[eval_data.length-1].pointstotal, 
+                eval_data[eval_data.length-1].pointstotal,
+                eval_data[eval_data.length-1].pointsacceleration,
+                eval_data[eval_data.length-1].pointsbraking,
+                eval_data[eval_data.length-1].pointssteering,
+                eval_data[eval_data.length-1].pointsspeed);
+        charts_draw(eval_data);
+    }
+        
 }
 
 // AJAX-ERR
-// alert with an error in case of server error
-function datepicker_fill_error(reply) {
-    alert("Unable to fill calendar - Server unrechable!");
-}
-
-// --------------------------
-// CRASH TABLE AJAX FUNCTION
-// --------------------------
-
-// AJAX-REQ
-// register event function
-function datepickerchange_event_register() {
-    $('#datetimepicker').on('dp.change', function(e){
-        var date;
-
-        if(e != null)
-            date = moment(e.date).format('L');
-        else
-            date = moment();
-
-        var serialized = "date="+date;
-        ajax_req("php/getcrash.php", serialized, table_fill, table_fill_error);
-        datepickerupdate_event_trigger();
-    });
-}
-
-// trigger datepicker change event
-function datepickerchange_event_trigger() {
-    $('#datetimepicker').trigger('dp.change');
-}
-
-// AJAX-REP
-// crash table fill
-function table_fill(reply) {
-    if(reply.error == true) {
-        table_fill_empty();
-        return;
-    }
-    
-    pagination_reset();
-    pagination_create(reply.crashinfos.length);
-    table_reset();
-
-    for(var i = 0; i < reply.crashinfos.length; i++) {
-        $('.crash-table tbody').append(`
-        <tr style="display: none;">
-            <th>`+reply.crashinfos[i].number+`</th>
-            <td>`+reply.crashinfos[i].crashtime+`</td>
-            <td>`+reply.crashinfos[i].intensity+`</td>
-            <td>`+Boolean(reply.crashinfos[i].stationary)+`</td>
-        </tr>
-        `);
-    }
-
-    show_rows(0);
-}
-
-// AJAX-ERR
-// alert with an error in case of server error
-function table_fill_error() {
-    table_fill_empty();
-    alert("Unable to fill table - Server unrechable!");
-}
-
-// --------------------------
-// TABLE UTILITY FUNCTION
-// --------------------------
-
-// reset table content
-function table_reset() {
-    $('.crash-table tbody').html("");
-}
-
-// fill the table with empty row
-function table_fill_empty() {
-    pagination_reset();
-    $('.crash-table tbody').html(`
-        <tr>
-            <th>-</th>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>`);
-}
-
-// show only limited number of rows
-function show_rows(init_number) {
-    for(var i = 0; i < $('.crash-table tbody tr').length; i++) {
-        if(i >= init_number && i < MAX_CRASH_PER_PAGE+init_number)
-            $('.crash-table tbody tr').eq(i).css("display", "table-row");
-        else
-            $('.crash-table tbody tr').eq(i).css("display", "none");
-    }
-}
-
-// ---------------------------
-// PAGINATION UTILITY FUNCTION
-// ----------------------------
-
-// reset pagination to default one
-function pagination_reset() {
-    $('.pagination').html(`<li class="page-item active">
-                                <a class="page-link" href="javascript:pagechange(1)">1</a>
-                        </li>`);
-}
-
-// create button for pagination
-function pagination_create(number) {
-    if(number > MAX_CRASH_PER_PAGE) {
-        for(var i = 0; i < (number % MAX_CRASH_PER_PAGE); i++) {
-            $('.pagination').append(`
-                <li class="page-item">
-                    <a class="page-link" href="javascript:pagechange(`+(i+2)+`)">`+(i+2)+`</a>
-                </li>
-            `);
-        }
-    }
-}
-
-// display the selected page
-function pagechange(pagenum) {
-    $('.pagination li').removeClass("active");
-    $('.pagination li').eq(pagenum-1).addClass("active");
-    show_rows((pagenum-1) * MAX_CRASH_PER_PAGE);
+// In case of error alert with text
+function get_evaluation_data_err() {
+    alert("Server unreachable.");
 }
 
 // -------------------------------------
-// GENERAL UTILITY
+// GAUGE OPTIONS AND BUILD
 // -------------------------------------
-
-// make an ajax req
-function ajax_req(dest, info, succ, err) {
-    $.ajax({
-        type: "POST",
-        url: dest,
-        data: info,
-        dataType: "json",
-        success: succ,
-        error: err
-    });
-}
-
-// toggle on boostrap tooltip
-function toggle_tooltip() {
-    $('[data-toggle="tooltip"]').tooltip(); 
-}
-
-// --------
-// BUILD GAUGE
-// --------------
-
-// -------------------
-// OPTION
-// ----------------
 
 var opts = {
-    angle: -0.1, // The span of the gauge arc
+    angle: -0.1,    // The span of the gauge arc
     lineWidth: 0.2, // The line thickness
     radiusScale: 1, // Relative radius
     pointer: {
-      length: 0.5, // // Relative to gauge radius
+      length: 0.5, // Relative to gauge radius
       strokeWidth: 0.035, // The thickness
       color: '#000000' // Fill color
     },
+    minValue: 0,
     limitMax: false,     // If false, max value increases automatically if value > maxValue
-    limitMin: false,     // If true, the min value of the gauge will be fixed
+    limitMin: true,     // If true, the min value of the gauge will be fixed
     colorStart: '#6FADCF',   // Colors
     colorStop: '#8FC0DA',    // just experiment with them
     strokeColor: '#E0E0E0',  // to see which ones work best for you
     generateGradient: true,
     highDpiSupport: true,     // High resolution support
-    percentColors: [[0.0, "#a9d70b" ], [0.50, "#f9c802"], [1.0, "#ff0000"]]
+    percentColors: [[0.0, "#ff0000" ], [0.50, "#f9c802"], [1.0, "#a9d70b"]]
   };
 
-  $(document).ready(function(){
-    var target = document.getElementById('gauge-total'); // your canvas element
-    var gauge = new Gauge(target).setOptions(opts); // create sexy gauge!
-    gauge.maxValue = 100; // set max gauge value
-    gauge.setTextField(document.getElementById("preview-textfield"));
-    gauge.setMinValue(0);  // Prefer setter over gauge.minValue = 0
-    gauge.animationSpeed = 32; // set animation speed (32 is default value)
-    gauge.set(50); // set actual value
-});
+// Build gauge and set initial data
+function gauge_build() {
+    gauge_tot = new Gauge(document.getElementById("gauge-tot")).setOptions(opts);
+    gauge_acc = new Gauge(document.getElementById("gauge-acc")).setOptions(opts);
+    gauge_bra = new Gauge(document.getElementById("gauge-bra")).setOptions(opts);
+    gauge_ste = new Gauge(document.getElementById("gauge-ste")).setOptions(opts);
+    gauge_ovr = new Gauge(document.getElementById("gauge-ovr")).setOptions(opts);    
+    gauge_tot.setTextField(document.getElementById("textfield-tot"));
+    gauge_acc.setTextField(document.getElementById("textfield-acc"));
+    gauge_bra.setTextField(document.getElementById("textfield-bra"));
+    gauge_ste.setTextField(document.getElementById("textfield-ste"));
+    gauge_ovr.setTextField(document.getElementById("textfield-ovr"));
+    gauge_tot.maxValue = 100;
+    gauge_acc.maxValue = 100;
+    gauge_bra.maxValue = 100;
+    gauge_ste.maxValue = 100;
+    gauge_ovr.maxValue = 100;
+    gauge_tot.set(0);
+    gauge_bra.set(0);
+    gauge_acc.set(0);
+    gauge_ste.set(0);
+    gauge_ovr.set(0);
+}
 
-// draw home chart
-function homeChartDraw() {
+// Set gauge to last trip data
+function gauge_set(tot, acc, bra, ste, ovr) {
+    gauge_tot.set(tot);
+    gauge_bra.set(acc);
+    gauge_acc.set(bra);
+    gauge_ste.set(ste);
+    gauge_ovr.set(ovr);
+}
+
+// -------------------------------------
+// CHART OPTIONS AND BUILD
+// -------------------------------------
+
+function charts_draw(eval_data) {
+    chart_tot_draw(eval_data);
+    chart_acc_draw(eval_data);
+    chart_bra_draw(eval_data);
+    chart_ste_draw(eval_data);
+    chart_ovr_draw(eval_data);
+}
+
+// build chart tot
+function chart_tot_draw(eval_data) {
+    var data_points = [];
+    for(var i = 0; i < eval_data.length; i++) {
+        data_points[i] = { x : Number(eval_data[i].number), 
+                          y : Number(eval_data[i].pointstotal) };
+    }
+
+    var chart = new CanvasJS.Chart("chart-tot", {
+        animationEnabled: true,
+        axisX: {
+            valueFormatString: "#",
+            titleFontFamily: "Roboto",
+            interval: 1,
+            minimum: data_points[0].x,
+            maximum: data_points[data_points.length-1].x
+        },
+        axisY: {
+            gridThickness: 0,
+            tickLength: 0,
+            margin: 0,
+            lineThickness: 0,
+            valueFormatString: " "
+        },
+        legend: {
+            fontFamily: "Roboto",
+            verticalAlign: "top",
+            horizontalAlign: "right",
+            dockInsidePlotArea: true
+        },
+        toolTip: {
+            shared: true
+        },
+        data: [{
+            name: "Overall",
+            legendMarkerType: "square",
+            type: "area",
+            color: "rgba(40,175,101,0.6)",
+            markerSize: 0,
+            dataPoints: data_points
+        }]
+    });
+    chart.render();
+}
+
+// build chart acc
+function chart_acc_draw(eval_data) {
     var chart = new CanvasJS.Chart("chart-container", {
         animationEnabled: true,
         axisX: {
@@ -324,23 +256,206 @@ function homeChartDraw() {
                 { x: new Date(2017, 1, 11), y: 109 },
                 { x: new Date(2017, 1, 12), y: 129 }
             ]
+        }]
+    });
+    chart.render();
+}
+
+// build chart bra
+function chart_bra_draw(eval_data) {
+    var chart = new CanvasJS.Chart("chart-container", {
+        animationEnabled: true,
+        axisX: {
+            valueFormatString: "DDD",
+            titleFontFamily: "Roboto",
+            minimum: new Date(2017, 1, 5, 23),
+            maximum: new Date(2017, 1, 12, 1)
         },
-        {
-            name: "Kilometers driven",
+        axisY: {
+            gridThickness: 0,
+            tickLength: 0,
+            margin: 0,
+            lineThickness: 0,
+            valueFormatString: " "
+        },
+        legend: {
+            fontFamily: "Roboto",
+            verticalAlign: "top",
+            horizontalAlign: "right",
+            dockInsidePlotArea: true
+        },
+        toolTip: {
+            shared: true
+        },
+        data: [{
+            name: "Overall",
             legendMarkerType: "square",
             type: "area",
-            color: "rgba(0,75,141,0.7)",
+            color: "rgba(40,175,101,0.6)",
             markerSize: 0,
             dataPoints: [
-                { x: new Date(2017, 1, 6), y: 42 },
-                { x: new Date(2017, 1, 7), y: 34 },
-                { x: new Date(2017, 1, 8), y: 29 },
-                { x: new Date(2017, 1, 9), y: 42 },
-                { x: new Date(2017, 1, 10), y: 53},
-                { x: new Date(2017, 1, 11), y: 15 },
-                { x: new Date(2017, 1, 12), y: 12 }
+                { x: new Date(2017, 1, 6), y: 220 },
+                { x: new Date(2017, 1, 7), y: 120 },
+                { x: new Date(2017, 1, 8), y: 144 },
+                { x: new Date(2017, 1, 9), y: 162 },
+                { x: new Date(2017, 1, 10), y: 129 },
+                { x: new Date(2017, 1, 11), y: 109 },
+                { x: new Date(2017, 1, 12), y: 129 }
             ]
         }]
     });
     chart.render();
+}
+
+// build chart ste
+function chart_ste_draw(eval_data) {
+    var chart = new CanvasJS.Chart("chart-container", {
+        animationEnabled: true,
+        axisX: {
+            valueFormatString: "DDD",
+            titleFontFamily: "Roboto",
+            minimum: new Date(2017, 1, 5, 23),
+            maximum: new Date(2017, 1, 12, 1)
+        },
+        axisY: {
+            gridThickness: 0,
+            tickLength: 0,
+            margin: 0,
+            lineThickness: 0,
+            valueFormatString: " "
+        },
+        legend: {
+            fontFamily: "Roboto",
+            verticalAlign: "top",
+            horizontalAlign: "right",
+            dockInsidePlotArea: true
+        },
+        toolTip: {
+            shared: true
+        },
+        data: [{
+            name: "Overall",
+            legendMarkerType: "square",
+            type: "area",
+            color: "rgba(40,175,101,0.6)",
+            markerSize: 0,
+            dataPoints: [
+                { x: new Date(2017, 1, 6), y: 220 },
+                { x: new Date(2017, 1, 7), y: 120 },
+                { x: new Date(2017, 1, 8), y: 144 },
+                { x: new Date(2017, 1, 9), y: 162 },
+                { x: new Date(2017, 1, 10), y: 129 },
+                { x: new Date(2017, 1, 11), y: 109 },
+                { x: new Date(2017, 1, 12), y: 129 }
+            ]
+        }]
+    });
+    chart.render();
+}
+
+// build chart ovr
+function chart_ovr_draw(eval_data) {
+    var chart = new CanvasJS.Chart("chart-container", {
+        animationEnabled: true,
+        axisX: {
+            valueFormatString: "DDD",
+            titleFontFamily: "Roboto",
+            minimum: new Date(2017, 1, 5, 23),
+            maximum: new Date(2017, 1, 12, 1)
+        },
+        axisY: {
+            gridThickness: 0,
+            tickLength: 0,
+            margin: 0,
+            lineThickness: 0,
+            valueFormatString: " "
+        },
+        legend: {
+            fontFamily: "Roboto",
+            verticalAlign: "top",
+            horizontalAlign: "right",
+            dockInsidePlotArea: true
+        },
+        toolTip: {
+            shared: true
+        },
+        data: [{
+            name: "Overall",
+            legendMarkerType: "square",
+            type: "area",
+            color: "rgba(40,175,101,0.6)",
+            markerSize: 0,
+            dataPoints: [
+                { x: new Date(2017, 1, 6), y: 220 },
+                { x: new Date(2017, 1, 7), y: 120 },
+                { x: new Date(2017, 1, 8), y: 144 },
+                { x: new Date(2017, 1, 9), y: 162 },
+                { x: new Date(2017, 1, 10), y: 129 },
+                { x: new Date(2017, 1, 11), y: 109 },
+                { x: new Date(2017, 1, 12), y: 129 }
+            ]
+        }]
+    });
+    chart.render();
+}
+
+// -------------------------------------
+// GENERAL UTILITY
+// -------------------------------------
+
+// build a chart
+function build_chart(chart_id, data_points) {
+    var chart = new CanvasJS.Chart(chart_id, {
+        animationEnabled: true,
+        axisX: {
+            valueFormatString: "#",
+            titleFontFamily: "Roboto",
+            interval: 1,
+            minimum: data_points[0].x,
+            maximum: data_points[data_points.length-1].x
+        },
+        axisY: {
+            gridThickness: 0,
+            tickLength: 0,
+            margin: 0,
+            lineThickness: 0,
+            valueFormatString: " "
+        },
+        legend: {
+            fontFamily: "Roboto",
+            verticalAlign: "top",
+            horizontalAlign: "right",
+            dockInsidePlotArea: true
+        },
+        toolTip: {
+            shared: true
+        },
+        data: [{
+            name: "Overall",
+            legendMarkerType: "square",
+            type: "area",
+            color: "rgba(40,175,101,0.6)",
+            markerSize: 0,
+            dataPoints: data_points
+        }]
+    });
+    chart.render();
+}
+
+// make an ajax req
+function ajax_req(dest, info, succ, err) {
+    $.ajax({
+        type: "POST",
+        url: dest,
+        xhrFields: { withCredentials: true },
+        data: info,
+        dataType: "json",
+        success: succ,
+        error: err
+    });
+}
+
+// toggle on boostrap tooltip
+function toggle_tooltip() {
+    $('[data-toggle="tooltip"]').tooltip(); 
 }

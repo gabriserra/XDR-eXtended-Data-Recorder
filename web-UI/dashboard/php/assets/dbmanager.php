@@ -8,9 +8,9 @@
 // -------------------------------------
 // DB CREDENTIAL
 // -------------------------------------
-$db_username = "root";
-$db_password = "password";
-$db_name = "XDR_DB";
+$db_username = "gabripr0";
+$db_password = "#-#-#";
+$db_name = "my_gabripr0";
 $db_host = "localhost";
 
 // -------------------------------------

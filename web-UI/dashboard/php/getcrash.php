@@ -7,12 +7,15 @@
 // and calendar
 // -----------------------
 
+header('Access-Control-Allow-Origin: https://gabriserra.github.io');
+header('Access-Control-Allow-Credentials: true');
+
 // -------------------------------------
 // REQUIRE
 // -------------------------------------
-require_once "dbmanager.php";
-require_once "session.php";
-require_once "jsonresponse.php";
+require_once "assets/dbmanager.php";
+require_once "assets/session.php";
+require_once "assets/jsonresponse.php";
 
 // start the current session
 session_start();
@@ -46,7 +49,7 @@ function retrieve_crash_dates($init_date, $last_date) {
     global $my_database;
 
     $query_string = "SELECT DATE_FORMAT(crashtime, '%m/%d/%Y')
-                     FROM (`trip` AS t INNER JOIN `crash` AS c ON t.`id` = c.`id`)
+                     FROM (`xdr_trip` AS t INNER JOIN `xdr_crash` AS c ON t.`id` = c.`id`)
                      WHERE `email` = '" . get_user_email() . "'";
         
     $my_result = $my_database->send_query($query_string);
@@ -65,7 +68,7 @@ function get_crashes_info($date) {
     global $my_database;
 
     $query_string = "SELECT DATE_FORMAT(crashtime, '%m/%d/%Y') as  crashtime, intensity, stationary
-                     FROM (`trip` AS t INNER JOIN `crash` AS c ON t.`id` = c.`id`)
+                     FROM (`xdr_trip` AS t INNER JOIN `xdr_crash` AS c ON t.`id` = c.`id`)
                      WHERE `email` = '" . get_user_email() . "'
                      AND DATE_FORMAT(crashtime, '%m/%d/%Y') = '" . $date . "'";
     

@@ -20,6 +20,7 @@
     <script type="text/javascript" src="js/assets/bootstrap.js"></script>
     <script type="text/javascript" src="js/assets/jquery.canvasjs.min.js"></script>
     <script type="text/javascript" src="js/assets/gauge.min.js"></script>
+    <script type="text/javascript" src="js/assets/path.js"></script>
     <script type="text/javascript" src="js/evaluation.js"></script>
   </head>
 
@@ -28,7 +29,7 @@
     <nav class="lat-nav sticky-top">
         <a class="fa fa-times-circle-o" href="#"></a>
         <div class="icon-bar">
-            <a class="nav-user-a" href="php/logout.php" data-toggle="tooltip" data-animation="false" data-placement="right" title="? - Logout">
+            <a class="nav-user-a" href="#" data-toggle="tooltip" data-animation="false" data-placement="right" title="? - Logout">
                 <img src="img/uploads/avatar-default.png" class="nav-avatar">
             </a>
             <a href="index.html" data-toggle="tooltip" data-animation="false" data-placement="right" title="Home">
@@ -61,12 +62,12 @@
                     </div>
                     <div class="row">
                         <div class="col-sm-6 d-flex justify-content-center">
-                            <div id="chart-container" style="height: 250px; width: 300px;"></div>
+                            <div id="chart-tot" class="chart-container"></div>
                         </div>
                         <div class="col-sm-6 d-flex justify-content-center">
                             <div class="align-self-center gauge-container">
-                                <div id="preview-textfield" style="font-size: 54px;" class="reset">1,250</div>
-                                <canvas id="gauge-total"></canvas>
+                                <div id="textfield-tot" class="eval-gauge-caption">0</div>
+                                <canvas id="gauge-tot"></canvas>
                             </div>
                         </div>
                     </div>
@@ -90,12 +91,23 @@
                     <div class="resume-card-title">
                         <h3>ACCELERATION</h3>
                     </div>
-                    <div class="col-sm-8">
-                        <div id="chart-container" style="height: 150px; width: 60%;"></div>
+                    <div class="row">
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div id="chart-acc" class="chart-container"></div>
+                        </div>
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="align-self-center gauge-container">
+                                <div id="textfield-acc" class="eval-gauge-caption">0</div>
+                                <canvas id="gauge-acc"></canvas>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="gauge-container"> 
-                            
+                    <div class="row mt-4">
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="card-caption"><span>TOTAL HISTORIC POINTS</span></div>
+                        </div>
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="card-caption"><span>TOTAL POINTS</span></div>
                         </div>
                     </div>
                 </div>
@@ -110,12 +122,23 @@
                     <div class="resume-card-title">
                         <h3>BRAKING</h3>
                     </div>
-                    <div class="col-sm-8">
-                        <div id="chart-container" style="height: 150px; width: 60%;"></div>
+                    <div class="row">
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div id="chart-bra" class="chart-container"></div>
+                        </div>
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="align-self-center gauge-container">
+                                <div id="textfield-bra" class="eval-gauge-caption">0</div>
+                                <canvas id="gauge-bra"></canvas>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="gauge-container"> 
-                            
+                    <div class="row mt-4">
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="card-caption"><span>TOTAL HISTORIC POINTS</span></div>
+                        </div>
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="card-caption"><span>TOTAL POINTS</span></div>
                         </div>
                     </div>
                 </div>
@@ -130,12 +153,23 @@
                     <div class="resume-card-title">
                         <h3>STEERING</h3>
                     </div>
-                    <div class="col-sm-8">
-                        <div id="chart-container" style="height: 150px; width: 60%;"></div>
+                    <div class="row">
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div id="chart-ste" class="chart-container"></div>
+                        </div>
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="align-self-center gauge-container">
+                                <div id="textfield-ste" class="eval-gauge-caption">0</div>
+                                <canvas id="gauge-ste"></canvas>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="gauge-container"> 
-                            
+                    <div class="row mt-4">
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="card-caption"><span>TOTAL HISTORIC POINTS</span></div>
+                        </div>
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="card-caption"><span>TOTAL POINTS</span></div>
                         </div>
                     </div>
                 </div>
@@ -150,12 +184,23 @@
                     <div class="resume-card-title">
                         <h3>OVERSPEEDING</h3>
                     </div>
-                    <div class="col-sm-8">
-                        <div id="chart-container" style="height: 150px; width: 60%;"></div>
+                    <div class="row">
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div id="chart-ovr" class="chart-container"></div>
+                        </div>
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="align-self-center gauge-container">
+                                <div id="textfield-ovr" class="eval-gauge-caption">0</div>
+                                <canvas id="gauge-ovr"></canvas>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-sm-4">
-                        <div class="gauge-container"> 
-                            
+                    <div class="row mt-4">
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="card-caption"><span>TOTAL HISTORIC POINTS</span></div>
+                        </div>
+                        <div class="col-sm-6 d-flex justify-content-center">
+                            <div class="card-caption"><span>TOTAL POINTS</span></div>
                         </div>
                     </div>
                 </div>

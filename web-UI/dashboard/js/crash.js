@@ -27,7 +27,7 @@ $(document).ready(function(){
 // Change navbar link if already logged in
 function get_user_data() {
     ajax_req(
-        "php/redirect.php", 
+        php_redir,
         "",     
         get_succ, 
         get_err
@@ -39,22 +39,22 @@ function get_user_data() {
 function get_succ(reply) {
     if (reply.error == false)
         prepare_page(reply.message);
-    //else
-        //window.location.replace("http://localhost/XDR/web-UI/frontend/");
+    else
+        window.location.replace(rel_fron_path);
 }
 
 // AJAX-ERR
 // Action done in case of failure
 function get_err() {
     alert("Server unreachable.");
-    window.location.replace("http://localhost/XDR/web-UI/frontend/");
-    // maybe something more in future...
+    window.location.replace(rel_fron_path);
 }
 
 // Build page with user data
 function prepare_page(userdata) {
+    $('.nav-user-a').attr("href", php_logout);
     $('.nav-user-a').attr("title", userdata.username + " - Logout");
-    $('.nav-avatar').attr("src", "img/uploads/" + userdata.avatar);
+    $('.nav-avatar').attr("src", img_svr_path + userdata.avatar);
 }
 
 // -----------------------------
@@ -81,7 +81,7 @@ function datepickerview_event_register() {
             var initdata = $('.datepicker-days tbody td').eq(CAL_FIRST_DAY).attr("data-day");
             var lastdata = $('.datepicker-days tbody td').eq(CAL_LAST_DAY).attr("data-day");
             var serialized = "init="+initdata+"&last="+lastdata;
-            ajax_req("php/getcrash.php", serialized, datepicker_fill, datepicker_fill_error);
+            ajax_req(php_crash, serialized, datepicker_fill, datepicker_fill_error);
         }
     });
 }
@@ -124,7 +124,7 @@ function datepickerchange_event_register() {
             date = moment();
 
         var serialized = "date="+date;
-        ajax_req("php/getcrash.php", serialized, table_fill, table_fill_error);
+        ajax_req(php_crash, serialized, table_fill, table_fill_error);
         datepickerupdate_event_trigger();
     });
 }
@@ -238,6 +238,7 @@ function ajax_req(dest, info, succ, err) {
     $.ajax({
         type: "POST",
         url: dest,
+        xhrFields: { withCredentials: true },
         data: info,
         dataType: "json",
         success: succ,

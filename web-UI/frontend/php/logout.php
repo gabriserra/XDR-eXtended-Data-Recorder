@@ -5,6 +5,8 @@
 // server
 // -------------------------------------
 
+header('Access-Control-Allow-Origin: https://gabriserra.github.io');
+header('Access-Control-Allow-Credentials: true');
 
 // session start/init
 session_check();

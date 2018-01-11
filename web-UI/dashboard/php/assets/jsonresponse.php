@@ -37,6 +37,34 @@ function send_trip_info($query_result) {
     exit(0);
 }
 
+// Retrieve a JSON object with last trip data
+function send_evaluation_data($query_result) {
+    $response_str = 
+    '{
+        "error" : false, 
+        "evaluationdata": [';
+
+    for($i = 0; $i < mysqli_num_rows($query_result); $i++) {
+        $row = $query_result->fetch_array();
+        $response_str = $response_str .
+            '{
+                "number" : ' . ($i+1) . ',
+                "starttime" : "' . $row['starttime'] . '",
+                "pointstotal" : "' . $row['pointstotal'] . '",
+                "pointsacceleration" : "' . $row['pointsacceleration'] . '",
+                "pointsbraking" : "' . $row['pointsbraking'] . '",
+                "pointssteering" : "' . $row['pointssteering'] . '",
+                "pointsspeed" : "' . $row['pointsspeed'] . '"
+            },';
+    }
+        
+    $response_str = substr($response_str, 0, -1);
+    $response_str = $response_str . ']}';
+
+    echo $response_str;
+    exit(0);
+}
+
 // Retrieve a JSON object with crashes data
 function send_crash_dates($query_result) {
     $response_str = 

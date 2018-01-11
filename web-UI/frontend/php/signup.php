@@ -5,13 +5,16 @@
 // and validate data
 // -------------------------------------
 
+header('Access-Control-Allow-Origin: https://gabriserra.github.io');
+header('Access-Control-Allow-Credentials: true');
+
 // -------------------------------------
 // REQUIRE
 // -------------------------------------
-require_once "dbmanager.php";
-require_once "session.php";
-require_once "imagevalidation.php";
-require_once "jsonresponse.php";
+require_once "assets/dbmanager.php";
+require_once "assets/session.php";
+require_once "assets/imagevalidation.php";
+require_once "assets/jsonresponse.php";
 
 // start a session to check if user is already logged
 session_start();
@@ -49,7 +52,7 @@ launch_response("Sign up successfull.");
 function is_user_registered() {
     global $my_database;
     
-    $query_string = "SELECT * FROM user WHERE email = '" . $_POST['email'] . "'";
+    $query_string = "SELECT * FROM `xdr_user` WHERE `email` = '" . $_POST['email'] . "'";
     $my_result = $my_database->send_query($query_string);
     $my_database->close_connection();
     
@@ -130,7 +133,7 @@ function encrypt_password(&$data) {
 
 // Upload an image to server
 function upload_image_to_server(&$data, $key) {
-    $target_dir = "../../dashboard/img/uploads/";
+    $target_dir = "../../dashboard/img/";
     $target_file = $key . "-" . $data['username'] . "." . image_get_extension($data[$key]);
     $target_uri = $target_dir . $target_file;
 
@@ -160,7 +163,7 @@ function send_data_to_db(&$data) {
     $columns = substr($columns, 0, -1);
     $values = substr($values, 0, -1);
 
-    $query_string = "INSERT INTO `user` (" . $columns . ")";
+    $query_string = "INSERT INTO `xdr_user` (" . $columns . ")";
     $query_string = $query_string . " VALUES (" . $values . ")";
     
     // send query and close connection

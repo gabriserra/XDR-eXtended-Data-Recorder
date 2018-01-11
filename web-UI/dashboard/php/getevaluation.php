@@ -1,10 +1,10 @@
 <?php
 
-// -------------------------
-// GETHOME.PHP
+// -----------------------------
+// GETEVALUATION.PHP
 // It contains PHP code to
-// fill up home cards 
-// -----------------------
+// fill up evaluation page cards 
+// -----------------------------
 
 header('Access-Control-Allow-Origin: https://gabriserra.github.io');
 header('Access-Control-Allow-Credentials: true');
@@ -22,8 +22,8 @@ session_start();
 // if user is not logged launch error and die
 logged_user_check();
 
-// retrieve last trip data
-retrieve_last_trip();
+// retrieve all evaluation data
+retrieve_evaluation_data();
 
 // -------------------------------------
 // UTILITY
@@ -36,24 +36,23 @@ function logged_user_check() {
 }
 
 // -------------------------------------
-// GET CRASH DATE LIST
+// GET EVALUATION DATE LIST
 // -------------------------------------
 
 // Retrieve and send crash dates to client
-function retrieve_last_trip() {
+function retrieve_evaluation_data() {
     global $my_database;
 
-    $query_string = "SELECT * 
-                     FROM `xdr_trip` INNER JOIN `xdr_evaluation` ON (`xdr_trip`.`id` = `xdr_evaluation`.`id`)
-                     WHERE `email` = '" . get_user_email() . "'
-                     AND `xdr_trip`.`id` >= (SELECT MAX(`xdr_trip`.`id`)
-                                FROM `xdr_trip`
-                                WHERE `email` = '" . get_user_email() . "')";
+    $query_string = "SELECT *
+                    FROM `xdr_trip` INNER JOIN `xdr_evaluation` ON (`xdr_trip`.`id` = `xdr_evaluation`.`id`)
+                    WHERE `email` = '" . get_user_email() . "'
+                    ORDER BY `xdr_trip`.`starttime` ASC
+                    LIMIT 0,10";
     
     $my_result = $my_database->send_query($query_string);
     
     if ($my_result->num_rows == 0)
         launch_error("No trip found.");
 
-    send_trip_info($my_result->fetch_array());
+    send_evaluation_data($my_result);
 }
