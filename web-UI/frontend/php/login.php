@@ -5,12 +5,15 @@
 // and validate data
 // -------------------------------------
 
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Credentials: true');
+
 // -------------------------------------
 // REQUIRE
 // -------------------------------------
-require_once "dbmanager.php";
-require_once "session.php";
-require_once "jsonresponse.php";
+require_once "assets/dbmanager.php";
+require_once "assets/session.php";
+require_once "assets/jsonresponse.php";
 
 // sanitize input to prevent code injection and try to strip HTML tags
 $data = filter_field();
@@ -80,7 +83,7 @@ function session_data_init(&$user) {
 function authenticate($username, $password) {   
     global $my_database;
 
-    $query_string = "SELECT * FROM user WHERE username = '" . $username . "' AND password='" . $password . "'";
+    $query_string = "SELECT * FROM `xdr_user` WHERE username = '" . $username . "' AND password='" . $password . "'";
     $my_result = $my_database->send_query($query_string);
     
     if ($my_result->num_rows != 1)

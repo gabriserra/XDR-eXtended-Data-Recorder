@@ -19,6 +19,7 @@
     <script type="text/javascript" src="js/assets/tether.min.js"></script>
     <script type="text/javascript" src="js/assets/bootstrap.js"></script>
     <script type="text/javascript" src="js/assets/gauge.min.js"></script>
+    <script type="text/javascript" src="js/assets/path.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
   </head>
 
@@ -27,7 +28,7 @@
     <nav class="lat-nav sticky-top">
         <a class="fa fa-times-circle-o" href="#"></a>
         <div class="icon-bar">
-            <a class="nav-user-a" href="php/logout.php" data-toggle="tooltip" data-animation="false" data-placement="right" title="? - Logout">
+            <a class="nav-user-a" href="#" data-toggle="tooltip" data-animation="false" data-placement="right" title="? - Logout">
                 <img src="img/uploads/avatar-default.png" class="nav-avatar">
             </a>
             <a class="active" href="index.html" data-toggle="tooltip" data-animation="false" data-placement="right" title="Home">
@@ -77,19 +78,19 @@
                     </div>
                     <div class="row resume-data">
                         <div class="col-sm-4">
-                            <h3 class="green">-
+                            <h3 class="green" id="counter-meter">-
                                 <small class="unit green">M</small>
                             </h3>
                             <span class="caption">METERS DRIVEN</span>
                         </div>
-                        <div class="col-sm-4">
-                            <h3 class="green">-
+                        <div class="col-sm-4" >
+                            <h3 class="green" id="counter-length">-
                                 <small class="unit green">M</small>
                             </h3>
                             <span class="caption">CAR USAGE</span>
                         </div>
-                         <div class="col-sm-4">
-                            <h3 class="green">-
+                         <div class="col-sm-4" >
+                            <h3 class="green" id="counter-starttime">-
                                 <small class="unit green">HH:MM</small>
                             </h3>
                             <span class="caption">LAST USAGE</span>

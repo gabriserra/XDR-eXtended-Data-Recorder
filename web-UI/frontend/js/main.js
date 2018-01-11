@@ -16,7 +16,7 @@ $(document).ready(function(){
 // Change navbar link if already logged in
 function check_if_logged() {
     ajax_req(
-        "php/redirect.php", 
+        php_redir,
         "",     
         check_succ, 
         check_err
@@ -25,6 +25,7 @@ function check_if_logged() {
 
 // Action done in case of success
 function check_succ(reply) {
+    console.log(reply);
     if (reply.error == false) {
         $("#btn-login").hide();
         $("#btn-signup").hide();
@@ -36,7 +37,6 @@ function check_succ(reply) {
 // Action done in case of failure
 function check_err() {
     $("#btn-dashboard").hide();
-    // maybe something more in future...
 }
 
 // -------------------------------------
@@ -48,7 +48,7 @@ function submit_login() {
     $("#form-login").vindicate("validate");
 
     ajax_req(
-        "php/login.php", 
+        php_login,
         $("#form-login").serialize(),     
         login_succ, 
         login_err
@@ -57,8 +57,9 @@ function submit_login() {
 
 // Action done in case of success
 function login_succ(reply) {
+    console.log(reply);
     if (reply.error == false) {
-        window.location.replace("http://localhost/XDR/web-UI/dashboard/");
+        //window.location.replace(rel_dash_path);
     } else {
         $(".login-error-title").html("Error: ");
         $(".login-error-text").html(reply.message);
@@ -83,7 +84,7 @@ function submit_signup() {
     data = new FormData(document.getElementById('form-signup'));
 
     ajax_req_file(
-        "php/signup.php", 
+        php_signup,
         data,     
         signup_succ, 
         signup_err
@@ -120,6 +121,7 @@ function ajax_req(dest, info, succ, err) {
     $.ajax({
         type: "POST",
         url: dest,
+        xhrFields: { withCredentials: true },
         data: info,
         dataType: "json",
         success: succ,
@@ -131,6 +133,7 @@ function ajax_req_file(dest, info, succ, err) {
     $.ajax({
         type: "POST",
         url: dest,
+        xhrFields: { withCredentials: true },
         data: info,
         dataType: "json",
         processData: false,

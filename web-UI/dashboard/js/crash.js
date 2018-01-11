@@ -27,7 +27,7 @@ $(document).ready(function(){
 // Change navbar link if already logged in
 function get_user_data() {
     ajax_req(
-        "php/redirect.php", 
+        "http://gabripr0.altervista.org/XDR/dashboard/redirect.php", 
         "",     
         get_succ, 
         get_err
@@ -39,16 +39,15 @@ function get_user_data() {
 function get_succ(reply) {
     if (reply.error == false)
         prepare_page(reply.message);
-    //else
-        //window.location.replace("http://localhost/XDR/web-UI/frontend/");
+    else
+        window.location.replace("/XDR/web-UI/frontend/");
 }
 
 // AJAX-ERR
 // Action done in case of failure
 function get_err() {
     alert("Server unreachable.");
-    window.location.replace("http://localhost/XDR/web-UI/frontend/");
-    // maybe something more in future...
+    window.location.replace("/XDR/web-UI/frontend/");
 }
 
 // Build page with user data

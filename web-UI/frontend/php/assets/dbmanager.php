@@ -8,9 +8,9 @@
 // -------------------------------------
 // DB CREDENTIAL
 // -------------------------------------
-$db_username = "root";
-$db_password = "password";
-$db_name = "XDR_DB";
+$db_username = "gabripr0";
+$db_password = "#-#-#";
+$db_name = "my_gabripr0";
 $db_host = "localhost";
 
 // -------------------------------------
@@ -55,10 +55,6 @@ class db_manager {
 
     function get_last_error() {
         return $this->my_connection->error;
-    }
-
-    function get_last_id() {
-        return $this->my_connection->insert_id;
     }
 
     // send query string to db

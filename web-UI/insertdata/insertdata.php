@@ -42,8 +42,8 @@
 // -------------------------------------
 // REQUIRE
 // -------------------------------------
-require_once "dbmanager.php";
-require_once "jsonresponse.php";
+require_once "assets/dbmanager.php";
+require_once "assets/jsonresponse.php";
 
 // -------------------------------------
 // PHP SERVER MAIN CODE
@@ -78,7 +78,7 @@ function insert_trip($email, $trip) {
     global $my_database;
 
     $query_string = 
-        "INSERT INTO `trip` (`id`, `email`, `meters`, `starttime`, `secondslength`) 
+        "INSERT INTO `xdr_trip` (`id`, `email`, `meters`, `starttime`, `secondslength`) 
         VALUES (NULL, 
                 '" . $email . "', 
                 '" . $trip['meters'] . "', 
@@ -98,7 +98,7 @@ function insert_stat($trip_id, $stat) {
     global $my_database;
 
     $query_string = 
-        "INSERT INTO `stat` (`id`, `numberacc`, `worstacc`, `numberbra`, `worstbra`, `numbercur`) 
+        "INSERT INTO `xdr_stat` (`id`, `numberacc`, `worstacc`, `numberbra`, `worstbra`, `numbercur`) 
         VALUES ('" . $trip_id . "', 
                 '" . $stat['numberacc'] . "', 
                 '" . $stat['worstacc'] . "', 
@@ -117,7 +117,7 @@ function insert_evaluation($trip_id, $evaluation) {
     global $my_database;
 
     $query_string = 
-        "INSERT INTO `evaluation` (`id`, `pointstotal`, `pointsacceleration`, `pointsbraking`, `pointssteering`, `pointsspeed`) 
+        "INSERT INTO `xdr_evaluation` (`id`, `pointstotal`, `pointsacceleration`, `pointsbraking`, `pointssteering`, `pointsspeed`) 
         VALUES ('" . $trip_id . "', 
                 '" . $evaluation['pointstotal'] . "', 
                 '" . $evaluation['pointsacceleration'] . "', 
@@ -139,7 +139,7 @@ function insert_crash($trip_id, $crash) {
         return;
 
     $query_string = 
-        "INSERT INTO `crash` (`id`, `crashtime`, `intensity`, `stationary`) 
+        "INSERT INTO `xdr_crash` (`id`, `crashtime`, `intensity`, `stationary`) 
         VALUES ('" . $trip_id . "', 
                 '" . $evaluation['crashtime'] . "', 
                 '" . $evaluation['intensity'] . "', 
@@ -200,14 +200,14 @@ function calculate_new_resume($resume, $trip, $evaluation) {
 function update_resume_data($email, $new_resume) {
     global $my_database;
 
-    $query_string = "UPDATE `resume` SET 
+    $query_string = "UPDATE `xdr_resume` SET 
                         `pointstotal` = '" . $new_resume['pointstotal'] . "', 
                         `pointsacceleration` = '" . $new_resume['pointsacceleration'] . "',
                         `pointsbraking` = '" . $new_resume['pointsbraking'] . "',
                         `pointssteering` = '" . $new_resume['pointssteering'] . "',
                         `pointsspeed` = '" . $new_resume['pointsspeed'] . "',
                         `drivenhours` = '" . $new_resume['drivenhours'] . "'
-                    WHERE `resume`.`email` = '" . $email . "';";
+                    WHERE `xdr_resume`.`email` = '" . $email . "';";
     
     $my_result = $my_database->send_query($query_string);
 

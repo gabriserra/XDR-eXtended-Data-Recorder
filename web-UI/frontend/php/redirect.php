@@ -5,11 +5,14 @@
 // already logged user server
 // -------------------------------------
 
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Credentials: true');
+
 // -------------------------------------
 // REQUIRE
 // -------------------------------------
-require_once "session.php";
-require_once "jsonresponse.php";
+require_once "assets/session.php";
+require_once "assets/jsonresponse.php";
 
 // start the current session
 session_start();
