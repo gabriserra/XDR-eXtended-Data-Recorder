@@ -59,7 +59,7 @@ function submit_login() {
 function login_succ(reply) {
     console.log(reply);
     if (reply.error == false) {
-        //window.location.replace(rel_dash_path);
+        window.location.replace(rel_dash_path);
     } else {
         $(".login-error-title").html("Error: ");
         $(".login-error-text").html(reply.message);

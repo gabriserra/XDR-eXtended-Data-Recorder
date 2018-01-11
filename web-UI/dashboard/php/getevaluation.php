@@ -6,6 +6,9 @@
 // fill up evaluation page cards 
 // -----------------------------
 
+header('Access-Control-Allow-Origin: https://gabriserra.github.io');
+header('Access-Control-Allow-Credentials: true');
+
 // -------------------------------------
 // REQUIRE
 // -------------------------------------

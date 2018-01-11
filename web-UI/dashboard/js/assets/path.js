@@ -13,8 +13,8 @@ var abs_fron_path = "https://gabriserra.github.io/XDR-eXtended-Data-Recorder/web
 // MOST USED SERVER PHP PAGES
 // ------------------------------------
 
-var php_logout = "https://gabripr0.altervista.org/XDR/dashboard/logout.php";
-var php_redir = "https://gabripr0.altervista.org/XDR/dashboard/redirect.php";
-var php_crash = "https://gabripr0.altervista.org/XDR/dashboard/getcrash.php";
-var php_eval = "https://gabripr0.altervista.org/XDR/dashboard/getevaluation.php";
-var php_home = "https://gabripr0.altervista.org/XDR/dashboard/gethome.php";
+var php_logout = "https://gabripr0.altervista.org/XDR/dashboard/php/logout.php";
+var php_redir = "https://gabripr0.altervista.org/XDR/dashboard/php/redirect.php";
+var php_crash = "https://gabripr0.altervista.org/XDR/dashboard/php/getcrash.php";
+var php_eval = "https://gabripr0.altervista.org/XDR/dashboard/php/getevaluation.php";
+var php_home = "https://gabripr0.altervista.org/XDR/dashboard/php/gethome.php";
