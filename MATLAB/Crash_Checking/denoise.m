@@ -17,12 +17,12 @@ function filtered = denoise(unfiltered)
         y = y - rho * (u - D(filtered));
     end
 
-    figure;
-    plot(unfiltered);
-    axis([1 l min(min(unfiltered),min(filtered)) max(max(unfiltered),max(filtered))]);
-    title('Filter');
-    hold on
-    plot(filtered,'r');
+%     figure;
+%     plot(unfiltered);
+%     axis([1 l min(min(unfiltered),min(filtered)) max(max(unfiltered),max(filtered))]);
+%     title('Filter');
+%     hold on
+%     plot(filtered,'r');
 end
 
 function y = D(x)

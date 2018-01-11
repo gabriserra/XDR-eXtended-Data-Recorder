@@ -1,4 +1,4 @@
-var=good1;
+var=max1;
 for i=3:1:size(var,2)
     var(:,i) = denoise(var(:,i));
 end

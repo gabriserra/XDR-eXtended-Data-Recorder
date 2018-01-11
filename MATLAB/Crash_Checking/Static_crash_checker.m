@@ -18,7 +18,7 @@ function [ brakings ] = Static_crash_checker(accx)
     end
     
     %find all peaks
-    peaks = find(abs(accx) > 0.5)   ;                 
+    peaks = find(abs(accx) > 1)   ;                 
     j=1;
     i=1;
     
@@ -55,6 +55,12 @@ function [ brakings ] = Static_crash_checker(accx)
         brakings(i,2) = accx(peaks(i,1)) - accx(brakings(i,4)+ brakings(i,1),1);              
         brakings(i,3) = brakings(i,2)/brakings(i,1)*100;                        
     end
+    
+    to_remove = find(brakings(:,1)>3 );
+    brakings(to_remove,:)=[];
+    to_remove = find(abs(brakings(:,3)) < 100)  
+    brakings(to_remove,:)=[];
+   % brakings
 
 end
 

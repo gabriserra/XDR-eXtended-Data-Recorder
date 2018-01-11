@@ -7,6 +7,7 @@
 % L'output restituito è:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [data]=Turn_Checker(accx,accy,giroz)
+      data=0;
       if(size(accx,1) == 1)
         accx=accx';
       end
@@ -23,7 +24,7 @@ function [data]=Turn_Checker(accx,accy,giroz)
        candidates=0;
       for i=1:1:size(giroz,1)
       
-        if(turning == 0 && abs(giroz(i,1)) > 4)
+        if(turning == 0 && abs(giroz(i,1)) > 100)
             start=i;
             if(giroz(i,1) > 0)
                directions(j,1) = 1;
@@ -36,25 +37,36 @@ function [data]=Turn_Checker(accx,accy,giroz)
                 turning=1;
         end
          
-         if(j>1 && candidates(j-1,1) == 1859)
-             turning
-             giroz(i,1)
-             directions
-         end
-        if(turning == 1 && ( (giroz(i,1) < 0 && directions(j-1,1) == 1) || ((giroz(i,1) > 0 && directions(j-1,1) == -1) )))
+         %fare controllo non proprio per il segno ma per la vicinanza allo
+         %0 in assoluto (10^-4)
+        if(turning == 1 && ( (giroz(i,1) < 0 && directions(j-1,1) == 1) || (( (abs(giroz(i,1)) < 4 || giroz(i,1) > 0.5 ) && directions(j-1,1) == -1) ) || i == size(giroz,1)))
             interval(j-1,1) = i-start;
             turning = 0;
         end
         
         
       end
- 
-      [candidates interval]
-      for i=1:1:size(candidates,1)
-        %qui è necessario considerare ogni intervallo in cui si curve e scegliere se:
-        %       1) basarsi su accx 
-        %       2) basarsi su la velocità ottenuta con iomega (attendibile?)
-      end
+      if(candidates ~= 0)
+          [candidates interval];
+          to_remove = find(interval < 20);
+          candidates(to_remove) = [];
+          interval(to_remove)= [];
+          directions(to_remove)= [];
+          [candidates interval directions];
+          data=zeros(size(candidates,1),7);
       
-     
+          for i=1:1:size(candidates,1)
+            data(i,1) = candidates(i,1);
+            data(i,2) = interval(i,1);
+            data(i,3) = directions(i,1);
+            data(i,4) = mean( accx(candidates(i,1):candidates(i,1)+interval(i,1),1 ));
+            data(i,5) = sum((accx(candidates(i,1):candidates(i,1)+interval(i,1),1) - data(i,4)).^2 );
+            data(i,5) = data(i,5)/interval(i,1);
+            data(i,6) = mean(iomega(accx(candidates(i,1):candidates(i,1)+interval(i,1),1),1/50,3,2));
+            data(i,7) = sum((iomega(accx(candidates(i,1):candidates(i,1)+interval(i,1),1),1/50,3,2) - data(i,6)).^2 );
+            data(i,7) = data(i,7)/interval(i,1);
+
+          end
+      
+      end
 end
