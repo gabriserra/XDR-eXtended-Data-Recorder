@@ -1,3 +1,12 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%   Takes in input the accx parameter that represents the frontal G
+%   Evolution over time.
+%   Return a nx4 matrix where each rows represents a sudden event
+%   (acceleration/braking)
+%    columns={time interval (sample),acc intensity, acc/interval,starting sample}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ data ] = sudden_checker(accx)    
       turning = 0;
       j=1;
@@ -5,13 +14,15 @@ function [ data ] = sudden_checker(accx)
       candidates=0;
       interval=0;
       directions=0;
+      
+      %checks for sudden candidates also computing associated directions
       for i=1:1:size(accx,1)
       
         if(turning == 0 && (accx(i,1) > 0.4 || accx(i,1) < -0.1) )
             start=i;
             candidates(j,1) = i;
-            
             turning=1;
+            
             if(accx(i,1) > 0)
                directions(j,1) = 1;
             else  
@@ -20,8 +31,7 @@ function [ data ] = sudden_checker(accx)
               j =j+1;
         end
          
-         %fare controllo non proprio per il segno ma per la vicinanza allo
-         %0 in assoluto (10^-4)
+        %computing sudden maneuvre's interval
         if(turning == 1 && ( ( (abs(accx(i,1)) < 10^-2 ||  accx(i,1)< 0) && directions(j-1,1) == 1) || ((  abs(accx(i,1)) < 10^-2  && directions(j-1,1) == -1) ) || i == size(accx,1)))
             interval(j-1,1) = i-start;
             turning = 0;
@@ -29,21 +39,22 @@ function [ data ] = sudden_checker(accx)
         
         
       end
- 
-      [candidates interval];
-      to_remove = find(interval < 2);
-      candidates(to_remove) = [];
-      interval(to_remove)= [];
-      directions(to_remove)= [];
-      data=zeros(size(candidates,1),4);
+      
+      if(candidates ~= 0)
+          %filtering
+          [candidates interval];
+          to_remove = find(interval < 2);
+          candidates(to_remove) = [];
+          interval(to_remove)= [];
+          directions(to_remove)= [];
+          data=zeros(size(candidates,1),4);
     
-      for i=1:1:size(candidates,1)
-          
-        data(i,1) = candidates(i,1);
-        data(i,2) = interval(i,1);
-        data(i,3) = directions(i,1);
-        data(i,4) = mean( accx(candidates(i,1):candidates(i,1)+interval(i,1),1 ));
-     
-      end
-        
+          %filling output matrix
+          for i=1:1:size(candidates,1)
+            data(i,1) = candidates(i,1);
+            data(i,2) = interval(i,1);
+            data(i,3) = directions(i,1);
+            data(i,4) = mean( accx(candidates(i,1):candidates(i,1)+interval(i,1),1 ));
+          end
+      end  
 end

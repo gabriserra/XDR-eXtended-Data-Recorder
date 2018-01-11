@@ -1,6 +1,3 @@
-function [ brakings ] = Static_crash_checker(accx)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %   Takes in input the accx parameter that represents the frontal G
@@ -9,18 +6,15 @@ function [ brakings ] = Static_crash_checker(accx)
 %   columns={time interval (sample),acc intensity, acc/interval,starting sample}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+function [ brakings ] = Static_crash_checker(accx)
+    i=1;
     %make sure that the input parameter has the right size
     if(size(accx,1) == 1)
         accx=accx';
     end
     
     %find all peaks
-    peaks = find(abs(accx) > 1)   ;                 
-    j=1;
-    i=1;
+    peaks = find(abs(accx) > 1);                 
     
     %find peaks' starting point, deleting adjacent peaks
     while(i< size(peaks,1)-1)   
@@ -56,11 +50,10 @@ function [ brakings ] = Static_crash_checker(accx)
         brakings(i,3) = brakings(i,2)/brakings(i,1)*100;                        
     end
     
+    %filtering
     to_remove = find(brakings(:,1)>3 );
     brakings(to_remove,:)=[];
     to_remove = find(abs(brakings(:,3)) < 100)  
     brakings(to_remove,:)=[];
-   % brakings
-
 end
 

@@ -8,6 +8,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [data]=Turn_Checker(accx,accy,giroz)
       data=0;
+      %check sizes
       if(size(accx,1) == 1)
         accx=accx';
       end
@@ -21,32 +22,34 @@ function [data]=Turn_Checker(accx,accy,giroz)
       turning = 0;
       j=1;
       start =0;
-       candidates=0;
+      candidates=0;
+      
+      %peaks search
       for i=1:1:size(giroz,1)
       
         if(turning == 0 && abs(giroz(i,1)) > 100)
             start=i;
+            candidates(j,1) = i;
+            turning=1;
+            
             if(giroz(i,1) > 0)
                directions(j,1) = 1;
-            else
-                
+            else 
                directions(j,1) = -1;
-            end
-                candidates(j,1) = i;
-                j =j+1;
-                turning=1;
-        end
+            end    
+                j =j+1; 
+         end
          
-         %fare controllo non proprio per il segno ma per la vicinanza allo
-         %0 in assoluto (10^-4)
+        %turn interval computing
         if(turning == 1 && ( (giroz(i,1) < 0 && directions(j-1,1) == 1) || (( (abs(giroz(i,1)) < 4 || giroz(i,1) > 0.5 ) && directions(j-1,1) == -1) ) || i == size(giroz,1)))
             interval(j-1,1) = i-start;
             turning = 0;
-        end
-        
-        
-      end
+        end     
+      end     
+      
       if(candidates ~= 0)
+          
+          %filtering 
           [candidates interval];
           to_remove = find(interval < 20);
           candidates(to_remove) = [];
@@ -54,7 +57,8 @@ function [data]=Turn_Checker(accx,accy,giroz)
           directions(to_remove)= [];
           [candidates interval directions];
           data=zeros(size(candidates,1),7);
-      
+          
+          %filling output matrix
           for i=1:1:size(candidates,1)
             data(i,1) = candidates(i,1);
             data(i,2) = interval(i,1);
@@ -65,8 +69,6 @@ function [data]=Turn_Checker(accx,accy,giroz)
             data(i,6) = mean(iomega(accx(candidates(i,1):candidates(i,1)+interval(i,1),1),1/50,3,2));
             data(i,7) = sum((iomega(accx(candidates(i,1):candidates(i,1)+interval(i,1),1),1/50,3,2) - data(i,6)).^2 );
             data(i,7) = data(i,7)/interval(i,1);
-
-          end
-      
+          end  
       end
 end
