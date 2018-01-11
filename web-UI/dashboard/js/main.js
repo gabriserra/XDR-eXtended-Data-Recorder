@@ -59,10 +59,11 @@ function get_err() {
 
 // Prepare page with custom user data
 function prepare_page(userdata) {
+    $('.nav-user-a').attr("href", php_logout);
     $('.nav-user-a').attr("title", userdata.username + " - Logout");
-    $('.nav-avatar').attr("src", "img/uploads/" + userdata.avatar);
-    $('.card-avatar').attr("src", "img/uploads/" + userdata.avatar);
-    $('.cover-img').css('background-image', 'url( img/uploads/' + userdata.cover + ')');
+    $('.nav-avatar').attr("src", img_svr_path + userdata.avatar);
+    $('.card-avatar').attr("src", img_svr_path + userdata.avatar);
+    $('.cover-img').css('background-image', 'url(' + img_svr_path + userdata.cover + ')');
     $('.card-name').html(userdata.name + " " + userdata.surname);
     $('.card-text').html(userdata.bio);
 }
@@ -75,7 +76,7 @@ function prepare_page(userdata) {
 // Get last trip data with AJAX req
 function get_lasttrip_data() {
     ajax_req(
-        "php/gethome.php", 
+        php_home,
         "",     
         get_lasttrip_succ, 
         get_lasttrip_err
@@ -178,6 +179,7 @@ function ajax_req(dest, info, succ, err) {
     $.ajax({
         type: "POST",
         url: dest,
+        xhrFields: { withCredentials: true },
         data: info,
         dataType: "json",
         success: succ,

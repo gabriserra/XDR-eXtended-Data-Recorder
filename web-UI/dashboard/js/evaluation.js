@@ -23,7 +23,6 @@ get_user_data();
 $(document).ready(function(){
     gauge_build();
     get_evaluation_data();
-    //homeChartDraw();
     toggle_tooltip();
 });
 
@@ -35,7 +34,7 @@ $(document).ready(function(){
 // Change navbar link if already logged in
 function get_user_data() {
     ajax_req(
-        "php/redirect.php", 
+        php_redir,
         "",     
         get_succ, 
         get_err
@@ -47,22 +46,22 @@ function get_user_data() {
 function get_succ(reply) {
     if (reply.error == false)
         prepare_page(reply.message);
-    //else
-        //window.location.replace("http://gabripr0.altervista.org/XDR/frontend/");
+    else
+        window.location.replace(rel_fron_path);
 }
 
 // AJAX-ERR
 // Action done in case of failure
 function get_err() {
     alert("Server unreachable.");
-    window.location.replace("http://gabripr0.altervista.org/XDR/frontend/");
-    // maybe something more in future...
+    window.location.replace(rel_fron_path);
 }
 
 // Build page with user data
 function prepare_page(userdata) {
+    $('.nav-user-a').attr("href", php_logout);
     $('.nav-user-a').attr("title", userdata.username + " - Logout");
-    $('.nav-avatar').attr("src", "img/uploads/" + userdata.avatar);
+    $('.nav-avatar').attr("src", img_svr_path + userdata.avatar);
 }
 
 // -----------------------------
@@ -73,7 +72,7 @@ function prepare_page(userdata) {
 // Get evaluation data from server
 function get_evaluation_data() {
     ajax_req(
-        "php/getevaluation.php", 
+        php_eval, 
         "",     
         get_evaluation_data_succ, 
         get_evaluation_data_err
@@ -448,6 +447,7 @@ function ajax_req(dest, info, succ, err) {
     $.ajax({
         type: "POST",
         url: dest,
+        xhrFields: { withCredentials: true },
         data: info,
         dataType: "json",
         success: succ,
