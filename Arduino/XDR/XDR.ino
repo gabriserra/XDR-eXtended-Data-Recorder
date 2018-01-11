@@ -7,20 +7,19 @@
 
 #define	SERIAL_BAUDRATE		2000000
 #define ESP_BAUDRATE 		57600
-#define	PERIOD				25
 
 //------------------------------------------------------------------------------
 // GLOBAL VARIABLES
 //------------------------------------------------------------------------------
 
-//const char *SSID     = "TIM-90340813_2.4Hz";
-//const char *PASSWORD = "bJMzBlXdf10x3E8RfgTG98oE";
+const char *SSID     = "TIM-90340813_2.4Hz";
+const char *PASSWORD = "bJMzBlXdf10x3E8RfgTG98oE";
 
 //const char *SSID     = "Alice-73100401";
 //const char *PASSWORD = "u3b1kz4btdvt4gzokiik6eff";
 
-const char *SSID     = "XDR";
-const char *PASSWORD = "BSBXDRBSB";
+//const char *SSID     = "XDR";
+//const char *PASSWORD = "BSBXDRBSB";
 
 //const char *SSID     = "iPhone di Silvio";
 //const char *PASSWORD = "12345678";
@@ -165,9 +164,5 @@ void setup(void) {
 //------------------------------------------------------------------------------
 
 void loop(void) {
-	//t = millis();
 	sendStruct();
-  	//d = PERIOD - millis() + t;
-  	//if (d > 0)
-	//	delay(d);
 }

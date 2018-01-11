@@ -8,11 +8,14 @@
 #include 	<errno.h>
 #include 	<inttypes.h>
 #include 	<netinet/in.h>
+#include	<pthread.h>
 #include 	<stdio.h>
+#include 	<stdlib.h>
 #include 	<string.h>
 #include 	<sys/select.h>
 #include 	<sys/socket.h>
 #include 	<time.h>
+#include 	<unistd.h>
 #include 	"udp.h"
 
 //------------------------------------------------------------------------------
@@ -20,7 +23,7 @@
 //------------------------------------------------------------------------------
 
 #define		KEYBOARD		0
-#define 	SERVER_PORT		8000
+#define 	MY_PORT			8000
 #define		IP_SIZE			16
 #define		TRUE			1
 #define		FALSE			0
@@ -35,14 +38,35 @@ typedef struct tm* tm_t;
 // GLOBAL VARIABLES
 //------------------------------------------------------------------------------
 
-int 	sockt_UDP, fdmax = 0, i, CAR_PORT, STARTED = TRUE, CONN_CREATED = FALSE, counter;
-char 	buf[1024], filename[34], carIP[IP_SIZE], myIP[IP_SIZE], *IP = 0;
+pthread_t tid[20];
+int 	sockt_UDP, fdmax = 0, i, CAR_PORT, STARTED = TRUE, CONN_CREATED = FALSE, counter, ERROR;
+char 	buf[1024], filename[35], carIP[IP_SIZE], myIP[IP_SIZE], *IP = 0;
 ssize_t recvBytes;
 time_t 	rawtime;
 tm_t	tm;
 FILE*	fp;
 fd_set 	master, read_fds;
 sensor_data_g_t all_d;
+
+//------------------------------------------------------------------------------
+// MATLAB: Function simulating matlab operations
+//------------------------------------------------------------------------------
+
+void processData(void) {
+	char path[1024];
+	char cmd[1024];
+	char *matlab_script = "sender";
+	if (getcwd(path, sizeof(path)) == NULL) {
+		printf("PROCESSING DATA FAILED: RETRIEVING CURRENT PATH FAILED\n");
+		return;
+	}
+	
+	sprintf(cmd,"osascript -e 'tell app \"Terminal\"\ndo script \"cd %s && cd ../sender_c &&./%s\"\nend tell' > /dev/null", path, matlab_script);
+
+	system(cmd);
+	
+	printf("PROCESSING DATA STARTED IN THE NEW TERMINAL\n");
+}
 
 //------------------------------------------------------------------------------
 // CLEAR BUFFER: Clear stdin
@@ -76,7 +100,7 @@ void createNewFile() {
 	counter = 0;
 	time(&rawtime);
 	tm = localtime(&rawtime);
-	sprintf(filename, "./log/log_%04d-%02d-%02d_%02d-%02d-%02d.csv", tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
+	sprintf(filename, "../log/log_%04d-%02d-%02d_%02d-%02d-%02d.csv", tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec);
 	if (fp != NULL)
 		fclose(fp);
 	fp = fopen(filename,"a");
@@ -134,7 +158,7 @@ int recvFromCar() {
 int main() {
 	fp = fopen ("", "r");
 	
-	if ((sockt_UDP = UDPrecv_init(SERVER_PORT)) < 0) {
+	if ((sockt_UDP = UDPrecv_init(MY_PORT)) < 0) {
 		printf("ERROR IN UDP RECV INIT\n");
 		fflush(stdout);
 		if (fp != NULL)
@@ -144,7 +168,7 @@ int main() {
 	
 	IP = getMyIP();
 	memcpy(myIP, IP, strlen(IP)+1);
-	printf("START SERVER (PORT: %d) (IP: %s)\n",SERVER_PORT, myIP);
+	printf("START SERVER (PORT: %d) (IP: %s)\n",MY_PORT, myIP);
 	fflush(stdout);
 
 	FD_ZERO(&master);
@@ -173,6 +197,7 @@ int main() {
 							STARTED = FALSE;
 							if (fp != NULL)
 								fclose(fp);
+							processData();
 							if (end())
 								return 0;
 							FD_CLR(sockt_UDP, &master);

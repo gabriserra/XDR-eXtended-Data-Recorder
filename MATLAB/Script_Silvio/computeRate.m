@@ -1,25 +1,22 @@
-function [AV, MAX, MIN] = computeRate(unfilled)
-<<<<<<< HEAD
-    %unfilled = readFile(filename);
-=======
+function [AV, MAX, MIN] = computeRate(filename)
+    date = erase(erase(filename,'.csv'),'../../server/log/log_');
+    
+    unfilled = readFile(filename);
+    
     % [var, d] = readFile('../server/log/log_2018-01-06_18-35-50.csv');
 %     unfilled = readFile(filename);
     
->>>>>>> 5ab74dc1106efc43f907d9b2942ba4f3edfab3ad
+    loss = computeLossPackets(unfilled);
     %unfilled(:,3) = denoise(unfilled(:,3));
     %unfilled(:,4) = denoise(unfilled(:,4));
     %unfilled(:,5) = denoise(unfilled(:,5));
     
-<<<<<<< HEAD
-    loss = computeLossPackets(unfilled)
-    
-=======
->>>>>>> 5ab74dc1106efc43f907d9b2942ba4f3edfab3ad
-    unfilled(:,3) = denoise(unfilled(:,3));
-    unfilled(:,4) = denoise(unfilled(:,4));
-    unfilled(:,5) = denoise(unfilled(:,5));
-    
     filled = filler(unfilled);
+    
+    filled = computeDate(filled, date);
+    
+    figure;
+    plot(filled(:,1), filled(:,3));
     
     %vel = iomega(filled, 0.02, 3, 2);
     
