@@ -1,5 +1,5 @@
-function [AV, MAX, MIN] = computeRate(filename)
-    date = erase(erase(filename,'.csv'),'../../server/log/log_');
+function [AV, MAX, MIN, loss] = computeRate(filename)
+    %date = erase(erase(filename,'.csv'),'../../server/log/log_');
     
     unfilled = readFile(filename);
     
@@ -13,7 +13,7 @@ function [AV, MAX, MIN] = computeRate(filename)
     
     filled = filler(unfilled);
     
-    filled = computeDate(filled, date);
+    %filled = computeDate(filled, date);
     
     figure;
     plot(filled(:,1), filled(:,3));
@@ -23,18 +23,18 @@ function [AV, MAX, MIN] = computeRate(filename)
     %figure;
     %plot(vel);
     
-    var = filled;
+    var = unfilled;
 
     diff = zeros(size(var,1), 1);
-    counter = 0;
 
     for i = 2 : size(var,1)
-        if(var(i,2) - var(i-1,2) == 1)
-            diff(i) = var(i,1) - var(i-1,1);
-        else
-            diff(i) = 0;
-            counter = counter + 1;
-        end
+        diff(i) = var(i,1) - var(i-1,1);
+%         if(var(i,2) - var(i-1,2) == 1)
+%             diff(i) = var(i,1) - var(i-1,1);
+%         else
+%             diff(i) = 0;
+%             counter = counter + 1;
+%         end
     end
 
     AV = mean(diff(diff>0));

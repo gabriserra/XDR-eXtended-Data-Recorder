@@ -13,7 +13,7 @@
 #include 	<sys/select.h>
 #include 	<sys/socket.h>
 #include 	<time.h>
-#include 	"tcp.h"
+#include 	"udp_tcp.h"
 
 //------------------------------------------------------------------------------
 // GLOBAL CONSTANTS
@@ -21,7 +21,7 @@
 
 #define 	MY_PORT			7000
 //#define 	SERVER_IP		"gabripr0.altervista.org"
-#define 	SERVER_IP		"104.28.22.117"
+#define 	SERVER_IP		"104.28.23.117"
 #define 	SERVER_PORT		80
 #define		TRUE			1
 #define		FALSE			0
@@ -38,7 +38,41 @@ typedef struct tm* tm_t;
 
 int 	sockt_TCP, fdmax = 0, i;
 char 	buffer[BUFFER_SIZE];
-char 	*query = "GET /search?q=arduino HTTP/1.1\nHost: www.google.com\nConnection: close\n\n";
+//char 	*query = "GET /XDR/insertdata/insertdata.php HTTP/1.1\nHost: www.gabripr0.altervista.org\nConnection: close\n\n";
+char 	*query = "POST /XDR/insertdata/insertdata.php HTTP/1.1\n\
+Host: www.gabripr0.altervista.org\n\
+Content-Type: application/x-www-form-urlencoded\n\
+Connection: close\n\
+Content-Length: 408\n\n\
+content={\
+\"email\" :\
+\"user@example.it\",\
+\"trip\" : {\
+\"meters\" : 50,\
+\"starttime\" : \"2018-01-07 07:30:00\",\
+\"secondslength\" : 120\
+},\
+\"stat\" : {\
+\"numberacc\" : 2,\
+\"worstacc\" : 5,\
+\"numberbra\" : 1,\
+\"worstbra\" : 3,\
+\"numbercur\" : 8\
+},\
+\"evaluation\" : {\
+\"pointstotal\" : 2,\
+\"pointsacceleration\" : 5,\
+\"pointsbraking\" : 1,\
+\"pointssteering\" : 3,\
+\"pointsspeed\" : 8\
+},\
+\"crash\" : {\
+\"crashtime\" : \"2018-01-07 07:30:00\",\
+\"intensity\" : 5,\
+\"stationary\" : 0\
+}\
+}\n\n";
+
 ssize_t recvBytes;
 fd_set 	master, read_fds;
 
@@ -56,11 +90,13 @@ void clearBuffer() {
 //------------------------------------------------------------------------------
 
 int main() {
-	if ((sockt_TCP = TCP_init(MY_PORT, SERVER_IP, SERVER_PORT)) < 0) {
+	if ((sockt_TCP = init_TCPclient(SERVER_IP, SERVER_PORT)) < 0) {
 		perror("ERROR IN TCP INIT: ERROR\n");
 		fflush(stdout);
 		return 0;
 	}
+	
+	printf("CONNECTION ESTABLISHED\n");
 
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
@@ -68,6 +104,7 @@ int main() {
 	if (fdmax < sockt_TCP)
 		fdmax = sockt_TCP;
 	
+	//printf("%s\n",query);
 	TCPsend(query);
 
 	while(1) {
@@ -82,7 +119,7 @@ int main() {
 			if(FD_ISSET(i, &read_fds)){
 				switch(i) {
 					default:
-						recvBytes = TCPrecv(buffer);
+						recvBytes = TCPrecv_string(buffer);
 						printf("%s\n",buffer);
 						break;
 				}
