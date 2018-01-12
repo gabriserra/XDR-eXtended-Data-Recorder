@@ -16,15 +16,18 @@
 #include 	<sys/socket.h>
 #include 	<time.h>
 #include 	<unistd.h>
-#include 	"udp.h"
+#include 	"udp_tcp.h"
 
 //------------------------------------------------------------------------------
 // GLOBAL CONSTANTS
 //------------------------------------------------------------------------------
 
 #define		KEYBOARD		0
-#define 	MY_PORT			8000
+#define 	MY_UDP_PORT		8000
+#define 	MY_TCP_PORT		8001
 #define		IP_SIZE			16
+#define		PORT_SIZE		4
+#define		PORT_IP_SIZE	IP_SIZE + PORT_SIZE
 #define		TRUE			1
 #define		FALSE			0
 
@@ -38,8 +41,8 @@ typedef struct tm* tm_t;
 // GLOBAL VARIABLES
 //------------------------------------------------------------------------------
 
-pthread_t tid[20];
-int 	sockt_UDP, fdmax = 0, i, CAR_PORT, STARTED = TRUE, CONN_CREATED = FALSE, counter, ERROR;
+int 	socket_UDP, socket_TCP, fdmax = 0, i, CAR_PORT, STARTED = TRUE, CONN_CREATED = FALSE, counter, ERROR;
+char 	PORT_IP[PORT_IP_SIZE];
 char 	buf[1024], filename[35], carIP[IP_SIZE], myIP[IP_SIZE], *IP = 0;
 ssize_t recvBytes;
 time_t 	rawtime;
@@ -111,8 +114,8 @@ void createNewFile() {
 //------------------------------------------------------------------------------
 
 int recvFromCar() {
-	recvBytes = UDPrecv(&all_d);
-
+	recvBytes = TCPrecv(&all_d);
+	
 	if (recvBytes <= 0) {
 		printf("ERROR IN UDP RECV\n");
 		fflush(stdout);
@@ -120,17 +123,6 @@ int recvFromCar() {
 	}
 	
 	switch(recvBytes) {
-		case sizeof(all_d.m):
-			CAR_PORT = all_d.m;
-			break;
-		case IP_SIZE:
-			IP = (char *) &all_d;
-			memcpy(carIP, IP, strlen(IP)+1);
-			createCarAddress(carIP, CAR_PORT);
-			UDPsend(myIP);
-			createNewFile();
-			CONN_CREATED = TRUE;
-			break;
 		case sizeof(sensor_data_g_t):
 			if (counter++ == 0) {
 				printf("START RECEIVING DATA ");
@@ -152,13 +144,60 @@ int recvFromCar() {
 }
 
 //------------------------------------------------------------------------------
+// INIT: Initialize connection with the car
+//------------------------------------------------------------------------------
+
+int initConnection() {
+	recvBytes = UDPrecv(PORT_IP, PORT_IP_SIZE);
+	char port_str[5];
+
+	if (recvBytes <= 0) {
+		printf("ERROR IN UDP RECV\n");
+		fflush(stdout);
+		return -1;
+	}
+	
+	switch(recvBytes) {
+		case sizeof(sensor_data_g_t):
+			memcpy(port_str, PORT_IP, 4);
+			port_str[4] = '\0';
+			CAR_PORT = atoi(port_str);
+			IP = PORT_IP+4;
+			memcpy(carIP, IP, strlen(IP)+1);
+			
+			init_UDPsend(carIP, CAR_PORT);
+			UDPsend(myIP);
+			
+			if ((socket_TCP = init_TCPserver(MY_TCP_PORT)) < 0) {
+				perror("ERROR IN TCP INIT: ERROR\n");
+				fflush(stdout);
+				return 0;
+			}
+			
+			FD_SET(socket_TCP, &master);
+			if (fdmax < socket_TCP)
+				fdmax = socket_TCP;
+			
+			createNewFile();
+			CONN_CREATED = TRUE;
+			break;
+		default:
+			printf("ERROR\n");
+			fflush(stdout);
+			break;
+	}
+	
+	return 0;
+}
+
+//------------------------------------------------------------------------------
 // MAIN: Server body
 //------------------------------------------------------------------------------
 
 int main() {
 	fp = fopen ("", "r");
 	
-	if ((sockt_UDP = UDPrecv_init(MY_PORT)) < 0) {
+	if ((socket_UDP = init_UDPrecv(MY_UDP_PORT)) < 0) {
 		printf("ERROR IN UDP RECV INIT\n");
 		fflush(stdout);
 		if (fp != NULL)
@@ -168,16 +207,16 @@ int main() {
 	
 	IP = getMyIP();
 	memcpy(myIP, IP, strlen(IP)+1);
-	printf("START SERVER (PORT: %d) (IP: %s)\n",MY_PORT, myIP);
+	printf("START SERVER (PORT: %d) (IP: %s)\n",MY_UDP_PORT, myIP);
 	fflush(stdout);
 
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
 	FD_SET(KEYBOARD, &master);
 	fdmax = KEYBOARD;
-	FD_SET(sockt_UDP, &master);
-	if (fdmax < sockt_UDP)
-		fdmax = sockt_UDP;
+	FD_SET(socket_UDP, &master);
+	if (fdmax < socket_UDP)
+		fdmax = socket_UDP;
 
 	while(1) {
 		read_fds = master;
@@ -191,35 +230,42 @@ int main() {
 		
 		for(i = 0; i <= fdmax; i++){
 			if(FD_ISSET(i, &read_fds)){
-				switch(i) {
-					case KEYBOARD:
-						if (STARTED) {
-							STARTED = FALSE;
+				if (i == KEYBOARD) {
+					if (STARTED) {
+						STARTED = FALSE;
+						if (fp != NULL)
+							fclose(fp);
+						processData();
+						if (end())
+							return 0;
+						FD_CLR(socket_UDP, &master);
+						fdmax = KEYBOARD;
+					}
+					else {
+						STARTED = TRUE;
+						clearBuffer();
+						FD_SET(socket_UDP, &master);
+						if (fdmax < socket_UDP)
+							fdmax = socket_UDP;
+						if (CONN_CREATED)
+							createNewFile();
+					}
+				}
+				else{
+					if (i == socket_UDP) {
+						if (STARTED == TRUE && initConnection() < 0) {
 							if (fp != NULL)
 								fclose(fp);
-							processData();
-							if (end())
-								return 0;
-							FD_CLR(sockt_UDP, &master);
-							fdmax = KEYBOARD;
+							return 0;
 						}
-						else {
-							STARTED = TRUE;
-							clearBuffer();
-							FD_SET(sockt_UDP, &master);
-							if (fdmax < sockt_UDP)
-								fdmax = sockt_UDP;
-							if (CONN_CREATED)
-								createNewFile();
-						}
-						break;
-					default:
+					}
+					else {
 						if (STARTED == TRUE && recvFromCar() < 0) {
 							if (fp != NULL)
 								fclose(fp);
-							return -1;
+							return 0;
 						}
-						break;
+					}
 				}
 			}
 		}

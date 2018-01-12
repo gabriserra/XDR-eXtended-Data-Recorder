@@ -24,6 +24,23 @@ void ESP8266::rx_empty(void) {
 // RECV STRING: Recvive data from uart. Return all received data
 //------------------------------------------------------------------------------
 
+bool ESP8266::recvString(uint32_t timeout) {
+  String data;
+  char a;
+  unsigned long start = millis();
+  while (millis() - start < timeout) {
+    if (m_puart->available() > 0) {
+      rx_empty();
+      return true;
+    }
+  }
+  return false;
+}
+
+//------------------------------------------------------------------------------
+// RECV STRING: Recvive data from uart. Return all received data
+//------------------------------------------------------------------------------
+
 String ESP8266::recvString(String target, uint32_t timeout) {
 	String data;
 	char a;
@@ -78,6 +95,32 @@ String ESP8266::recvString(String target1, String target2, String target3, uint3
 		}
 	}
 	return data;
+}
+
+String ESP8266::recvString(String target1, String target2, String target3, String target4, String target5, String target6, uint32_t timeout) {
+  String data;
+  char a;
+  unsigned long start = millis();
+  while (millis() - start < timeout) {
+    while (m_puart->available() > 0) {
+      a = m_puart->read();
+      if (a == '\0') continue;
+        data += a;
+    }
+    if (data.indexOf(target1) != -1)
+        break;
+    else if (data.indexOf(target2) != -1)
+        break;
+    else if (data.indexOf(target3) != -1)
+          break;
+    else if (data.indexOf(target4) != -1)
+            break;
+    else if (data.indexOf(target5) != -1)
+      break;
+    else if (data.indexOf(target6) != -1)
+      break;
+  }
+  return data;
 }
 
 //------------------------------------------------------------------------------
@@ -331,6 +374,26 @@ bool ESP8266::AT_CIPSTART_SINGLE(String type, String addr, uint32_t port) {
 	return false;
 }
 
+bool ESP8266::AT_CIPSTART_SINGLE(String type, String addr, uint32_t port, uint32_t local_port, uint8_t mode) {
+  String data;
+  rx_empty();
+  m_puart->print(F("AT+CIPSTART=\""));
+  m_puart->print(type);
+  m_puart->print(F("\",\""));
+  m_puart->print(addr);
+  m_puart->print(F("\","));
+  m_puart->print(port);
+  m_puart->print(F(","));
+  m_puart->print(local_port);
+  m_puart->print(F(","));
+  m_puart->println(mode);
+
+  data = recvString("OK", "ERROR", "ALREADY CONNECT", 500);
+  if (data.indexOf("OK") != -1 || data.indexOf("ALREADY CONNECT") != -1)
+    return true;
+  return false;
+}
+
 bool ESP8266::AT_CIPSTART_MULTIPLE(uint8_t mux_id, String type, String addr, uint32_t port) {
 	String data;
 	rx_empty();
@@ -377,11 +440,12 @@ bool ESP8266::AT_CIPSEND_SINGLE(const uint8_t *buffer, uint32_t len) {
 	rx_empty();
 	m_puart->print(F("AT+CIPSEND="));
 	m_puart->println(len);
-	if (recvFind(">", 5000)) {
+	if (recvString(600000)) {
+    delay(2);
 		rx_empty();
 		for (uint32_t i = 0; i < len; i++)
 			m_puart->write(buffer[i]);
-		return recvFind("SEND OK", 10000);
+		return recvString("O","K","S","E","N","D", 600000);
 	}
 	return false;
 }
@@ -392,11 +456,11 @@ bool ESP8266::AT_CIPSEND_MULTIPLE(uint8_t mux_id, const uint8_t *buffer, uint32_
 	m_puart->print(mux_id);
 	m_puart->print(F(","));
 	m_puart->println(len);
-	if (recvFind(">", 15)) {
+	if (recvFind(">", 600000)) {
 		rx_empty();
 		for (uint32_t i = 0; i < len; i++)
 			m_puart->write(buffer[i]);
-		return recvString("O","K","S", 50);
+		return recvString("O","K","S","E","N","D", 600000);
 	}
 	return false;
 }
@@ -468,17 +532,16 @@ bool ESP8266::AT_CIPSTO(uint32_t timeout) {
 }
 
 //------------------------------------------------------------------------------
-// INIT: 	Establish a successful connection with network in STATION
-//			mode. This method will set the connection baud rate to be
-//			9600
+// INIT UDP: 	Establish a successful UDP connection with network in STATION
+//			      mode. 
 //------------------------------------------------------------------------------
 
-bool ESP8266::init(const String &ssid, const String &pwd, uint32_t baudRateSet) {
-	if (!autoSetBaud(baudRateSet)) {
-		Serial.print(F("AUTO SET BAUDRATE: "));
-		return false;
-	}
-
+bool ESP8266::init_UDP(const String &ssid, const String &pwd) {
+  if (!restart()) {
+    Serial.print(F("RESTART: "));
+    return false;
+  }
+  
 	if (!setOprToStation()) {
 		Serial.print(F("SET STATION OPTION: "));
 		return false;
@@ -498,13 +561,38 @@ bool ESP8266::init(const String &ssid, const String &pwd, uint32_t baudRateSet) 
 }
 
 //------------------------------------------------------------------------------
+// INIT TCP:  Establish a successful TCP connection with network in STATION
+//            mode. 
+//------------------------------------------------------------------------------
+
+bool ESP8266::init_TCP(uint8_t recv_mux_id, uint8_t send_mux_id) {
+
+  if (!unregisterUDP(recv_mux_id)) {
+   Serial.print(F("UNREGISTER UDP RECV: "));
+    return false;
+  }
+
+  if (!unregisterUDP(send_mux_id)) {
+    Serial.print(F("UNREGISTER UDP SEND: "));
+    return false;
+  }
+  
+  if (!disableMUX()) {
+    Serial.print(F("DISABLE MUX: "));
+    return false;
+  }
+
+  return true;
+}
+
+//------------------------------------------------------------------------------
 // AUTO SET BAUD: 	Detect ESP8266 baudrate and reset it to baudRateSet
 //------------------------------------------------------------------------------
 
 bool ESP8266::autoSetBaud(uint32_t baudRateSet) {
 	rx_empty();
 	long time0 = millis();
-	long baudRateArray[] = {9600, 19200, 57600, 115200};
+	long baudRateArray[] = {9600, 19200, 38400, 57600, 115200};
 	const int attempts = 5;
 	bool baudFlag = 0;
 
@@ -823,6 +911,14 @@ bool ESP8266::registerUDP(String addr, uint32_t port) {
 
 bool ESP8266::registerUDP(uint8_t mux_id, String addr, uint32_t port) {
 	return AT_CIPSTART_MULTIPLE(mux_id, "UDP", addr, port);
+}
+
+//------------------------------------------------------------------------------
+// REGISTER UDP:   Register UDP port number in single mode with local port
+//------------------------------------------------------------------------------
+
+bool ESP8266::registerUDP(String addr, uint32_t port, uint32_t local_port, uint8_t mode) {
+  return AT_CIPSTART_SINGLE("UDP", addr, port, local_port, mode);
 }
 
 //------------------------------------------------------------------------------
