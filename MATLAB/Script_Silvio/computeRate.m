@@ -1,6 +1,4 @@
 function [AV, MAX, MIN, loss] = computeRate(filename)
-    %date = erase(erase(filename,'.csv'),'../../server/log/log_');
-    
     unfilled = readFile(filename);
     
     % [var, d] = readFile('../server/log/log_2018-01-06_18-35-50.csv');
@@ -13,10 +11,10 @@ function [AV, MAX, MIN, loss] = computeRate(filename)
     
     filled = filler(unfilled);
     
-    %filled = computeDate(filled, date);
+    timestamp = computeDate(filled, erase(erase(filename,'.csv'),'../../server/log/log_'));
     
     figure;
-    plot(filled(:,1), filled(:,3));
+    plot(timestamp, filled(:,3));
     
     %vel = iomega(filled, 0.02, 3, 2);
     

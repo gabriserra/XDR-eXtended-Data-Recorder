@@ -225,7 +225,7 @@ int main() {
 						STARTED = FALSE;
 						if (fp != NULL)
 							fclose(fp);
-						processData();
+						//processData();
 						if (end())
 							return 0;
 						FD_CLR(socket_UDP, &master);
