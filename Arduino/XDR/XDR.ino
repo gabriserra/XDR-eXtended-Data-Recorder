@@ -159,7 +159,7 @@ bool init_UDP(){
 
   #ifdef UDP
     send_mux_id = 2;
-    if (!wifi.registerUDP(send_mux_id,BROADCAST_ADDRESS, SERVER_UDP_PORT)) {
+    if (!wifi.registerUDP(send_mux_id,SERVER_ADDRESS, SERVER_UDP_PORT)) {
       Serial.println(F("UDP SEND SERVER CONNECTION ERROR"));
       return false;
     }
