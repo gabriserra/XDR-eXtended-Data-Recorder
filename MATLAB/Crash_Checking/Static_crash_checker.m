@@ -51,9 +51,9 @@ function [ brakings ] = Static_crash_checker(accx)
     end
     
     %filtering
-    to_remove = find(brakings(:,1)>3 );
-    brakings(to_remove,:)=[];
-    to_remove = find(abs(brakings(:,3)) < 100)  
+    to_remove = find(brakings(:,1)>10 );
+   % brakings(to_remove,:)=[];
+    to_remove = find(abs(brakings(:,3)) < 50)  
     brakings(to_remove,:)=[];
 end
 

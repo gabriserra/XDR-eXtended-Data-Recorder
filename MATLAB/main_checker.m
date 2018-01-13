@@ -28,9 +28,14 @@ function [suddens, turns, static_crashes, dynamic_crashes] = main_checker(datain
     turns = Turn_Checker(accx,accy,giroz)
     
     %Crashes
-    static_crashes = Static_crash_checker(accx)
-    dynamic_crashes =Dynamic_crash_checker(accx);
+    static_crashes = Static_crash_checker(n_datain(:,3))
+    dynamic_crashes = Dynamic_crash_checker(accx);
+
     
-    
+    %remove static crashes from dynamic crashes
+    for i=1:1:size(static_crashes,1)
+        dynamic_crashes(find(dynamic_crashes(:,1) == static_crashes(i,4)),:)=[];
+    end
 end
+
 

@@ -1,9 +1,15 @@
+for i=3:1:5
+   var(:,i)= denoise(var(:,i));
+   % subtrip(:,i) = denoise(subtrip(:,i));
+end
+var=filler(var);
+
 figure;
-plot(var(:,1),var(:,2));
+plot(var(:,2),var(:,3));
 figure;
-plot(var(:,1),var(:,3));
-output(1,:)=brakings(1,:);output(1,:)=brakings(1,:);figure;
-plot(var(:,1),var(:,4));
+plot(var(:,2),var(:,4));
+figure;
+plot(var(:,2),var(:,5));
 % figure;
 % plot(var(:,1),var(:,5));
 % figure;
