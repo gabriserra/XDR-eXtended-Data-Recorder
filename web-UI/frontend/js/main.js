@@ -1,7 +1,7 @@
-// -------------------------
+// -----------------------------------------
 // MAIN.JS
-// It contains main js function
-// -----------------------
+// It contains js code to permit login/signup
+// ------------------------------------------
 
 $(document).ready(function(){
     check_if_logged();
@@ -10,22 +10,16 @@ $(document).ready(function(){
 });
 
 // -------------------------------------
-// CHECK USER FUNCTION
+// LOGGED/NOT-LOGGED USER FUNCTION
 // -------------------------------------
 
-// Change navbar link if already logged in
+// Make an ajax req to know if user is logged or not
 function check_if_logged() {
-    ajax_req(
-        php_redir,
-        "",     
-        check_succ, 
-        check_err
-    );
+    ajax_req(php_redir, "", check_succ, check_err);
 }
 
-// Action done in case of success
+// Hide login/signup button and show dashboard one
 function check_succ(reply) {
-    console.log(reply);
     if (reply.error == false) {
         $("#btn-login").hide();
         $("#btn-signup").hide();
@@ -34,7 +28,7 @@ function check_succ(reply) {
     }
 }
 
-// Action done in case of failure
+// Hide dashboard button (server not reachable)
 function check_err() {
     $("#btn-dashboard").hide();
 }
@@ -55,9 +49,8 @@ function submit_login() {
     );
 }
 
-// Action done in case of success
+// Redirect to dashboard if login was successful or display error
 function login_succ(reply) {
-    console.log(reply);
     if (reply.error == false) {
         window.location.replace(rel_dash_path);
     } else {
@@ -67,7 +60,7 @@ function login_succ(reply) {
     }
 }
 
-// Action done in case of failure
+// Show an alert if login was not possible
 function login_err() {
     $(".login-error-title").html("Error: ");
     $(".login-error-text").html("server unreachable.");
