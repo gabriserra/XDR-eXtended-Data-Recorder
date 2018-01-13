@@ -4,11 +4,10 @@
 // fill up crash page
 // -----------------------
 
-const MAX_CRASH_PER_PAGE = 4;
 const CAL_FIRST_DAY = 0;
 const CAL_LAST_DAY = 41;
 
-get_user_data();
+//get_user_data();
 
 $(document).ready(function(){
     datepicker_build();
@@ -16,6 +15,7 @@ $(document).ready(function(){
     datepickerchange_event_register();
     datepickerupdate_event_trigger();
     datepickerchange_event_trigger();
+    select_event_register();
 });
 
 // -------------------------------------
@@ -81,7 +81,7 @@ function datepickerview_event_register() {
             var initdata = $('.datepicker-days tbody td').eq(CAL_FIRST_DAY).attr("data-day");
             var lastdata = $('.datepicker-days tbody td').eq(CAL_LAST_DAY).attr("data-day");
             var serialized = "init="+initdata+"&last="+lastdata;
-            ajax_req(php_crash, serialized, datepicker_fill, datepicker_fill_error);
+            ajax_req(php_stat, serialized, datepicker_fill, datepicker_fill_error);
         }
     });
 }
@@ -98,7 +98,7 @@ function datepicker_fill(reply) {
         alert(reply.message);
     else
         for(var i = 0; i < $('.datepicker-days tbody td').length; i++)
-            if(reply.crashdates.includes($('.datepicker-days tbody td').eq(i).attr("data-day")))   
+            if(reply.statsdates.includes($('.datepicker-days tbody td').eq(i).attr("data-day")))   
                 $( ".datepicker-days tbody td" ).eq(i).addClass( "notify");
 }
 
@@ -109,7 +109,7 @@ function datepicker_fill_error(reply) {
 }
 
 // --------------------------
-// CRASH TABLE AJAX FUNCTION
+// SELECT LIST AJAX FUNCTION
 // --------------------------
 
 // AJAX-REQ
@@ -124,7 +124,7 @@ function datepickerchange_event_register() {
             date = moment();
 
         var serialized = "date="+date;
-        ajax_req(php_crash, serialized, table_fill, table_fill_error);
+        ajax_req(php_stat, serialized, select_fill, select_fill_error);
         datepickerupdate_event_trigger();
     });
 }
@@ -136,97 +136,127 @@ function datepickerchange_event_trigger() {
 
 // AJAX-REP
 // crash table fill
-function table_fill(reply) {
+function select_fill(reply) {
     if(reply.error == true) {
-        table_fill_empty();
+        select_fill_empty();
         return;
     }
     
-    pagination_reset();
-    pagination_create(reply.crashinfos.length);
-    table_reset();
+    select_reset();
 
-    for(var i = 0; i < reply.crashinfos.length; i++) {
-        $('.crash-table tbody').append(`
-        <tr style="display: none;">
-            <th>`+reply.crashinfos[i].number+`</th>
-            <td>`+reply.crashinfos[i].crashtime+`</td>
-            <td>`+reply.crashinfos[i].intensity+`</td>
-            <td>`+Boolean(reply.crashinfos[i].stationary)+`</td>
-        </tr>
-        `);
+    for(var i = 0; i < reply.statlist.length; i++) {
+        $('#trip-list').append(`<option value="`+reply.statlist[i].id+`">`+reply.statlist[i].time+`</option>`);
     }
 
-    show_rows(0);
+    select_event_trigger();
 }
 
 // AJAX-ERR
 // alert with an error in case of server error
-function table_fill_error() {
-    table_fill_empty();
-    alert("Unable to fill table - Server unrechable!");
+function select_fill_error() {
+    select_fill_empty();
+    alert("Unable to fill trip list - Server unrechable!");
 }
 
 // --------------------------
-// TABLE UTILITY FUNCTION
+// COUNTER AJAX FUNCTION
 // --------------------------
 
-// reset table content
-function table_reset() {
-    $('.crash-table tbody').html("");
+// AJAX-REQ
+// register event function
+function select_event_register() {
+    $('#trip-list').change(function(e){
+        console.log("ABC");
+        var id = $('#trip-list').find(":selected").val();
+
+        if(id == null)
+            return;
+
+        var serialized = "trip_id="+id;
+        ajax_req(php_stat, serialized, counter_fill, counter_fill_error);
+    });
 }
 
-// fill the table with empty row
-function table_fill_empty() {
-    pagination_reset();
-    $('.crash-table tbody').html(`
-        <tr>
-            <th>-</th>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-        </tr>`);
+// trigger select change event
+function select_event_trigger() {
+    $('#trip-list').trigger('change');
 }
 
-// show only limited number of rows
-function show_rows(init_number) {
-    for(var i = 0; i < $('.crash-table tbody tr').length; i++) {
-        if(i >= init_number && i < MAX_CRASH_PER_PAGE+init_number)
-            $('.crash-table tbody tr').eq(i).css("display", "table-row");
-        else
-            $('.crash-table tbody tr').eq(i).css("display", "none");
+// AJAX-REP
+// counter fill
+function counter_fill(reply) {
+    if(reply.error == true) {
+        counter_fill_empty();
+        return;
     }
+    
+    counter_reset();
+
+    counter_animate('#acc-num', reply.statdata.numberacc);
+    counter_animate('#acc-wrs', reply.statdata.worstacc);
+    counter_animate('#bra-num', reply.statdata.numberbra);
+    counter_animate('#bra-wrs', reply.statdata.worstbra);
+    counter_animate('#trn-num', reply.statdata.numbercur);
+    counter_animate('#trn-wrs', reply.statdata.worstcur);
 }
 
-// ---------------------------
-// PAGINATION UTILITY FUNCTION
-// ----------------------------
-
-// reset pagination to default one
-function pagination_reset() {
-    $('.pagination').html(`<li class="page-item active">
-                                <a class="page-link" href="javascript:pagechange(1)">1</a>
-                        </li>`);
+// AJAX-ERR
+// alert with an error in case of server error
+function counter_fill_error() {
+    counter_fill_empty();
+    alert("Unable to fill counters - Server unrechable!");
 }
 
-// create button for pagination
-function pagination_create(number) {
-    if(number > MAX_CRASH_PER_PAGE) {
-        for(var i = 0; i < (number % MAX_CRASH_PER_PAGE); i++) {
-            $('.pagination').append(`
-                <li class="page-item">
-                    <a class="page-link" href="javascript:pagechange(`+(i+2)+`)">`+(i+2)+`</a>
-                </li>
-            `);
-        }
-    }
+// --------------------------
+// SELECT UTILITY FUNCTION
+// --------------------------
+
+// reset select content
+function select_reset() {
+    $('#trip-list').html("");
 }
 
-// display the selected page
-function pagechange(pagenum) {
-    $('.pagination li').removeClass("active");
-    $('.pagination li').eq(pagenum-1).addClass("active");
-    show_rows((pagenum-1) * MAX_CRASH_PER_PAGE);
+// fill the table with empty option list
+function select_fill_empty() {
+    $('#trip-list').html("<option>-</option>");
+}
+
+// --------------------------
+// COUNTER UTILITY FUNCTION
+// --------------------------
+
+// reset counter content
+function counter_reset() {
+    for(var i = 0; i < $('.counter-card h3').length; i++) {
+        $('.counter-card h3').eq(i).html("");
+        $('.counter-card h3').eq(i).attr('style', '');
+    }     
+}
+
+// fill counters with empty value
+function counter_fill_empty() {
+    for(var i = 0; i < $('.counter-card h3').length; i++)
+        $('.counter-card h3').eq(i).html("-");
+}
+
+function counter_animate(selector, num) {
+    $(selector).html("0");
+    $(selector).animateNumber(
+        {
+          number: num,
+          color: counter_get_color(num),
+        },
+        2000
+      );
+}
+
+function counter_get_color(num) {
+    if(num < 2)
+        return $.Color("#1BC98E");
+    else if (num >= 2 && num < 5)
+        return $.Color("rgb(201, 175, 27)");
+    else
+        return $.Color("#E64759");
 }
 
 // -------------------------------------

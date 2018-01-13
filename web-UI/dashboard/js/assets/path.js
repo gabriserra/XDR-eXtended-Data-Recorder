@@ -15,6 +15,9 @@ var abs_fron_path = "https://gabriserra.github.io/XDR-eXtended-Data-Recorder/web
 
 var php_logout = "https://gabripr0.altervista.org/XDR/dashboard/php/logout.php";
 var php_redir = "https://gabripr0.altervista.org/XDR/dashboard/php/redirect.php";
-var php_crash = "https://gabripr0.altervista.org/XDR/dashboard/php/getcrash.php";
-var php_eval = "https://gabripr0.altervista.org/XDR/dashboard/php/getevaluation.php";
 var php_home = "https://gabripr0.altervista.org/XDR/dashboard/php/gethome.php";
+var php_eval = "https://gabripr0.altervista.org/XDR/dashboard/php/getevaluation.php";
+var php_stat = "https://gabripr0.altervista.org/XDR/dashboard/php/getstat.php";
+var php_crash = "https://gabripr0.altervista.org/XDR/dashboard/php/getcrash.php";
+
+

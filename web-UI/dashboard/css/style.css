@@ -5,22 +5,24 @@ DASHBOARD CSS FILE
 
 GENERAL:
     1 - Lateral navbar
-    2 - Containers and headings
+    2 - Containers, headings and colors
+    3 - Card setup
 
 HOME:
-    3 - Bio card
-    4 - Resume card
+    4 - Bio card
+    5 - Resume card
 
 EVALUATION:
-    5 - Full card
+    6 - Full card
 
 STATS:
-    6 - Calendar card
-    7 - Stat card
+    7 - Stat calendar card
+    8 - Select card
+    9 - Stat counter card
 
 CRASH:
-    7 - Crash calendar card
-    8 - Crash table card
+    10 - Crash calendar card
+    11 - Crash table card
 
 */
 
@@ -160,7 +162,49 @@ CRASH:
 
 /* 
 // ---------------------------
-// 3 - BIO CARD
+// 3 - CARD SETUP
+// ---------------------------
+*/
+
+.card-title {
+    padding: 20px;
+    position: relative;
+    line-height: 20px;
+    text-align: center;
+    margin-bottom: 0;
+}
+
+.card-title:before {
+    position: absolute;
+    top: 45%;
+    display: block;
+    content: "";
+    width: calc(100% - 40px);
+    height: 2px;
+    background-color: #eee;
+}
+
+.card-title h3 {
+    padding: 0 5px;
+    font-size: 18px;
+    position: relative;
+    display: inline-block;
+    font-weight: 300;
+    background-color: #fff;
+    z-index: 2;
+}
+
+.green {
+    color: #1BC98E;
+}
+
+.red {
+    color: #E64759;
+}
+
+/* 
+// ---------------------------
+// 4 - BIO CARD
 // ---------------------------
 */
 
@@ -194,39 +238,12 @@ CRASH:
 
 /* 
 // ---------------------------
-// 4 - RESUME CARD
+// 5 - RESUME CARD
 // ---------------------------
 */
 
 .resume-card {
     min-height: 402px;
-}
-
-.resume-card-title {
-    padding: 20px;
-    position: relative;
-    line-height: 20px;
-    text-align: center;
-}
-
-.resume-card-title:before {
-    position: absolute;
-    top: 45%;
-    display: block;
-    content: "";
-    width: calc(100% - 40px);
-    height: 2px;
-    background-color: #eee;
-}
-
-.resume-card-title h3 {
-    padding: 0 5px;
-    font-size: 18px;
-    position: relative;
-    display: inline-block;
-    font-weight: 300;
-    background-color: #fff;
-    z-index: 2;
 }
 
 .resume-data .col-sm-4 {
@@ -241,24 +258,11 @@ CRASH:
     vertical-align: middle;
 }
 
-.green {
-    color: #1BC98E;
-}
-
-.red {
-    color: #E64759;
-}
-
 .resume-data .caption {
     font-size: 85%;
     letter-spacing: .15em;
     color: #78838e;
     text-transform: uppercase;
-}
-
-.resume-chart {
-    margin-top: 30px;
-    padding: 0 50px;
 }
 
 .resume-gauge-container {
@@ -298,7 +302,7 @@ CRASH:
 
 /* 
 // ---------------------------
-// 5 - FULL CARD
+// 6 - FULL CARD
 // ---------------------------
 */
 
@@ -320,7 +324,82 @@ CRASH:
 
 /* 
 // ---------------------------
-// 7 - CRASH CALENDAR CARD
+// 7 - STAT CALENDAR CARD
+// ---------------------------
+*/
+
+.stat-calendar-card {
+    min-height: 300px;
+}
+
+.stat-calendar-container {
+    overflow: hidden;
+    padding: 0px 25px;
+    font-size: 0.7rem;
+}
+
+.stat-calendar-container .bootstrap-datetimepicker-widget table td.day {
+    height: 30px;
+    width: 30px;
+}
+
+.card-select {
+    margin-top: 20px;
+}
+
+.select-container {
+    text-align: center;
+}
+
+.select-trip-list {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0px;
+    margin-bottom: 20px;
+}
+
+/* 
+// ---------------------------
+// 9 - STAT COUNTER CARD
+// ---------------------------
+*/
+
+.counter-card {
+    min-height: 456px;
+}
+
+.counter-data .col-sm-4 {
+    padding: 10px 40px;
+    text-align: center;
+}
+
+.counter-data .unit {
+    display: inline-block;
+    padding: .4em;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+.counter-data .caption {
+    font-size: 85%;
+    letter-spacing: .15em;
+    color: #78838e;
+    text-transform: uppercase;
+}
+
+.counter-data h3 {
+    font-size: 4.5rem;
+}
+
+.white-space {
+    height: 40px;
+}
+
+
+/* 
+// ---------------------------
+// 10 - CRASH CALENDAR CARD
 // ---------------------------
 */
 
@@ -334,7 +413,7 @@ CRASH:
     font-size: 0.9rem;
 }
 
-.bootstrap-datetimepicker-widget table td.day {
+.calendar-container .bootstrap-datetimepicker-widget table td.day {
     height: 40px;
 }
 
@@ -361,7 +440,7 @@ CRASH:
 
 /* 
 // ---------------------------
-// 8 - CRASH TABLE CARD
+// 11 - CRASH TABLE CARD
 // ---------------------------
 */
 

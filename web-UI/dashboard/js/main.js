@@ -23,7 +23,6 @@ get_user_data();
 $(document).ready(function(){
     get_lasttrip_data();
     gauge_build();
-    toggle_tooltip();
 });
 
 // ----------------------------
@@ -66,6 +65,7 @@ function prepare_page(userdata) {
     $('.cover-img').css('background-image', 'url(' + img_svr_path + userdata.cover + ')');
     $('.card-name').html(userdata.name + " " + userdata.surname);
     $('.card-text').html(userdata.bio);
+    toggle_tooltip();
 }
 
 // -------------------------
