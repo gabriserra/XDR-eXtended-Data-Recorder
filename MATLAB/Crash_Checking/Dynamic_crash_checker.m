@@ -1,5 +1,5 @@
 function [crash] = Dynamic_crash_checker(accx)
-    peaks = find(accx < -0.3 & accx > -1.2 );
+    peaks = find(accx < -0.5 & accx > -1.2 );
    
 
     crash=0;

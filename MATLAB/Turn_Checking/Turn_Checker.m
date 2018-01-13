@@ -7,7 +7,7 @@
 % L'output restituito è:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [data]=Turn_Checker(accx,accy,giroz)
-      turn_peaks_threshold = 100;
+      turn_peaks_threshold = 0.25;
       turn_end_threshold = 1;
       data=0;
       %check sizes
@@ -27,9 +27,9 @@ function [data]=Turn_Checker(accx,accy,giroz)
       candidates=0;
       
       %peaks search
-      for i=1:1:size(giroz,1)
+      for i=1:1:size(accy,1)
       
-        if(turning == 0 && abs(giroz(i,1)) > turn_peaks_threshold)
+        if(turning == 0 && abs(accy(i,1)) > turn_peaks_threshold)
             start=i;
             candidates(j,1) = i;
             turning=1;
@@ -43,7 +43,7 @@ function [data]=Turn_Checker(accx,accy,giroz)
          end
          
         %turn interval computing
-        if(turning == 1 && ( (giroz(i,1) < 0 && directions(j-1,1) == 1) || (( (abs(giroz(i,1)) < 4 || giroz(i,1) > 0.5 ) && directions(j-1,1) == -1) ) || i == size(giroz,1)))
+        if(turning == 1 && ( (accy(i,1) < 0 && directions(j-1,1) == 1) || (( (abs(giroz(i,1)) < 4 || accy(i,1) > 0 ) && directions(j-1,1) == -1) ) || i == size(giroz,1)))
             interval(j-1,1) = i-start;
             turning = 0;
         end     
