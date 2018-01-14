@@ -42,7 +42,7 @@ function submit_login() {
     $("#form-login").vindicate("validate");
 
     ajax_req(
-        php_login,
+        php_signup,
         $("#form-login").serialize(),     
         login_succ, 
         login_err
