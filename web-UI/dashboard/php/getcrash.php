@@ -55,7 +55,7 @@ function retrieve_crash_dates($init_date, $last_date) {
     $my_result = $my_database->send_query($query_string);
     
     if ($my_result->num_rows == 0)
-        launch_error("No crashes founded.");
+        launch_error("No crashes found.");
     
     send_crash_dates($my_result);
 }
