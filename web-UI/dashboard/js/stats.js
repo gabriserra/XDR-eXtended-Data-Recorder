@@ -7,7 +7,7 @@
 const CAL_FIRST_DAY = 0;
 const CAL_LAST_DAY = 41;
 
-//get_user_data();
+get_user_data();
 
 $(document).ready(function(){
     datepicker_build();

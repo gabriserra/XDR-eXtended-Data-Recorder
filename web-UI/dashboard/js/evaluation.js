@@ -21,6 +21,7 @@ var gauge_ovr;
 get_user_data();
 
 $(document).ready(function(){
+    scroll_page_toggle();
     gauge_build();
     get_evaluation_data();
 });
@@ -281,4 +282,12 @@ function ajax_req(dest, info, succ, err) {
 // toggle on boostrap tooltip
 function toggle_tooltip() {
     $('[data-toggle="tooltip"]').tooltip(); 
+}
+
+// toggle on full height scroll on desktop
+function scroll_page_toggle() {
+    if(window.matchMedia("(min-width: 768px)").matches)
+        $('#fullpage').fullpage();
+    else
+        $('.row-heading:not(:first)').hide();
 }

@@ -138,10 +138,6 @@ CRASH:
     color: #777;
 }
 
-.full-height {
-    min-height: 100vh;
-}
-
 #preview-textfield {
     text-align: center;
 }
@@ -151,6 +147,9 @@ CRASH:
         box-sizing: border-box;
         margin-left: 70px;
         padding: 0px 70px;
+    }
+    .full-height {
+        min-height: 100vh;
     }
 }
 
@@ -305,9 +304,27 @@ CRASH:
 // 6 - FULL CARD
 // ---------------------------
 */
+@media (min-width: 768px) {
+    .card-full {
+        height: calc(100vh - 190px);
+    }
+}
+@media (max-width: 767px) {
+    .mt-4 {
+        display: none;
+    }
+}
 
-.card-full {
-    height: calc(100vh - 90px);
+.fp-section.fp-table, .fp-slide.fp-table {
+    display: block;
+    table-layout: auto;
+    width: auto;
+}
+
+.fp-tableCell {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .chart-container {
