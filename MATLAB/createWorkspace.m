@@ -1,5 +1,5 @@
 function createWorkspace()
-    path = '../server/log/oggi/';
+    path = '../server/log/50_Hz/';
     folder = dir(strcat(path,'*'));
     for sub_folder = folder'
         if(~strcmp(sub_folder.name,'..')==1)
@@ -11,10 +11,10 @@ function createWorkspace()
                     cmd = [filename '=readFile(strcat(sub_folder_path,file.name));'];
                     eval(cmd);
 
-                    if ~exist('dataset.mat','file')
-                        save('dataset.mat',filename);
+                    if ~exist('dataset3.mat','file')
+                        save('dataset3.mat',filename);
                     else
-                        save('dataset.mat',filename,'-append');
+                        save('dataset3.mat',filename,'-append');
                     end
                 end
             end

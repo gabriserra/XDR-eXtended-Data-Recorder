@@ -31,6 +31,17 @@ function [suddens, turns, static_crashes, dynamic_crashes] = main_checker(datain
     static_crashes = Static_crash_checker(n_datain(:,3))
     dynamic_crashes = Dynamic_crash_checker(accx);
 
+    %remove suddens from turns
+    proximity_margin = 100;
+        
+        for i=1:1:size(turns,1)
+            upper = turns(i,1)+turns(i,2)+ proximity_margin;
+            lower = turns(i,1)- proximity_margin;
+            to_remove = find(suddens(:,1) < upper & suddens(:,1) > lower);
+            suddens(to_remove,:) = [];
+        end
+    
+    
     
     %remove static crashes from suddens
     proximity_margin = 100;

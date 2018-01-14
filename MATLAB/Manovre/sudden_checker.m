@@ -8,8 +8,8 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ data ] = sudden_checker(accx)    
-      acc_threshold = 0.5;
-      brake_threshold = -0.1;
+      acc_threshold = 0.4;
+      brake_threshold = -0.3;
       brake_intensity_threshold = -0.2;
       turning = 0;
       j=1;
@@ -42,10 +42,10 @@ function [ data ] = sudden_checker(accx)
         
         
       end
-      
+        data=zeros(size(candidates,1),4);
       if(candidates ~= 0)
           %filtering
-          [candidates interval]
+          [candidates interval];
           to_remove = find(interval < 15);
          % to_remove = find data
          % candidates(to_remove) = [];

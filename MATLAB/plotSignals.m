@@ -1,8 +1,9 @@
+
 for i=3:1:5
-   var(:,i)= denoise(var(:,i));
+  %var(:,i)= denoise(var(:,i));
    % subtrip(:,i) = denoise(subtrip(:,i));
 end
-var=filler(var);
+% var=filler(var);
 
 figure;
 plot(var(:,2),var(:,3));

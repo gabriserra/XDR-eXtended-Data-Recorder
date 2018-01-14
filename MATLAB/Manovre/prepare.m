@@ -1,9 +1,16 @@
 subtrip = acc;
-subtrip2 = good;
-subtrip3 = post_kicks;
-subtrip4 = max1;
-subtrip5 = urto_max;
-% subtrip5 = crash_C2;
+subtrip2 = acc;
+subtrip3 = acc;
+subtrip4 =acc;
+subtrip5 = acc;
+subtrip6 = acc;
+
+noise_subtrip = filler(acc);
+noise_subtrip2=filler(acc);
+noise_subtrip3=filler(acc);
+noise_subtrip4=filler(acc);
+noise_subtrip5 = filler(acc);
+noise_subtrip6 = filler(acc);
 
 for i=3:1:5
      subtrip(:,i) = denoise(subtrip(:,i));
@@ -11,61 +18,68 @@ for i=3:1:5
      subtrip3(:,i) = denoise(subtrip3(:,i));
      subtrip4(:,i)= denoise(subtrip4(:,i));
      subtrip5(:,i) = denoise(subtrip5(:,i));
+     subtrip6(:,i) = denoise(subtrip6(:,i));
      
 end
-
-   noise_subtrip = filler(acc);
-   noise_subtrip2=filler(good);
-   noise_subtrip3=filler(post_kicks);
-   noise_subtrip4=filler(max1);
-   noise_subtrip5 = filler(urto_max);
  
  var_subtrip = filler(subtrip);
+ ylimits = size(var_subtrip,1)
+
  var_subtrip2=filler(subtrip2);
+ ylimits = [ylimits ; size(var_subtrip2,1)]
+
  var_subtrip3=filler(subtrip3);
+ ylimits = [ylimits ;size(var_subtrip3,1)]
+
  var_subtrip4=filler(subtrip4);
+ ylimit= [ylimits ;size(var_subtrip4,1)]
+
  var_subtrip5 = filler(subtrip5);
-
- %plot(var_acc_fren2(:,3),'r')
+ ylimits = [ylimits ;size(var_subtrip5,1)];
  
+ var_subtrip6 = filler(subtrip6);
+ ylimits = [ylimits ;size(var_subtrip6,1)];
 
-trip= var_subtrip;
-%trip = [trip; var_subtrip(:,1) (var_subtrip(:,2)+trip(size(trip,1),2)) var_subtrip(:,3) var_subtrip(:,4) var_subtrip(:,5)];
+
+for i=2:1:size(ylimits,1)
+    ylimits(i,1) =  ylimits(i-1,1)+ylimits(i,1);
+end
+
+
+ 
+ trip= var_subtrip;
  trip = [trip; var_subtrip2(:,1)  (var_subtrip2(:,2)+trip(size(trip,1),2)) var_subtrip2(:,3) var_subtrip2(:,4) var_subtrip2(:,5)];
  trip = [trip;  var_subtrip3(:,1)  ( var_subtrip3(:,2)+trip(size(trip,1),2))  var_subtrip3(:,3)  var_subtrip3(:,4)  var_subtrip3(:,5)];
  trip = [trip; var_subtrip4(:,1)  (var_subtrip4(:,2)+trip(size(trip,1),2)) var_subtrip4(:,3) var_subtrip4(:,4) var_subtrip4(:,5)];
  trip = [trip; var_subtrip5(:,1)  (var_subtrip5(:,2)+trip(size(trip,1),2)) var_subtrip5(:,3) var_subtrip5(:,4) var_subtrip5(:,5)];
-
+ trip = [trip; var_subtrip6(:,1)  (var_subtrip6(:,2)+trip(size(trip,1),2)) var_subtrip6(:,3) var_subtrip6(:,4) var_subtrip6(:,5)];
 
  n_trip= noise_subtrip;
  n_trip = [n_trip; noise_subtrip2(:,1)  (noise_subtrip2(:,2)+n_trip(size(n_trip,1),2)) noise_subtrip2(:,3) noise_subtrip2(:,4) noise_subtrip2(:,5)];
  n_trip = [n_trip;  noise_subtrip3(:,1)  ( noise_subtrip3(:,2)+n_trip(size(n_trip,1),2))  noise_subtrip3(:,3)  noise_subtrip3(:,4)  noise_subtrip3(:,5)];
  n_trip = [n_trip; noise_subtrip4(:,1)  (noise_subtrip4(:,2)+n_trip(size(n_trip,1),2)) noise_subtrip4(:,3) noise_subtrip4(:,4) noise_subtrip4(:,5)];
  n_trip = [n_trip; noise_subtrip5(:,1)  (noise_subtrip5(:,2)+n_trip(size(n_trip,1),2)) noise_subtrip5(:,3) noise_subtrip5(:,4) noise_subtrip5(:,5)];
-% 
-% 
-% xlimits=[size(var_subtrip,1) size(var_subtrip,1) size(var_subtrip,1)+size(var_subtrip2,1) size(var_subtrip,1)+size(var_subtrip2,1)  ];
-% ylimits=[-2 2 -2 2];
+ n_trip = [n_trip; noise_subtrip6(:,1)  (noise_subtrip6(:,2)+n_trip(size(n_trip,1),2)) noise_subtrip6(:,3) noise_subtrip6(:,4) noise_subtrip6(:,5)];
+
+
 var=trip;
 n_var=n_trip;
+
 figure;
 plot(n_var(:,3),'r');
 hold on;
 plot(var(:,3));
+hold on; 
+vline(ylimits','g')
 
-% hold on;
-% plot(xlimits,ylimits,'r')
-
-%plot( size(var_subtrip,1) ,size(var_subtrip,1),-1.5,1.5);
-var = trip;
 figure;
 plot(var(:,4));
-% hold on;
-% plot(xlimits,ylimits,'r')
+vline(ylimits','g')
+
 figure;
 plot(var(:,5));
-% hold on;
-% plot(xlimits,ylimits,'r')
+vline(ylimits','g')
+
 
 %plot(var(:,3),'r')
 [suddens, turns, static_crashes, dynamic_crashes]=main_checker(var,n_var);
