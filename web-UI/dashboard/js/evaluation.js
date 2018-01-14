@@ -284,7 +284,7 @@ function toggle_tooltip() {
     $('[data-toggle="tooltip"]').tooltip(); 
 }
 
-// toggle on full height scroll on desktop
+// toggle on full height scroll on big devices
 function scroll_page_toggle() {
     if(window.matchMedia("(min-width: 768px)").matches)
         $('#fullpage').fullpage();

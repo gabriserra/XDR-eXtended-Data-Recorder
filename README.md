@@ -43,7 +43,7 @@ web-UI
 * <b>Andrea Baldecchi</b>
 * <b>Gabriele Serra</b>
 
-The same list can be found also in the <a href="graphs/contributors/">contributors of this project.</a>
+The same list can be found also in the <a href="https://github.com/gabriserra/XDR-eXtended-Data-Recorder/graphs/contributors">contributors of this project.</a>
 
 ## License and citation
 The project comes with an Apache 2 license. Of you want to use this code, you can do without limitation but you have to document the modifications and include this license. If you want to cite, please refer to:
