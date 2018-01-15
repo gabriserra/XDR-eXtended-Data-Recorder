@@ -1,4 +1,5 @@
 function [loss, stats] = computeLossPackets(filename)
+    fprintf('CIAO\n');
     unfilled = readFile(filename);
     diff = zeros(size(unfilled,1), 4);
     duration = unfilled(size(unfilled,1),1) - unfilled(1,1);

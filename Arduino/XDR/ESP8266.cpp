@@ -440,12 +440,12 @@ bool ESP8266::AT_CIPSEND_SINGLE(const uint8_t *buffer, uint32_t len) {
 	rx_empty();
 	m_puart->print(F("AT+CIPSEND="));
 	m_puart->println(len);
-	if (recvString(600000)) {
+	if (recvString(30000)) {
     delay(2);
 		rx_empty();
 		for (uint32_t i = 0; i < len; i++)
 			m_puart->write(buffer[i]);
-		return recvString("O","K","S","E","N","D", 600000);
+		return recvString("O","K","S","E","N","D", 30000);
 	}
 	return false;
 }

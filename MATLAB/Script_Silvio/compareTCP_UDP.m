@@ -17,10 +17,13 @@ MIN_UDP = [MIN_UDP_S; MIN_UDP_X; MIN_UDP_A];
 MIN_TCP = [MIN_TCP_S; MIN_TCP_X; MIN_TCP_A];
 
 STATS_1_UDP = [LOSS_UDP_S(size(LOSS_UDP_S,1) - 1,1:3); LOSS_UDP_X(size(LOSS_UDP_X,1) - 1,1:3); LOSS_UDP_A(size(LOSS_UDP_A,1) - 1,1:3)];
-%STATS_1_TCP = [LOSS_TCP_S(size(LOSS_TCP_S,1) - 1,1:3); LOSS_TCP_X(size(LOSS_TCP_X,1) - 1,1:3); LOSS_TCP_A(size(LOSS_TCP_A,1) - 1,1:3)];
-
 STATS_2_UDP = [LOSS_UDP_S(size(LOSS_UDP_S,1),:); LOSS_UDP_X(size(LOSS_UDP_X,1),:); LOSS_UDP_A(size(LOSS_UDP_A,1),:)];
-%STATS_2_TCP = [LOSS_TCP_S(size(LOSS_TCP_S,1),:); LOSS_TCP_X(size(LOSS_TCP_X,1),:); LOSS_TCP_A(size(LOSS_TCP_A,1),:)];
+
+if ~isempty(LOSS_TCP_S) && ~isempty(LOSS_TCP_X) && ~isempty(LOSS_TCP_A)
+    STATS_1_TCP = [LOSS_TCP_S(size(LOSS_TCP_S,1) - 1,1:3); LOSS_TCP_X(size(LOSS_TCP_X,1) - 1,1:3); LOSS_TCP_A(size(LOSS_TCP_A,1) - 1,1:3)];
+    STATS_2_TCP = [LOSS_TCP_S(size(LOSS_TCP_S,1),:); LOSS_TCP_X(size(LOSS_TCP_X,1),:); LOSS_TCP_A(size(LOSS_TCP_A,1),:)];
+end
+
 set(0,'DefaultFigureVisible','on');
 
 str1 = [string('MEDIA TEMPO DI TRASMISSIONE'); string('MAX TEMPO DI TRASMISSIONE'); string('MIN TEMPO DI TRASMISSIONE'); string('MAX PERSI CONS.'); string('MIN PERSI CONS.'); string('MEDIA PERSI CONS.'); string('TOT. PACCHETTI PERSI'); string('TOT. TEMPO PERSO'); string('TOTALE REGISTRATO'); string('PERCENTUALE PERSA')];
@@ -33,7 +36,11 @@ UDP = [names UDP];
 
 str2 = [string('MEDIA TEMPO DI TRASMISSIONE'); string('MAX TEMPO DI TRASMISSIONE'); string('MIN TEMPO DI TRASMISSIONE')];
 
-TCP = [str2'; AVERAGE_TCP MAX_TCP MIN_TCP];
+if ~isempty(LOSS_TCP_S) && ~isempty(LOSS_TCP_X) && ~isempty(LOSS_TCP_A)
+    TCP = [str2'; AVERAGE_TCP MAX_TCP MIN_TCP STATS_1_TCP STATS_2_TCP];
+else
+    TCP = [str2'; AVERAGE_TCP MAX_TCP MIN_TCP];
+end
 
 TCP = [names TCP];
 

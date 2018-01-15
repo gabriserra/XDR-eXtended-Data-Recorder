@@ -1,5 +1,5 @@
 function createWorkspace()
-    path = '../server/log/50_Hz/';
+    path = '../server/log/oggi2/';
     folder = dir(strcat(path,'*'));
     for sub_folder = folder'
         if(~strcmp(sub_folder.name,'..')==1)
@@ -7,6 +7,7 @@ function createWorkspace()
             files = dir(strcat(sub_folder_path,'*'));
             for file = files'
                 if(contains(file.name,'log') == 1)
+                    computeRate(file.name);
                     filename = erase(strrep(file.name, '-','_'),'.csv');
                     cmd = [filename '=readFile(strcat(sub_folder_path,file.name));'];
                     eval(cmd);
