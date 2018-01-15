@@ -11,7 +11,6 @@ const CAL_LAST_DAY = 41;
 get_user_data();
 
 $(document).ready(function(){
-    toggle_tooltip();
     datepicker_build();
     datepickerview_event_register();
     datepickerchange_event_register();
@@ -55,6 +54,7 @@ function prepare_page(userdata) {
     $('.nav-user-a').attr("href", php_logout);
     $('.nav-user-a').attr("title", userdata.username + " - Logout");
     $('.nav-avatar').attr("src", img_svr_path + userdata.avatar);
+    toggle_tooltip();
 }
 
 // -----------------------------

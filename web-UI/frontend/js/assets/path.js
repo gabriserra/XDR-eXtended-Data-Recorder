@@ -16,4 +16,4 @@ var abs_fron_path = "https://gabriserra.github.io/XDR-eXtended-Data-Recorder/web
 var php_logout = "https://gabripr0.altervista.org/XDR/frontend/php/logout.php";
 var php_redir = "https://gabripr0.altervista.org/XDR/frontend/php/redirect.php";
 var php_login = "https://gabripr0.altervista.org/XDR/frontend/php/login.php";
-var php_signup = "https://gabripr0.altervista.org/XDR/frontend/php/login.php";
+var php_signup = "https://gabripr0.altervista.org/XDR/frontend/php/signup.php";

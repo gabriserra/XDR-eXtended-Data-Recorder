@@ -6,11 +6,11 @@
 // -------------------------------------
 
 // -----------------------------------
-// JSON OBJECT SAMPLE
+// JSON OBJECT EXAMPLE
 // -----------------------------------
 /*
     '{  
-        "mail" : 
+        "email" : 
             "user@example.it",
         "trip" : {
             "meters" : 50,
@@ -22,7 +22,8 @@
             "worstacc" : 5,
             "numberbra" : 1,
             "worstbra" : 3,
-            "numbercur" : 8 
+            "numbercur" : 8,
+            "worstcur" : 4  
         },
         "evaluation" : {
             "pointstotal" : 2,
@@ -34,7 +35,7 @@
         "crash" : {
             "crashtime" : "2018-01-07 07:30:00",
             "intensity" : 5,
-            "stationary" : 0,
+            "stationary" : 0
         }
     }';
 */
@@ -47,33 +48,49 @@ require_once "assets/jsonresponse.php";
 
 // -------------------------------------
 // PHP SERVER MAIN CODE
+//      GET DATA & DECODE
+//      INSERT TRIP & RETRIEVE ID
+//      INSERT STAT
+//      INSERT EVALUATION
+//      INSERT CRASH (NOT MANDATORY)
+//      RETRIEVE RESUME
+//      CALCULATE NEW RESUME
+//      UPDATE RESUME
+//      CLOSE & SUCCESS REPLY
 // -------------------------------------
 
-// GET DATA
-// INSERT TRIP & RETRIEVE ID
-// INSERT STAT
-// INSERT EVALUATION
-// INSERT CRASH (NOT MANDATORY)
-// RETRIEVE RESUME
-// CALCULATE NEW RESUME
-// UPDATE RESUME
-// CLOSE & SUCCESS REPLY
-
+// get data from POST req and decode it
 $data_array = json_decode($_POST['content'], true);
+
+// insert new trip into the db and retrieve the inserted id
 $trip_id = insert_trip($data_array['email'], $data_array['trip']);
+
+// insert stats related to last trip
 insert_stat($trip_id, $data_array['stat']);
+
+// insert evaluations related to last trip
 insert_evaluation($trip_id, $data_array['evaluation']);
+
+// insert crashes related to last trip (if present)
 insert_crash($trip_id, $data_array['crash']);
+
+// retrieve total resume point of the user
 $resume = get_resume_points($data_array['email']);
+
+// calculate new total resume point of the user
 $new_resume = calculate_new_resume($resume, $data_array['trip'], $data_array['evaluation']);
+
+// update new total resume point of the user
 update_resume_data($data_array['email'], $new_resume);
+
+// reply to the client
 close_and_reply();
 
 // -------------------------------------
 // DB QUERY FUNCTIONS
 // -------------------------------------
 
-// insert trip data and return the trip id
+// Insert trip data and return the trip id
 function insert_trip($email, $trip) {
     global $my_database;
 
@@ -88,12 +105,12 @@ function insert_trip($email, $trip) {
     $my_result = $my_database->send_query($query_string);
 
     if (!$my_result)
-        launch_error("Problem inserting trip data.");
+        launch_error("Problem inserting trip data, maybe user is not registered.");
 
     $my_id = $my_database->get_last_id();
 }
 
-// insert stat data into DB
+// Insert stat data into DB
 function insert_stat($trip_id, $stat) {
     global $my_database;
 
@@ -112,7 +129,7 @@ function insert_stat($trip_id, $stat) {
         launch_error("Problem inserting stat data.");
 }
 
-// insert evaluation data into db
+// Insert evaluation data into db
 function insert_evaluation($trip_id, $evaluation) {
     global $my_database;
 
@@ -131,7 +148,7 @@ function insert_evaluation($trip_id, $evaluation) {
         launch_error("Problem inserting evaluation data.");
 }
 
-// insert crash data into db if crash data is not null
+// Insert crash data into db if crash data is not null
 function insert_crash($trip_id, $crash) {
     global $my_database;
 
@@ -151,7 +168,7 @@ function insert_crash($trip_id, $crash) {
         launch_error("Problem inserting crash data.");
 }
 
-// get all resume info of a user
+// Get all resume info of a user
 function get_resume_points($email) {
     global $my_database;
 
@@ -165,7 +182,7 @@ function get_resume_points($email) {
     return $resume;
 }
 
-// calculate new resume data starting from new trip and old resume data
+// Calculate new resume data starting from new trip and old resume data
 function calculate_new_resume($resume, $trip, $evaluation) {
     $driven_hour = $resume['drivenhours'];
     $triplen_hour = $trip['secondslength'] / 3600;
@@ -196,7 +213,7 @@ function calculate_new_resume($resume, $trip, $evaluation) {
     return $new_resume;
 }
 
-// update resume data of user
+// Update resume data of user
 function update_resume_data($email, $new_resume) {
     global $my_database;
 
@@ -215,7 +232,7 @@ function update_resume_data($email, $new_resume) {
         launch_error("Problem updating resume data.");
 }
 
-// reply to script caller & close the connection with db
+// Reply to script caller & close the connection with db
 function close_and_reply() {
     launch_response("Data inserted with success!");
     $my_database->close_connection();

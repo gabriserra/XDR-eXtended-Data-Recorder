@@ -21,9 +21,9 @@ var gauge_ovr;
 get_user_data();
 
 $(document).ready(function(){
+    scroll_page_toggle();
     gauge_build();
     get_evaluation_data();
-    toggle_tooltip();
 });
 
 // -------------------------------------
@@ -62,6 +62,7 @@ function prepare_page(userdata) {
     $('.nav-user-a').attr("href", php_logout);
     $('.nav-user-a').attr("title", userdata.username + " - Logout");
     $('.nav-avatar').attr("src", img_svr_path + userdata.avatar);
+    toggle_tooltip();
 }
 
 // -----------------------------
@@ -178,225 +179,51 @@ function chart_tot_draw(eval_data) {
                           y : Number(eval_data[i].pointstotal) };
     }
 
-    var chart = new CanvasJS.Chart("chart-tot", {
-        animationEnabled: true,
-        axisX: {
-            valueFormatString: "#",
-            titleFontFamily: "Roboto",
-            interval: 1,
-            minimum: data_points[0].x,
-            maximum: data_points[data_points.length-1].x
-        },
-        axisY: {
-            gridThickness: 0,
-            tickLength: 0,
-            margin: 0,
-            lineThickness: 0,
-            valueFormatString: " "
-        },
-        legend: {
-            fontFamily: "Roboto",
-            verticalAlign: "top",
-            horizontalAlign: "right",
-            dockInsidePlotArea: true
-        },
-        toolTip: {
-            shared: true
-        },
-        data: [{
-            name: "Overall",
-            legendMarkerType: "square",
-            type: "area",
-            color: "rgba(40,175,101,0.6)",
-            markerSize: 0,
-            dataPoints: data_points
-        }]
-    });
-    chart.render();
+    build_chart("chart-tot", data_points);
 }
 
 // build chart acc
 function chart_acc_draw(eval_data) {
-    var chart = new CanvasJS.Chart("chart-container", {
-        animationEnabled: true,
-        axisX: {
-            valueFormatString: "DDD",
-            titleFontFamily: "Roboto",
-            minimum: new Date(2017, 1, 5, 23),
-            maximum: new Date(2017, 1, 12, 1)
-        },
-        axisY: {
-            gridThickness: 0,
-            tickLength: 0,
-            margin: 0,
-            lineThickness: 0,
-            valueFormatString: " "
-        },
-        legend: {
-            fontFamily: "Roboto",
-            verticalAlign: "top",
-            horizontalAlign: "right",
-            dockInsidePlotArea: true
-        },
-        toolTip: {
-            shared: true
-        },
-        data: [{
-            name: "Overall",
-            legendMarkerType: "square",
-            type: "area",
-            color: "rgba(40,175,101,0.6)",
-            markerSize: 0,
-            dataPoints: [
-                { x: new Date(2017, 1, 6), y: 220 },
-                { x: new Date(2017, 1, 7), y: 120 },
-                { x: new Date(2017, 1, 8), y: 144 },
-                { x: new Date(2017, 1, 9), y: 162 },
-                { x: new Date(2017, 1, 10), y: 129 },
-                { x: new Date(2017, 1, 11), y: 109 },
-                { x: new Date(2017, 1, 12), y: 129 }
-            ]
-        }]
-    });
-    chart.render();
+    var data_points = [];
+    for(var i = 0; i < eval_data.length; i++) {
+        data_points[i] = { x : Number(eval_data[i].number), 
+                          y : Number(eval_data[i].pointsacceleration) };
+    }
+
+    build_chart("chart-acc", data_points);
 }
 
 // build chart bra
 function chart_bra_draw(eval_data) {
-    var chart = new CanvasJS.Chart("chart-container", {
-        animationEnabled: true,
-        axisX: {
-            valueFormatString: "DDD",
-            titleFontFamily: "Roboto",
-            minimum: new Date(2017, 1, 5, 23),
-            maximum: new Date(2017, 1, 12, 1)
-        },
-        axisY: {
-            gridThickness: 0,
-            tickLength: 0,
-            margin: 0,
-            lineThickness: 0,
-            valueFormatString: " "
-        },
-        legend: {
-            fontFamily: "Roboto",
-            verticalAlign: "top",
-            horizontalAlign: "right",
-            dockInsidePlotArea: true
-        },
-        toolTip: {
-            shared: true
-        },
-        data: [{
-            name: "Overall",
-            legendMarkerType: "square",
-            type: "area",
-            color: "rgba(40,175,101,0.6)",
-            markerSize: 0,
-            dataPoints: [
-                { x: new Date(2017, 1, 6), y: 220 },
-                { x: new Date(2017, 1, 7), y: 120 },
-                { x: new Date(2017, 1, 8), y: 144 },
-                { x: new Date(2017, 1, 9), y: 162 },
-                { x: new Date(2017, 1, 10), y: 129 },
-                { x: new Date(2017, 1, 11), y: 109 },
-                { x: new Date(2017, 1, 12), y: 129 }
-            ]
-        }]
-    });
-    chart.render();
+    var data_points = [];
+    for(var i = 0; i < eval_data.length; i++) {
+        data_points[i] = { x : Number(eval_data[i].number), 
+                          y : Number(eval_data[i].pointsbraking) };
+    }
+
+    build_chart("chart-bra", data_points);
 }
 
 // build chart ste
 function chart_ste_draw(eval_data) {
-    var chart = new CanvasJS.Chart("chart-container", {
-        animationEnabled: true,
-        axisX: {
-            valueFormatString: "DDD",
-            titleFontFamily: "Roboto",
-            minimum: new Date(2017, 1, 5, 23),
-            maximum: new Date(2017, 1, 12, 1)
-        },
-        axisY: {
-            gridThickness: 0,
-            tickLength: 0,
-            margin: 0,
-            lineThickness: 0,
-            valueFormatString: " "
-        },
-        legend: {
-            fontFamily: "Roboto",
-            verticalAlign: "top",
-            horizontalAlign: "right",
-            dockInsidePlotArea: true
-        },
-        toolTip: {
-            shared: true
-        },
-        data: [{
-            name: "Overall",
-            legendMarkerType: "square",
-            type: "area",
-            color: "rgba(40,175,101,0.6)",
-            markerSize: 0,
-            dataPoints: [
-                { x: new Date(2017, 1, 6), y: 220 },
-                { x: new Date(2017, 1, 7), y: 120 },
-                { x: new Date(2017, 1, 8), y: 144 },
-                { x: new Date(2017, 1, 9), y: 162 },
-                { x: new Date(2017, 1, 10), y: 129 },
-                { x: new Date(2017, 1, 11), y: 109 },
-                { x: new Date(2017, 1, 12), y: 129 }
-            ]
-        }]
-    });
-    chart.render();
+    var data_points = [];
+    for(var i = 0; i < eval_data.length; i++) {
+        data_points[i] = { x : Number(eval_data[i].number), 
+                          y : Number(eval_data[i].pointssteering) };
+    }
+
+    build_chart("chart-ste", data_points);
 }
 
 // build chart ovr
 function chart_ovr_draw(eval_data) {
-    var chart = new CanvasJS.Chart("chart-container", {
-        animationEnabled: true,
-        axisX: {
-            valueFormatString: "DDD",
-            titleFontFamily: "Roboto",
-            minimum: new Date(2017, 1, 5, 23),
-            maximum: new Date(2017, 1, 12, 1)
-        },
-        axisY: {
-            gridThickness: 0,
-            tickLength: 0,
-            margin: 0,
-            lineThickness: 0,
-            valueFormatString: " "
-        },
-        legend: {
-            fontFamily: "Roboto",
-            verticalAlign: "top",
-            horizontalAlign: "right",
-            dockInsidePlotArea: true
-        },
-        toolTip: {
-            shared: true
-        },
-        data: [{
-            name: "Overall",
-            legendMarkerType: "square",
-            type: "area",
-            color: "rgba(40,175,101,0.6)",
-            markerSize: 0,
-            dataPoints: [
-                { x: new Date(2017, 1, 6), y: 220 },
-                { x: new Date(2017, 1, 7), y: 120 },
-                { x: new Date(2017, 1, 8), y: 144 },
-                { x: new Date(2017, 1, 9), y: 162 },
-                { x: new Date(2017, 1, 10), y: 129 },
-                { x: new Date(2017, 1, 11), y: 109 },
-                { x: new Date(2017, 1, 12), y: 129 }
-            ]
-        }]
-    });
-    chart.render();
+    var data_points = [];
+    for(var i = 0; i < eval_data.length; i++) {
+        data_points[i] = { x : Number(eval_data[i].number), 
+                          y : Number(eval_data[i].pointsspeed) };
+    }
+
+    build_chart("chart-ovr", data_points);
 }
 
 // -------------------------------------
@@ -427,9 +254,6 @@ function build_chart(chart_id, data_points) {
             horizontalAlign: "right",
             dockInsidePlotArea: true
         },
-        toolTip: {
-            shared: true
-        },
         data: [{
             name: "Overall",
             legendMarkerType: "square",
@@ -458,4 +282,12 @@ function ajax_req(dest, info, succ, err) {
 // toggle on boostrap tooltip
 function toggle_tooltip() {
     $('[data-toggle="tooltip"]').tooltip(); 
+}
+
+// toggle on full height scroll on big devices
+function scroll_page_toggle() {
+    if(window.matchMedia("(min-width: 768px)").matches)
+        $('#fullpage').fullpage();
+    else
+        $('.row-heading:not(:first)').hide();
 }

@@ -8,6 +8,9 @@
 header('Access-Control-Allow-Origin: https://gabriserra.github.io');
 header('Access-Control-Allow-Credentials: true');
 
+// header path location
+define("HOME_PATH", "https://gabriserra.github.io/XDR-eXtended-Data-Recorder/");
+
 // session start/init
 session_check();
 
@@ -15,7 +18,7 @@ session_check();
 session_destroy();
 
 //readdress to calling page
-header("Location: " . $_SERVER['HTTP_REFERER']);
+header("Location: " . HOME_PATH);
 
 // Start PHP session or fill with empty one
 function session_check() {

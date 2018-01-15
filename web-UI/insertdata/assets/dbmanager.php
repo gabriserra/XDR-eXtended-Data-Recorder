@@ -53,10 +53,12 @@ class db_manager {
             return $this->my_connection->ping();
     }
 
+    // get last db error string
     function get_last_error() {
         return $this->my_connection->error;
     }
 
+    // get last inserted id
     function get_last_id() {
         return $this->my_connection->insert_id;
     }
