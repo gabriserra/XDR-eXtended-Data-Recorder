@@ -5,6 +5,8 @@
 // SQL database
 // -------------------------------------
 
+header('Content-type: application/json');
+
 // -----------------------------------
 // JSON OBJECT EXAMPLE
 // -----------------------------------
@@ -49,6 +51,7 @@ require_once "assets/jsonresponse.php";
 // -------------------------------------
 // PHP SERVER MAIN CODE
 //      GET DATA & DECODE
+//      DECODED SUCCESSFULL?
 //      INSERT TRIP & RETRIEVE ID
 //      INSERT STAT
 //      INSERT EVALUATION
@@ -61,6 +64,9 @@ require_once "assets/jsonresponse.php";
 
 // get data from POST req and decode it
 $data_array = json_decode($_POST['content'], true);
+
+// check if decoded json had correct format
+check_decoded_json($data_array);
 
 // insert new trip into the db and retrieve the inserted id
 $trip_id = insert_trip($data_array['email'], $data_array['trip']);
@@ -86,6 +92,16 @@ update_resume_data($data_array['email'], $new_resume);
 // reply to the client
 close_and_reply();
 
+// -----------------------------------
+// JSON STRING FUNCTIONS
+// -----------------------------------
+
+// Check if JSON decoded with success
+function check_decoded_json($data_array) {
+    if($data_array == null)
+        launch_error("JSON arrived to server is not correct.");
+}
+
 // -------------------------------------
 // DB QUERY FUNCTIONS
 // -------------------------------------
@@ -107,7 +123,7 @@ function insert_trip($email, $trip) {
     if (!$my_result)
         launch_error("Problem inserting trip data, maybe user is not registered.");
 
-    $my_id = $my_database->get_last_id();
+    return $my_id = $my_database->get_last_id();
 }
 
 // Insert stat data into DB
@@ -115,13 +131,14 @@ function insert_stat($trip_id, $stat) {
     global $my_database;
 
     $query_string = 
-        "INSERT INTO `xdr_stat` (`id`, `numberacc`, `worstacc`, `numberbra`, `worstbra`, `numbercur`) 
+        "INSERT INTO `xdr_stat` (`id`, `numberacc`, `worstacc`, `numberbra`, `worstbra`, `numbercur`, `worstcur`) 
         VALUES ('" . $trip_id . "', 
                 '" . $stat['numberacc'] . "', 
                 '" . $stat['worstacc'] . "', 
                 '" . $stat['numberbra'] . "',
                 '" . $stat['worstbra'] . "',
-                '" . $stat['numbercur'] . "');";
+                '" . $stat['numbercur'] . "',
+                '" . $stat['worstcur'] . "');";
 
     $my_result = $my_database->send_query($query_string);
 
@@ -158,9 +175,9 @@ function insert_crash($trip_id, $crash) {
     $query_string = 
         "INSERT INTO `xdr_crash` (`id`, `crashtime`, `intensity`, `stationary`) 
         VALUES ('" . $trip_id . "', 
-                '" . $evaluation['crashtime'] . "', 
-                '" . $evaluation['intensity'] . "', 
-                '" . $evaluation['stationary'] . "');";
+                '" . $crash['crashtime'] . "', 
+                '" . $crash['intensity'] . "', 
+                '" . $crash['stationary'] . "');";
 
     $my_result = $my_database->send_query($query_string);
 
@@ -172,7 +189,7 @@ function insert_crash($trip_id, $crash) {
 function get_resume_points($email) {
     global $my_database;
 
-    $query_string = "SELECT * FROM user WHERE email = '" . $email . "'";
+    $query_string = "SELECT * FROM `xdr_user` WHERE `email` = '" . $email . "'";
     $my_result = $my_database->send_query($query_string);
     
     if ($my_result->num_rows != 1)
@@ -237,7 +254,3 @@ function close_and_reply() {
     launch_response("Data inserted with success!");
     $my_database->close_connection();
 }
-
-
-
-
