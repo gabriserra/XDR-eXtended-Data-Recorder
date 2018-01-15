@@ -117,7 +117,7 @@ int main() {
 	
 	callMatlabScript("../log/log_2018-01-15_10-57-23.csv");
 	
-	fp = fopen("../matlab_c/tmp.txt", "r");
+	fp = fopen("../matlab_c/.tmp.txt", "r");
 	fgets(json_content, 1024, fp);
 	fclose(fp);
 
