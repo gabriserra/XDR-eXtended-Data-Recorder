@@ -1,5 +1,5 @@
 function createWorkspace()
-    path = '../server/log/oggi2/';
+    path = '../server/log/';
     folder = dir(strcat(path,'*'));
     for sub_folder = folder'
         if(~strcmp(sub_folder.name,'..')==1)

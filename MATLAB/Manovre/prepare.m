@@ -1,22 +1,22 @@
-subtrip = acc;
-subtrip2 = kicks;
-subtrip3 = max1;
-subtrip4 =max2;
-subtrip5 = turns2;
-subtrip6 = urto_wall;
+subtrip = kicks;
+subtrip2 = kicks15;
+subtrip3 =turn_norm;
+subtrip4 = turns2;
+subtrip5 = longtrip3;
+subtrip6 = longtrip2;
 
-noise_subtrip = filler(acc);
-noise_subtrip2=filler(kicks);
-noise_subtrip3=filler(max1);
-noise_subtrip4=filler(max2);
-noise_subtrip5 = filler(turns2);
-noise_subtrip6 = filler(urto_wall);
+noise_subtrip = filler(kicks);
+noise_subtrip2=filler(kicks15);
+noise_subtrip3=filler(turn_norm)
+noise_subtrip4=filler(turns2);
+noise_subtrip5 = filler(longtrip3);
+noise_subtrip6 = filler(longtrip2);
 
 for i=3:1:5
      subtrip(:,i) = denoise(subtrip(:,i));
-     subtrip2(:,i) = denoise(subtrip2(:,i));
-     subtrip3(:,i) = denoise(subtrip3(:,i));
-     subtrip4(:,i)= denoise(subtrip4(:,i));
+      subtrip2(:,i) = denoise(subtrip2(:,i));
+      subtrip3(:,i) = denoise(subtrip3(:,i));
+      subtrip4(:,i)= denoise(subtrip4(:,i));
      subtrip5(:,i) = denoise(subtrip5(:,i));
      subtrip6(:,i) = denoise(subtrip6(:,i));
      
@@ -32,7 +32,7 @@ end
  ylimits = [ylimits ;size(var_subtrip3,1)]
 
  var_subtrip4=filler(subtrip4);
- ylimit= [ylimits ;size(var_subtrip4,1)]
+ ylimits= [ylimits ;size(var_subtrip4,1)]
 
  var_subtrip5 = filler(subtrip5);
  ylimits = [ylimits ;size(var_subtrip5,1)];
@@ -48,7 +48,7 @@ end
 
  
  trip= var_subtrip;
- trip = [trip; var_subtrip2(:,1)  (var_subtrip2(:,2)+trip(size(trip,1),2)) var_subtrip2(:,3) var_subtrip2(:,4) var_subtrip2(:,5)];
+  trip = [trip; var_subtrip2(:,1)  (var_subtrip2(:,2)+trip(size(trip,1),2)) var_subtrip2(:,3) var_subtrip2(:,4) var_subtrip2(:,5)];
  trip = [trip;  var_subtrip3(:,1)  ( var_subtrip3(:,2)+trip(size(trip,1),2))  var_subtrip3(:,3)  var_subtrip3(:,4)  var_subtrip3(:,5)];
  trip = [trip; var_subtrip4(:,1)  (var_subtrip4(:,2)+trip(size(trip,1),2)) var_subtrip4(:,3) var_subtrip4(:,4) var_subtrip4(:,5)];
  trip = [trip; var_subtrip5(:,1)  (var_subtrip5(:,2)+trip(size(trip,1),2)) var_subtrip5(:,3) var_subtrip5(:,4) var_subtrip5(:,5)];

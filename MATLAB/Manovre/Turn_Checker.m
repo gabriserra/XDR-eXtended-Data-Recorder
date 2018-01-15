@@ -8,8 +8,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [data]=Turn_Checker(accx,accy,giroz)
-      turn_peaks_threshold = 0.25;
-      turn_end_threshold = 1;
+      turn_peaks_threshold = 0.035;
       turn_lower_size = 15;
       data=0;
       
@@ -46,7 +45,7 @@ function [data]=Turn_Checker(accx,accy,giroz)
          end
          
         %turn interval computing
-        if(turning == 1 && ( (accy(i,1) < 0 && directions(j-1,1) == 1) || (( (abs(accy(i,1)) < 0.1 || accy(i,1) > 0 ) && directions(j-1,1) == -1) ) || i == size(accy,1)))
+        if(turning == 1 && ( (accy(i,1) < 0 && directions(j-1,1) == 1) || (( (abs(accy(i,1)) < 0.01 || accy(i,1) > 0 ) && directions(j-1,1) == -1) ) || i == size(accy,1)))
             interval(j-1,1) = i-start;
             turning = 0;
         end     
@@ -66,13 +65,7 @@ function [data]=Turn_Checker(accx,accy,giroz)
               for i=1:1:size(candidates,1)
                 data(i,1) = candidates(i,1);
                 data(i,2) = interval(i,1);
-                data(i,3) = directions(i,1);
-                data(i,4) = mean( accx(candidates(i,1):candidates(i,1)+interval(i,1),1 ));
-                data(i,5) = sum((accx(candidates(i,1):candidates(i,1)+interval(i,1),1) - data(i,4)).^2 );
-                data(i,5) = data(i,5)/interval(i,1);
-                data(i,6) = mean(iomega(accx(candidates(i,1):candidates(i,1)+interval(i,1),1),1/50,3,2));
-                data(i,7) = sum((iomega(accx(candidates(i,1):candidates(i,1)+interval(i,1),1),1/50,3,2) - data(i,6)).^2 );
-                data(i,7) = data(i,7)/interval(i,1);
+                data(i,3) = abs(mean( accx(candidates(i,1):candidates(i,1)+interval(i,1),1 )));
               end  
           end
       end

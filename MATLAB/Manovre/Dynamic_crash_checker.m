@@ -7,11 +7,11 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [crash] = Dynamic_crash_checker(accx)
-    dynamic_upper = -0.5;
-    dynamic_lower = -1.2;
-    dynamic_ending = 0.3;
+    dynamic_upper = -0.1;
+    dynamic_lower = -1.5;
+    dynamic_ending = 0.08;
     dynamic_upper_size = 15;
-    dynamic_lower_size = 4;
+    dynamic_lower_size = 3;
     crash=0;
     found=0;
     j=1;
@@ -29,7 +29,7 @@ function [crash] = Dynamic_crash_checker(accx)
             found = 1;
         end
         
-        if(found == 1 && abs(crash(j-1,1)-peaks(i,1)) > 10)
+        if(found == 1 && abs(crash(j-1,1)-peaks(i,1)) > 25)
             found = 0;
             i = i-1;
         end
@@ -41,14 +41,14 @@ function [crash] = Dynamic_crash_checker(accx)
         
         for i=1:1:size(crash,1)  
             ends=find(abs(accx(crash(i,1):size(accx,1))) < dynamic_ending);
-            crash(i,1)
-            crash(i,2)=ends(1,1);
+            crash(i,2) = ends(1,1);
+            crash(i,3) = max(abs(accx(crash(i,1):crash(i,1)+crash(i,2))));
         end
         
         %remove outliers
         to_remove = find(crash(:,2)> dynamic_upper_size);
         crash(to_remove,:)=[];
-        to_remove = find(abs(crash(:,2)) < dynamic_lower_size)  
+        to_remove = find(abs(crash(:,2)) < dynamic_lower_size)  ;
         crash(to_remove,:)=[];
     else
          crash=0;
