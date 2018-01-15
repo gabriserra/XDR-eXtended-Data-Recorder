@@ -1,15 +1,18 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Prende come input le tre grandezze ricevute, per testarla:
-%           1) Caricare la workspace turns.mat
-%           2) Lanciare prepare (denoise+filler)
-%           3) eseguire Turn_Checker(var(:,2),var(:,3),var(:,4));
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% L'output restituito è:
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%   Takes in input the accx parameter that represents the frontal G
+%   Evolution over time.
+%   Return a nx7 matrix where each rows represents a sudden event
+%   (acceleration/braking)
+%    columns={starting sample, interval, directions, accx average, accx variance}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [data]=Turn_Checker(accx,accy,giroz)
       turn_peaks_threshold = 0.25;
       turn_end_threshold = 1;
+      turn_lower_size = 15;
       data=0;
+      
       %check sizes
       if(size(accx,1) == 1)
         accx=accx';
@@ -43,7 +46,7 @@ function [data]=Turn_Checker(accx,accy,giroz)
          end
          
         %turn interval computing
-        if(turning == 1 && ( (accy(i,1) < 0 && directions(j-1,1) == 1) || (( (abs(giroz(i,1)) < 4 || accy(i,1) > 0 ) && directions(j-1,1) == -1) ) || i == size(giroz,1)))
+        if(turning == 1 && ( (accy(i,1) < 0 && directions(j-1,1) == 1) || (( (abs(accy(i,1)) < 0.1 || accy(i,1) > 0 ) && directions(j-1,1) == -1) ) || i == size(accy,1)))
             interval(j-1,1) = i-start;
             turning = 0;
         end     
@@ -52,13 +55,10 @@ function [data]=Turn_Checker(accx,accy,giroz)
       if(candidates ~= 0 )
           
           %filtering 
-          [candidates interval];
-          to_remove = find(interval < 15);
+          to_remove = find(interval < turn_lower_size);
           candidates(to_remove) = [];
           interval(to_remove)= [];
           directions(to_remove)= [];
-          [candidates interval directions];
-          candidates;
           data=zeros(size(candidates,1),7);
           
           %filling output matrix

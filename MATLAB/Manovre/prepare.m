@@ -1,16 +1,16 @@
 subtrip = acc;
-subtrip2 = acc;
-subtrip3 = acc;
-subtrip4 =acc;
-subtrip5 = acc;
-subtrip6 = acc;
+subtrip2 = kicks;
+subtrip3 = max1;
+subtrip4 =max2;
+subtrip5 = turns2;
+subtrip6 = urto_wall;
 
 noise_subtrip = filler(acc);
-noise_subtrip2=filler(acc);
-noise_subtrip3=filler(acc);
-noise_subtrip4=filler(acc);
-noise_subtrip5 = filler(acc);
-noise_subtrip6 = filler(acc);
+noise_subtrip2=filler(kicks);
+noise_subtrip3=filler(max1);
+noise_subtrip4=filler(max2);
+noise_subtrip5 = filler(turns2);
+noise_subtrip6 = filler(urto_wall);
 
 for i=3:1:5
      subtrip(:,i) = denoise(subtrip(:,i));
