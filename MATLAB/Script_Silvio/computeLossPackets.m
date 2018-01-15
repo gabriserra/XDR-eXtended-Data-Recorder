@@ -1,4 +1,4 @@
-function json_content = computeLossPackets(filename)
+function [loss, stats] = computeLossPackets(filename)
     fprintf('%s\n', filename);
     unfilled = readFile(filename);
     diff = zeros(size(unfilled,1), 4);
@@ -57,8 +57,4 @@ function json_content = computeLossPackets(filename)
         names = [string('PACKET LOST'); string('TIME LOST'); string('PERC. LOST'); string('MAX CONS. PACKET LOST'); string('MIN CONS. PACKET LOST'); string('MEAN CONS. PACKET LOST')];
         stats = [stats; names [SUM(1); SUM(2); SUM(2)/duration*100; MAX; MIN; MEAN]];
     end
-    
-    json_content = prova_conversione();
-
-    diary;
 end

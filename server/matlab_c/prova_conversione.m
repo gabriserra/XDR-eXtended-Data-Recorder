@@ -1,5 +1,4 @@
 function json_content = prova_conversione()
-
     trip = struct('meters', 50, 'starttime', '2018-01-07 07:30:00', 'secondslength', 120);
 
     stat = struct('numberacc', 2, 'worstacc', 5, 'numberbra', 1, 'worstbra', 3, 'numbercur', 8);

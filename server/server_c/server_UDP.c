@@ -124,27 +124,29 @@ int recvFromCar() {
 		return -1;
 	}
 	
-	switch(recvBytes) {
-		case sizeof(sensor_data_g_t):
-			if (counter++ == 0) {
-				printf("START RECEIVING DATA ");
+	if (STARTED == TRUE) {
+		switch(recvBytes) {
+			case sizeof(sensor_data_g_t):
+				if (counter++ == 0) {
+					printf("START RECEIVING DATA ");
+					fflush(stdout);
+				}
+				else if (counter++ % 100 == 0){
+					printf(".");
+					fflush(stdout);
+				}
+				
+				diff = all_d.seq_num - previous_seq_num;
+				if (diff > 5)
+					printf("%d", diff);
+				previous_seq_num = all_d.seq_num;
+				fprintf(fp,"%" PRIu32 "\t %" PRIu32 "\t %f\t %f\t %f\t\n", all_d.m, all_d.seq_num, all_d.ax, all_d.ay, all_d.gz);
+				break;
+			default:
+				printf("ERROR\n");
 				fflush(stdout);
-			}
-			else if (counter++ % 100 == 0){
-				printf(".");
-				fflush(stdout);
-			}
-			
-			diff = all_d.seq_num - previous_seq_num;
-			if (diff > 5)
-				printf("%d", diff);
-			previous_seq_num = all_d.seq_num;
-			fprintf(fp,"%" PRIu32 "\t %" PRIu32 "\t %f\t %f\t %f\t\n", all_d.m, all_d.seq_num, all_d.ax, all_d.ay, all_d.gz);
-			break;
-		default:
-			printf("ERROR\n");
-			fflush(stdout);
-			break;
+				break;
+		}
 	}
 	
 	return 0;
@@ -235,26 +237,21 @@ int main() {
 						//processData();
 						if (end())
 							return 0;
-						FD_CLR(socket_UDP, &master);
-						fdmax = KEYBOARD;
 					}
 					else {
 						STARTED = TRUE;
 						clearBuffer();
-						FD_SET(socket_UDP, &master);
-						if (fdmax < socket_UDP)
-							fdmax = socket_UDP;
 						if (CONN_CREATED)
 							createNewFile();
 					}
 				}
 				else {
-					if (STARTED == TRUE && CONN_CREATED == FALSE && initConnection() < 0) {
+					if (CONN_CREATED == FALSE && initConnection() < 0) {
 						if (fp != NULL)
 							fclose(fp);
 						return 0;
 					}
-					else if (STARTED == TRUE && CONN_CREATED == TRUE && recvFromCar() < 0) {
+					else if (CONN_CREATED == TRUE && recvFromCar() < 0) {
 						if (fp != NULL)
 							fclose(fp);
 						return 0;
