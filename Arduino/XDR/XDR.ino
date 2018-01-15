@@ -7,7 +7,7 @@
 
 #define	SERIAL_BAUDRATE		2000000
 #define ESP_BAUDRATE 		57600
-#define PERIOD         20
+#define PERIOD         		20
 #define UDP
 
 //------------------------------------------------------------------------------
@@ -83,33 +83,31 @@ void computeBroadcastAddress() {
 
 void sendStruct() {
 	all_d = acc_gy.getData(millis(), seq_num++);
-  #ifdef UDP
-    if (!wifi.send(send_mux_id, (char*)&all_d, sizeof(all_d)))
-    Serial.println(F("SEND STRUCT FAILED"));
-  #endif
-  
-  #ifndef UDP
-    if (!wifi.send((char*)&all_d, sizeof(all_d)))
-      Serial.println(F("SEND STRUCT FAILED"));
-  #endif
+	#ifdef UDP
+		if (!wifi.send(send_mux_id, (char*)&all_d, sizeof(all_d)))
+			Serial.println(F("SEND STRUCT FAILED"));
+	#else
+		if (!wifi.send((char*)&all_d, sizeof(all_d)))
+			Serial.println(F("SEND STRUCT FAILED"));
+	#endif
 }
 
 
 //------------------------------------------------------------------------------
-// INIT UDP: Initialize UDP connection
+// CONNECT TO AP: Connect to the access point and prepare the UDP connection
 //------------------------------------------------------------------------------
 
 bool connectToAP(){
-  if (!wifi.init_UDP(SSID, PASSWORD)) {
-    Serial.println(F("UDP INIT FAILED"));
-    digitalWrite(LED_BUILTIN, HIGH);
-    return false;
-  }
-    
-  Serial.print(F("UDP INIT COMPLETE")); 
-  Serial.print(F("CONNECTION ESTABLISHED: "));
-  Serial.println(wifi.getLocalIP().c_str());
-  return true;
+	if (!wifi.init_UDP(SSID, PASSWORD)) {
+		Serial.println(F("UDP INIT FAILED"));
+		digitalWrite(LED_BUILTIN, HIGH);
+		return false;
+	}
+
+	Serial.print(F("UDP INIT COMPLETE"));
+	Serial.print(F("CONNECTION ESTABLISHED: "));
+	Serial.println(wifi.getLocalIP().c_str());
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -118,54 +116,54 @@ bool connectToAP(){
 
 bool init_UDP(){
 	if (!wifi.registerUDP(recv_mux_id,wifi.getLocalIP().c_str(), MY_UDP_PORT, MY_UDP_PORT, 2)) {
-    Serial.println(F("UDP RECV CONNECTION ERROR"));
-    digitalWrite(LED_BUILTIN, HIGH);
-    return false;
-  }
-  else
-    Serial.println(F("UDP RECV CONNECTION OK"));
+		Serial.println(F("UDP RECV CONNECTION ERROR"));
+		digitalWrite(LED_BUILTIN, HIGH);
+		return false;
+	}
+	else
+		Serial.println(F("UDP RECV CONNECTION OK"));
 
-  computeBroadcastAddress();
-  Serial.print(F("BROADCAST ADDRESS: "));
-  Serial.println(BROADCAST_ADDRESS);
+	computeBroadcastAddress();
+	Serial.print(F("BROADCAST ADDRESS: "));
+	Serial.println(BROADCAST_ADDRESS);
 
-  if (!wifi.registerUDP(send_mux_id,BROADCAST_ADDRESS, SERVER_UDP_PORT)) {
-    Serial.println(F("UDP SEND BROADCAST CONNECTION ERROR"));
-    digitalWrite(LED_BUILTIN, HIGH);
-    return false;
-  }
-  else
-    Serial.println(F("UDP SEND BROADCAST CONNECTION OK"));
+	if (!wifi.registerUDP(send_mux_id,BROADCAST_ADDRESS, SERVER_UDP_PORT)) {
+		Serial.println(F("UDP SEND BROADCAST CONNECTION ERROR"));
+		digitalWrite(LED_BUILTIN, HIGH);
+		return false;
+	}
+	else
+		Serial.println(F("UDP SEND BROADCAST CONNECTION OK"));
 
-  String PORT_IP = String(MY_UDP_PORT) + wifi.getLocalIP();
-  char myPORT_IP[20];
-  PORT_IP.toCharArray(myPORT_IP, PORT_IP.length()+1);
+	String PORT_IP = String(MY_UDP_PORT) + wifi.getLocalIP();
+	char myPORT_IP[20];
+	PORT_IP.toCharArray(myPORT_IP, PORT_IP.length()+1);
 
-  if (!wifi.send(send_mux_id, myPORT_IP, 20)) {
-   Serial.println(F("SENT MY PORT AND IP FAILED"));
-    digitalWrite(LED_BUILTIN, HIGH);
-    return false;
-  }
-  else
-    Serial.println(F("SENT MY PORT AND IP OK"));
+	if (!wifi.send(send_mux_id, myPORT_IP, 20)) {
+		Serial.println(F("SENT MY PORT AND IP FAILED"));
+		digitalWrite(LED_BUILTIN, HIGH);
+		return false;
+	}
+	else
+		Serial.println(F("SENT MY PORT AND IP OK"));
 
-  if(int recvBytes = wifi.recv(recv_mux_id, SERVER_ADDRESS, sizeof(SERVER_ADDRESS), 5000) < 7) {
-    Serial.println(F("SERVER NOT RECEIVED"));
-    return false;
-  }
-  
-  Serial.print(F("SERVER ADDRESS: "));
-  Serial.println(SERVER_ADDRESS);
+	if(int recvBytes = wifi.recv(recv_mux_id, SERVER_ADDRESS, sizeof(SERVER_ADDRESS), 5000) < 7) {
+		Serial.println(F("SERVER NOT RECEIVED"));
+		return false;
+	}
 
-  #ifdef UDP
-    send_mux_id = 2;
-    if (!wifi.registerUDP(send_mux_id,SERVER_ADDRESS, SERVER_UDP_PORT)) {
-      Serial.println(F("UDP SEND SERVER CONNECTION ERROR"));
-      return false;
-    }
-    #endif
+	Serial.print(F("SERVER ADDRESS: "));
+	Serial.println(SERVER_ADDRESS);
 
-  return true;
+	#ifdef UDP
+		send_mux_id = 2;
+		if (!wifi.registerUDP(send_mux_id,SERVER_ADDRESS, SERVER_UDP_PORT)) {
+			Serial.println(F("UDP SEND SERVER CONNECTION ERROR"));
+			return false;
+		}
+	#endif
+
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -173,21 +171,23 @@ bool init_UDP(){
 //------------------------------------------------------------------------------
 
 bool init_TCP(){
-  if (!wifi.init_TCP(recv_mux_id, send_mux_id)) {
-    Serial.println(F("TCP INIT FAILED"));
-    digitalWrite(LED_BUILTIN, HIGH);
-    return false;
-  }
-  Serial.println(F("TCP INIT COMPLETE"));
+	if (!wifi.init_TCP(recv_mux_id, send_mux_id)) {
+		Serial.println(F("TCP INIT FAILED"));
+		digitalWrite(LED_BUILTIN, HIGH);
+		return false;
+	}
+	
+	Serial.println(F("TCP INIT COMPLETE"));
 
-  if (!wifi.createTCP(SERVER_ADDRESS, SERVER_TCP_PORT)) {
-   Serial.println(F("TCP CONNECTION ERROR"));
-    digitalWrite(LED_BUILTIN, HIGH);
-    return false;
-  }
-  else
-    Serial.println(F("TCP CONNECTION OK"));
-  return true;
+	if (!wifi.createTCP(SERVER_ADDRESS, SERVER_TCP_PORT)) {
+		Serial.println(F("TCP CONNECTION ERROR"));
+		digitalWrite(LED_BUILTIN, HIGH);
+		return false;
+	}
+	else
+		Serial.println(F("TCP CONNECTION OK"));
+	
+	return true;
 }
 
 //------------------------------------------------------------------------------
@@ -201,18 +201,16 @@ void setup(void) {
 	delay(1000);
 	Serial.println(F("STARTING APPLICATION"));
 	seq_num = 0;
-  while (!wifi.autoSetBaud(ESP_BAUDRATE)) {delay(1000); Serial.println(F("AUTO SET BAUDRATE FAILED")); delay(1000);}
+	while (!wifi.autoSetBaud(ESP_BAUDRATE)) {delay(1000); Serial.println(F("AUTO SET BAUDRATE FAILED")); delay(1000);}
 	while (!connectToAP()) {delay(1000); digitalWrite(LED_BUILTIN, LOW); delay(1000);}
 	delay(1000);
-  
-  #ifdef UDP
-	  while (!init_UDP()) {delay(1000); digitalWrite(LED_BUILTIN, LOW); delay(1000);}
-  #endif
 
-  #ifndef UDP
-    while (!init_UDP() || !init_TCP()) {delay(1000); digitalWrite(LED_BUILTIN, LOW); delay(1000);}
-  #endif
-  
+	#ifdef UDP
+		while (!init_UDP()) {delay(1000); digitalWrite(LED_BUILTIN, LOW); delay(1000);}
+	#else
+		while (!init_UDP() || !init_TCP()) {delay(1000); digitalWrite(LED_BUILTIN, LOW); delay(1000);}
+	#endif
+
 	acc_gy.init();
 	digitalWrite(LED_BUILTIN, HIGH);
 	acc_gy.calibrate();
@@ -224,9 +222,9 @@ void setup(void) {
 //------------------------------------------------------------------------------
 
 void loop(void) {
-  t = millis();
+	t = millis();
 	sendStruct();
-  d = PERIOD - millis() + t;
-  if(d > 0)
-    delay(d);
+	d = PERIOD - millis() + t;
+	if(d > 0)
+		delay(d);
 }

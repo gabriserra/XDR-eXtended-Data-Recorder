@@ -25,16 +25,16 @@ void ESP8266::rx_empty(void) {
 //------------------------------------------------------------------------------
 
 bool ESP8266::recvString(uint32_t timeout) {
-  String data;
-  char a;
-  unsigned long start = millis();
-  while (millis() - start < timeout) {
-    if (m_puart->available() > 0) {
-      rx_empty();
-      return true;
-    }
-  }
-  return false;
+	String data;
+	char a;
+	unsigned long start = millis();
+	while (millis() - start < timeout) {
+		if (m_puart->available() > 0) {
+			rx_empty();
+			return true;
+		}
+	}
+	return false;
 }
 
 //------------------------------------------------------------------------------
@@ -98,29 +98,29 @@ String ESP8266::recvString(String target1, String target2, String target3, uint3
 }
 
 String ESP8266::recvString(String target1, String target2, String target3, String target4, String target5, String target6, uint32_t timeout) {
-  String data;
-  char a;
-  unsigned long start = millis();
-  while (millis() - start < timeout) {
-    while (m_puart->available() > 0) {
-      a = m_puart->read();
-      if (a == '\0') continue;
-        data += a;
-    }
-    if (data.indexOf(target1) != -1)
-        break;
-    else if (data.indexOf(target2) != -1)
-        break;
-    else if (data.indexOf(target3) != -1)
-          break;
-    else if (data.indexOf(target4) != -1)
-            break;
-    else if (data.indexOf(target5) != -1)
-      break;
-    else if (data.indexOf(target6) != -1)
-      break;
-  }
-  return data;
+	String data;
+	char a;
+	unsigned long start = millis();
+	while (millis() - start < timeout) {
+		while (m_puart->available() > 0) {
+			a = m_puart->read();
+			if (a == '\0') continue;
+			data += a;
+		}
+		if (data.indexOf(target1) != -1)
+			break;
+		else if (data.indexOf(target2) != -1)
+			break;
+		else if (data.indexOf(target3) != -1)
+			break;
+		else if (data.indexOf(target4) != -1)
+			break;
+		else if (data.indexOf(target5) != -1)
+			break;
+		else if (data.indexOf(target6) != -1)
+			break;
+	}
+	return data;
 }
 
 //------------------------------------------------------------------------------
