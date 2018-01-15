@@ -236,7 +236,6 @@ int main() {
 						STARTED = TRUE;
 						if (end())
 							return 0;
-						clearBuffer();
 						if (CONN_CREATED)
 							createNewFile();
 					}
