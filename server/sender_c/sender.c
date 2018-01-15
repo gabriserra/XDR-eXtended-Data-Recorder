@@ -9,6 +9,7 @@
 #include 	<inttypes.h>
 #include 	<json-c/json.h>
 #include 	<netinet/in.h>
+#include 	<signal.h>
 #include 	<stdio.h>
 #include 	<string.h>
 #include 	<sys/select.h>
@@ -43,7 +44,7 @@ char *HEADER_HTTP = "POST /XDR/insertdata/insertdata.php HTTP/1.1\n\
 Host: www.gabripr0.altervista.org\n\
 Content-Type: application/x-www-form-urlencoded\n\
 Connection: close\n\
-Content-Length: 408\n\n\
+Content-Length: 390\n\n\
 content=";
 
 char *FOOTER_HTTP = "\n\n";
@@ -66,16 +67,12 @@ void callMatlabScript(char * filename) {
 	}
 	
 	char *matlab = "/Applications/MATLAB_R2016b.app/bin/matlab";
-	//char *run_script = " -r \"../matlab_c/computeLossPackets.m\"";
 	char *run_script = "\"; \"../matlab_c/prova\"";
 	char *options = " -nodisplay -nosplash -noFigureWindows";
-	//sprintf(sd, "%s%s%s", " -r \"cd ", path, "; run ../matlab_c/prova.m\"");
-	//sprintf(sd, "%s%s%s", " -r \"cd ", path, "; cd ../matlab_c\"");
-	//sprintf(sd, "%s%s%s", " -r \"cd ", path, "; cd ../matlab_c; run computeLossPackets(../log/log_2018-01-14_10-30-45.csv)\"");
-	sprintf(sd, "%s%s%s%s%s", " -r \"cd('", path, "'); cd('../matlab_c'); computeLossPackets('",filename,"')\"");
-	
+	int pid = getpid();
+	sprintf(sd, "%s%s%s%s%s", " -r \"cd('", path, "'); cd('../matlab_c'); computeLossPackets('",filename,"'); quit\"");
 	sprintf(cmd, "%s%s%s", matlab, options, sd);
-	printf("%s\n",cmd);
+	printf("%s\n", cmd);
 	system(cmd);
 }
 
@@ -150,6 +147,9 @@ json_object * createExampleData() {
 //------------------------------------------------------------------------------
 
 int main() {
+	FILE* fp;
+	char json_content[1024];
+	
 	if ((sockt_TCP = init_TCPclient(SERVER_IP, SERVER_PORT)) < 0) {
 		perror("ERROR IN TCP INIT: ERROR\n");
 		fflush(stdout);
@@ -164,17 +164,22 @@ int main() {
 	if (fdmax < sockt_TCP)
 		fdmax = sockt_TCP;
 	
-	callMatlabScript("../log/log_2018-01-14_10-30-45.csv");
+	callMatlabScript("../log/log_2018-01-15_10-57-23.csv");
+	
+	fp = fopen("../matlab_c/tmp.txt", "r");
+	fgets(json_content, 1024, fp);
+	fclose(fp);
 	
 	//json_object * content = createExampleData();
 	
 	//printf ("The json object created: %s\n",json_object_to_json_string(content));
-	//char buffer[1024];
-	//sprintf(buffer, "%s%s%s", HEADER_HTTP, json_object_to_json_string(content), FOOTER_HTTP);
-	//printf("%s\n",buffer);
-	//TCPsend(buffer);
+	printf("%lu\n", strlen(json_content));
+	char buffer[1024];
+	sprintf(buffer, "%s%s%s", HEADER_HTTP, json_content, FOOTER_HTTP);
+	printf("%s\n",buffer);
+	TCPsend(buffer);
 
-	/*
+	
 	while(1) {
 		read_fds = master;
 		if(select(fdmax+1, &read_fds, NULL, NULL, NULL) < 0) {
@@ -189,10 +194,9 @@ int main() {
 					default:
 						recvBytes = TCPrecv_string(buffer);
 						printf("%s\n",buffer);
-						break;
+						return 0;
 				}
 			}
 		}
 	}
-	 */
 }
