@@ -72,9 +72,7 @@ void callMatlabScript(char * filename) {
 	//sprintf(sd, "%s%s%s", " -r \"cd ", path, "; run ../matlab_c/prova.m\"");
 	//sprintf(sd, "%s%s%s", " -r \"cd ", path, "; cd ../matlab_c\"");
 	//sprintf(sd, "%s%s%s", " -r \"cd ", path, "; cd ../matlab_c; run computeLossPackets(../log/log_2018-01-14_10-30-45.csv)\"");
-	sprintf(sd, "%s%s%s%s%s", " -r \"cd('", path, "'); cd('../matlab_c'); computeLossPackets('",filename,"')\"; quit");
-	//h = fopen('matlab_output','r');
-	//fscanf(format,...);
+	sprintf(sd, "%s%s%s%s%s", " -r \"cd('", path, "'); cd('../matlab_c'); computeLossPackets('",filename,"')\"");
 	
 	sprintf(cmd, "%s%s%s", matlab, options, sd);
 	printf("%s\n",cmd);

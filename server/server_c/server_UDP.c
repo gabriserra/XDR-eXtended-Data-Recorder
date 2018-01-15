@@ -50,8 +50,6 @@ tm_t	tm;
 FILE*	fp;
 fd_set 	master, read_fds;
 sensor_data_g_t all_d;
-uint32_t previous_seq_num = 0;
-int diff = 0;
 
 //------------------------------------------------------------------------------
 // MATLAB: Function simulating matlab operations
@@ -135,11 +133,7 @@ int recvFromCar() {
 					printf(".");
 					fflush(stdout);
 				}
-				
-				diff = all_d.seq_num - previous_seq_num;
-				if (diff > 5)
-					printf("%d", diff);
-				previous_seq_num = all_d.seq_num;
+
 				fprintf(fp,"%" PRIu32 "\t %" PRIu32 "\t %f\t %f\t %f\t\n", all_d.m, all_d.seq_num, all_d.ax, all_d.ay, all_d.gz);
 				break;
 			default:

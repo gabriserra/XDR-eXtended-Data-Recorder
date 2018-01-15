@@ -59,6 +59,4 @@ function json_content = computeLossPackets(filename)
     end
     
     json_content = prova_conversione();
-
-    diary;
 end
