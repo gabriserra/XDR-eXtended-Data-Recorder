@@ -1,0 +1,2 @@
+fprintf('CIAO\n');
+quit;
