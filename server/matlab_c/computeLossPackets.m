@@ -59,6 +59,7 @@ function json_content = computeLossPackets(filename)
     end
     
     json_content = prova_conversione();
+    json_content = sprintf('%s%s', 'content=',json_content);
     
     fileID = fopen('./tmp.txt', 'w');
     fprintf(fileID, '%s', json_content);

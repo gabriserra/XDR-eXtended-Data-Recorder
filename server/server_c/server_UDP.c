@@ -58,13 +58,13 @@ sensor_data_g_t all_d;
 void processData(void) {
 	char path[1024];
 	char cmd[1024];
-	char *matlab_script = "sender";
+	char *sender_script = "sender";
 	if (getcwd(path, sizeof(path)) == NULL) {
 		printf("PROCESSING DATA FAILED: RETRIEVING CURRENT PATH FAILED\n");
 		return;
 	}
 	
-	sprintf(cmd,"osascript -e 'tell app \"Terminal\"\ndo script \"cd %s && cd ../sender_c &&./%s\"\nend tell' > /dev/null", path, matlab_script);
+	sprintf(cmd,"osascript -e 'tell app \"Terminal\"\ndo script \"cd %s && cd ../sender_c &&./%s\"\nend tell' > /dev/null", path, sender_script);
 
 	system(cmd);
 	
@@ -234,6 +234,8 @@ int main() {
 					}
 					else {
 						STARTED = TRUE;
+						if (end())
+							return 0;
 						clearBuffer();
 						if (CONN_CREATED)
 							createNewFile();
