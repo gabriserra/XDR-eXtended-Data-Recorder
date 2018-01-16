@@ -1,16 +1,16 @@
-subtrip = max_accfren;
-subtrip2 = urto154;
-subtrip3 = kicks;
-subtrip4 = turn_norm;
-subtrip5 = longtrip2;
-subtrip6 = longtrip16;
+subtrip = urto161;
+subtrip2 = kicks15;
+subtrip3 = minmax_accfren;
+subtrip4 = urto162;
+subtrip5 = urto163;
+subtrip6 = urto164;
 
-noise_subtrip = filler(max_accfren);
-noise_subtrip2=filler(urto154);
-noise_subtrip3=filler(kicks);
-noise_subtrip4=filler(turn_norm);
-noise_subtrip5 = filler(longtrip2);
-noise_subtrip6 = filler(longtrip16);
+noise_subtrip = filler(urto161);
+noise_subtrip2=filler(kicks15);
+noise_subtrip3=filler(minmax_accfren)
+noise_subtrip4=filler(urto162);
+noise_subtrip5 = filler(urto163);
+noise_subtrip6 = filler(urto164);
 
 for i=3:1:5
      subtrip(:,i) = denoise(subtrip(:,i));
@@ -23,16 +23,16 @@ for i=3:1:5
 end
  
  var_subtrip = filler(subtrip);
- ylimits = size(var_subtrip,1);
- 
+ ylimits = size(var_subtrip,1)
+
  var_subtrip2=filler(subtrip2);
- ylimits = [ylimits ; size(var_subtrip2,1)];
+ ylimits = [ylimits ; size(var_subtrip2,1)]
 
  var_subtrip3=filler(subtrip3);
  ylimits = [ylimits ;size(var_subtrip3,1)];
 
  var_subtrip4=filler(subtrip4);
- ylimits= [ylimits ;size(var_subtrip4,1)];
+ ylimits= [ylimits ;size(var_subtrip4,1)]
 
  var_subtrip5 = filler(subtrip5);
  ylimits = [ylimits ;size(var_subtrip5,1)];
@@ -70,19 +70,19 @@ plot(n_var(:,3),'r');
 hold on;
 plot(var(:,3));
 hold on; 
-vline(ylimits','g');
+vline(ylimits','g')
 
 figure;
 plot(var(:,4));
-vline(ylimits','g');
+vline(ylimits','g')
 
 figure;
 plot(var(:,5));
-vline(ylimits','g');
+vline(ylimits','g')
 
 
 %plot(var(:,3),'r')
-[suddens, turns, static_crashes, dynamic_crashes,zz]=main_checker(var,n_var);
+[suddens, turns, static_crashes, dynamic_crashes]=main_checker(var,n_var);
 zsuddens=suddens; 
 zturns=turns;
 zstatic_crashes=static_crashes;

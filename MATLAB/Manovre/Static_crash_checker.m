@@ -7,7 +7,6 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ brakings ] = Static_crash_checker(accx)
-    i=1;
     brakings=0;
     %make sure that the input parameter has the right size
     if(size(accx,1) == 1)
@@ -17,7 +16,9 @@ function [ brakings ] = Static_crash_checker(accx)
     %find all peaks
     peaks = find(abs(accx) > 1.5);
     i=1;
+
     while(i <= size(peaks,1) && ~isempty(peaks) )
+       
         if(abs(accx(peaks(i,1)-2,1)) > 0.1 || abs(accx(peaks(i,1)-3,1)) > 0.1 || abs(accx(peaks(i,1)-4,1)) > 0.1 || abs(accx(peaks(i,1)-5,1)) > 0.1)
             peaks(i)=[];
         elseif(i > 1 && peaks(i,1) - peaks(i-1,1) < 10 )
@@ -27,7 +28,7 @@ function [ brakings ] = Static_crash_checker(accx)
         end
     end
 
-
+  
     %directions contains sign of peaks, brakings is the output
     if(~isempty(peaks))
         directions= zeros(size(peaks,1),1);
@@ -55,12 +56,11 @@ function [ brakings ] = Static_crash_checker(accx)
             brakings(i,3) = brakings(i,2)/brakings(i,4)*100;   
             brakings(i,5) = accx(brakings(i,1));
         end
-
+     
         %filtering
         to_remove = find(brakings(:,4)>10 );
-       % brakings(to_remove,:)=[];
-        to_remove = find(abs(brakings(:,3)) < 50)  
-        to_remove
+        brakings(to_remove,:)=[];
+        to_remove = find(abs(brakings(:,3)) < 50);  
         brakings(to_remove,:)=[];
     end
 end

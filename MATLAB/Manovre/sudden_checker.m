@@ -34,7 +34,7 @@ function [ data ] = sudden_checker(accx)
         end
          
         %computing sudden maneuvre's interval
-        if(turning == 1 && ( ( (abs(accx(i,1)) <  acc_threshold  ||  accx(i,1)< 0) && directions(j-1,1) == 1) || ((  abs(accx(i,1)) < -brake_threshold  && directions(j-1,1) == -1) ) || i == size(accx,1)))
+        if(turning == 1 && ( ( (abs(accx(i,1)) <  acc_threshold  ||  accx(i,1)< 0) && directions(j-1,1) == 1) || (( abs(accx(i,1)) < -brake_threshold  && directions(j-1,1) == -1) ) || i == size(accx,1)))
             interval(j-1,1) = i-start;
             turning = 0;
         end
@@ -44,12 +44,12 @@ function [ data ] = sudden_checker(accx)
         data=zeros(size(candidates,1),4);
       if(candidates ~= 0)
           %filtering
-          [candidates interval];
+          [candidates interval]
           to_remove = find(interval < 15);
          % to_remove = find data
-         % candidates(to_remove) = [];
-          %interval(to_remove)= [];
-          %directions(to_remove)= [];
+         candidates(to_remove) = [];
+          interval(to_remove)= [];
+          directions(to_remove)= [];
           data=zeros(size(candidates,1),4);
     
           %filling output matrix
