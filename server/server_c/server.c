@@ -228,7 +228,7 @@ int main() {
 						STARTED = FALSE;
 						if (fp != NULL)
 							fclose(fp);
-						//processData();
+						processData();
 						if (end())
 							return 0;
 					}

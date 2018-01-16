@@ -68,7 +68,7 @@ void callMatlabScript(char * filename) {
 	char *run_script = "\"; \"../matlab_c/prova\"";
 	char *options = " -nodisplay -nosplash -noFigureWindows";
 	int pid = getpid();
-	sprintf(sd, "%s%s%s%s%s", " -r \"cd('", path, "'); cd('../matlab_c'); computeLossPackets('",filename,"'); quit\" > /dev/null");
+	sprintf(sd, "%s%s%s%s%s", " -r \"cd('", path, "'); cd('../matlab_c'); processData('",filename,"','ciabbi94@live.it'); quit\"  > /dev/null");
 	sprintf(cmd, "%s%s%s", matlab, options, sd);
 	system(cmd);
 }
@@ -121,6 +121,7 @@ int main() {
 	fgets(json_content, 1024, fp);
 	fclose(fp);
 
+	printf("%s\n", json_content);
 	char buffer[1024];
 	sprintf(buffer, "%s%lu%s%s%s", HEADER_HTTP, strlen(json_content),"\n\n", json_content, FOOTER_HTTP);
 	TCPsend(buffer);

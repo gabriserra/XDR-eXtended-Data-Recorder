@@ -30,5 +30,6 @@ function filled = filler(unfilled)
             index = index + 1;
         end
     end
+    filled(:,1) = filled(:,1) - filled(1,1);
 end
 
