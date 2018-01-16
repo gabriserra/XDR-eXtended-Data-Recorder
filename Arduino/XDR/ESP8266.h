@@ -41,11 +41,11 @@ class ESP8266 {
 		// RECV STRING: 	Recvive data from uart. Return all received data
 		//----------------------------------------------------------------------
 
-    bool   recvString(uint32_t timeout);
+    	bool   recvString(uint32_t timeout);
 		String recvString(String target, uint32_t timeout = DEF_TIMEOUT);
 		String recvString(String target1, String target2, uint32_t timeout = DEF_TIMEOUT);
 		String recvString(String target, String target2, String target3, uint32_t timeout = DEF_TIMEOUT);
-    String recvString(String target1, String target2, String target3, String target4, String target5, String target6, uint32_t timeout);
+    	String recvString(String target1, String target2, String target3, String target4, String target5, String target6, uint32_t timeout);
 	
 		//----------------------------------------------------------------------
 		// RECV FIND: 	Recvive data from uart and search first target. Return
@@ -87,9 +87,9 @@ class ESP8266 {
 	
 		bool AT_CIPSTATUS(String &list);
 		bool AT_CIPSTART_SINGLE(String type, String addr, uint32_t port);
-    bool AT_CIPSTART_SINGLE(String type, String addr, uint32_t port, uint32_t local_port, uint8_t mode);
+    	bool AT_CIPSTART_SINGLE(String type, String addr, uint32_t port, uint32_t local_port, uint8_t mode);
 		bool AT_CIPSTART_MULTIPLE(uint8_t mux_id, String type, String addr, uint32_t port);
-    bool AT_CIPSTART_MULTIPLE(uint8_t mux_id, String type, String addr, uint32_t port, uint32_t local_port, uint8_t mode);
+    	bool AT_CIPSTART_MULTIPLE(uint8_t mux_id, String type, String addr, uint32_t port, uint32_t local_port, uint8_t mode);
 		bool AT_CIPSEND_SINGLE( const uint8_t *buffer, uint32_t len);
 		bool AT_CIPSEND_MULTIPLE(uint8_t mux_id, const uint8_t *buffer, uint32_t len);
 		bool AT_CIPCLOSE_SINGLE(void);
@@ -116,18 +116,18 @@ class ESP8266 {
 		ESP8266(SoftwareSerial &uart, uint32_t baud = DEF_BAUDRATE);
 	
 		//------------------------------------------------------------------------------
-    // INIT UDP:   Establish a successful UDP connection with network in STATION
-    //            mode. 
-    //------------------------------------------------------------------------------
-    
-    bool init_UDP(const String &ssid, const String &pwd);
-    
-    //------------------------------------------------------------------------------
-    // INIT TCP:  Establish a successful TCP connection with network in STATION
-    //            mode. 
-    //------------------------------------------------------------------------------
-    
-    bool init_TCP(uint8_t recv_mux_id, uint8_t send_mux_id);
+		// INIT UDP:   Establish a successful UDP connection with network in STATION
+		//            mode.
+		//------------------------------------------------------------------------------
+	
+		bool init_UDP(const String &ssid, const String &pwd);
+	
+		//------------------------------------------------------------------------------
+		// INIT TCP:  Establish a successful TCP connection with network in STATION
+		//            mode.
+		//------------------------------------------------------------------------------
+	
+		bool init_TCP(uint8_t recv_mux_id, uint8_t send_mux_id);
 	
 		//----------------------------------------------------------------------
 		// AUTO SET BAUD: 	Detect ESP8266 baudrate and reset it to baudRateSet
@@ -265,12 +265,12 @@ class ESP8266 {
 	
 		bool registerUDP(uint8_t mux_id, String addr, uint32_t port);
 
-   //----------------------------------------------------------------------
-   // REGISTER UDP:    Register UDP port number in single mode with local
-    //          port
-    //----------------------------------------------------------------------
+	   	//----------------------------------------------------------------------
+	   	// REGISTER UDP:    Register UDP port number in single mode with local
+		//          port
+		//----------------------------------------------------------------------
 
-    bool registerUDP(String addr, uint32_t port, uint32_t local_port, uint8_t mode);
+		bool registerUDP(String addr, uint32_t port, uint32_t local_port, uint8_t mode);
 
 		//----------------------------------------------------------------------
 		// REGISTER UDP:  	Register UDP port number in multiple mode with local

@@ -37,19 +37,16 @@ typedef struct tm* tm_t;
 // GLOBAL VARIABLES
 //------------------------------------------------------------------------------
 
-int 	sockt_TCP, fdmax = 0, i;
-char 	buffer[BUFFER_SIZE];
-//char 	*query = "GET /XDR/insertdata/insertdata.php HTTP/1.1\nHost: www.gabripr0.altervista.org\nConnection: close\n\n";
-char *HEADER_HTTP = "POST /XDR/insertdata/insertdata.php HTTP/1.1\n\
-Host: www.gabripr0.altervista.org\n\
-Content-Type: application/x-www-form-urlencoded\n\
-Connection: close\n\
-Content-Length: ";
-
-char *FOOTER_HTTP = "\n\n";
-
 ssize_t recvBytes;
 fd_set 	master, read_fds;
+int 	sockt_TCP, fdmax = 0, i;
+char 	buffer[BUFFER_SIZE];
+char 	*FOOTER_HTTP = "\n\n";
+char 	*HEADER_HTTP = 	"POST /XDR/insertdata/insertdata.php HTTP/1.1\n"
+						"Host: www.gabripr0.altervista.org\n"
+						"Content-Type: application/x-www-form-urlencoded\n"
+						"Connection: close\n"
+						"Content-Length: ";
 
 //------------------------------------------------------------------------------
 // CALL MATLAB SCRIPT: Call Matlab script to process data
@@ -60,7 +57,7 @@ void callMatlabScript(char * filename) {
 	char cmd[1024];
 	char sd[1024];
 	
-	printf("PROCESSING DATA IN MATLAB\n\n");
+	printf("PROCESSING DATA IN MATLAB...\n\n");
 	
 	if (getcwd(path, sizeof(path)) == NULL) {
 		printf("PROCESSING DATA FAILED: RETRIEVING CURRENT PATH FAILED\n");
@@ -77,7 +74,7 @@ void callMatlabScript(char * filename) {
 }
 
 //------------------------------------------------------------------------------
-// PARSE HTTP REPLY:
+// PARSE HTTP REPLY: Parse HTTP reply to find server response
 //------------------------------------------------------------------------------
 
 void parseHttpReply(char * reply) {
@@ -97,16 +94,7 @@ void parseHttpReply(char * reply) {
 }
 
 //------------------------------------------------------------------------------
-// CLEAR BUFFER: Clear stdin
-//------------------------------------------------------------------------------
-
-void clearBuffer() {
-	int c;
-	while((c = getchar())!='\n' && c != '\0') {}
-}
-
-//------------------------------------------------------------------------------
-// MAIN: Server body
+// MAIN: Sender body
 //------------------------------------------------------------------------------
 
 int main() {
@@ -119,7 +107,7 @@ int main() {
 		return 0;
 	}
 	
-	printf("CONNECTION ESTABLISHED\n\n");
+	printf("CONNECTION ESTABLISHED WITH THE WEB SERVER (PORT: %d) (IP: %s)\n\n", SERVER_PORT, SERVER_IP);
 
 	FD_ZERO(&master);
 	FD_ZERO(&read_fds);
@@ -129,7 +117,7 @@ int main() {
 	
 	callMatlabScript("../log/log_2018-01-15_10-57-23.csv");
 	
-	fp = fopen("../matlab_c/tmp.txt", "r");
+	fp = fopen("../matlab_c/.tmp.txt", "r");
 	fgets(json_content, 1024, fp);
 	fclose(fp);
 

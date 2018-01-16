@@ -64,7 +64,7 @@ void processData(void) {
 		return;
 	}
 	
-	sprintf(cmd,"osascript -e 'tell app \"Terminal\"\ndo script \"cd %s && cd ../sender_c &&./%s\"\nend tell' > /dev/null", path, sender_script);
+	sprintf(cmd,"osascript -e 'tell app \"Terminal\"\ndo script \"cd %s && cd ../sender_c && clear && ./%s\"\nend tell' > /dev/null", path, sender_script);
 
 	system(cmd);
 	
@@ -236,7 +236,6 @@ int main() {
 						STARTED = TRUE;
 						if (end())
 							return 0;
-						clearBuffer();
 						if (CONN_CREATED)
 							createNewFile();
 					}

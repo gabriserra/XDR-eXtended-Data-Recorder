@@ -4,13 +4,12 @@
 %   Evolution over time.
 %   Return a nx4 matrix where each rows represents a sudden event
 %   (acceleration/braking)
-%    columns={time interval (sample),acc intensity, acc/interval,starting sample}
+%    columns={starting sample,time interval (sample),acc intensity, acc/interval}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [ data ] = sudden_checker(accx)    
-      acc_threshold = 0.4;
-      brake_threshold = -0.3;
-      brake_intensity_threshold = -0.2;
+      acc_threshold = 0.04;
+      brake_threshold = -0.1;
       turning = 0;
       j=1;
       start =0;
@@ -61,7 +60,7 @@ function [ data ] = sudden_checker(accx)
             data(i,4) = mean( accx(candidates(i,1):candidates(i,1)+interval(i,1),1 ));
           end
           
-              to_remove = find(data(:,4) >  brake_intensity_threshold & data(:,3) == -1 )
-              data(to_remove,:)=[];
+%               to_remove = find(data(:,4) >  brake_intensity_threshold & data(:,3) == -1 )
+%               data(to_remove,:)=[];
       end  
 end
