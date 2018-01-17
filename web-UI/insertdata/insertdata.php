@@ -177,11 +177,18 @@ function insert_crash($trip_id, $crash) {
 
     $query_string = "INSERT INTO `xdr_crash` (`id`, `crashtime`, `intensity`, `stationary`) VALUES ";
 
-    for($i = 0; $i < count($crash); $i++) {
+    if(count($crash) == 1) {
         $query_string = $query_string . "('" . $trip_id . "', 
-                                        '" . $crash[$i]['crashtime'] . "', 
-                                        '" . $crash[$i]['intensity'] . "', 
-                                        '" . $crash[$i]['stationary'] . "'), ";
+                                        '" . $crash['crashtime'] . "', 
+                                        '" . $crash['intensity'] . "', 
+                                        '" . $crash['stationary'] . "'), ";
+    } else {
+        for($i = 0; $i < count($crash); $i++) {
+            $query_string = $query_string . "('" . $trip_id . "', 
+                                            '" . $crash[$i]['crashtime'] . "', 
+                                            '" . $crash[$i]['intensity'] . "', 
+                                            '" . $crash[$i]['stationary'] . "'), ";
+        }
     }
 
     $query_string = substr($query_string, 0, -2);
