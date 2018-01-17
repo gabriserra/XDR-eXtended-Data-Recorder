@@ -87,7 +87,7 @@ function [suddens, turns, static_crashes, dynamic_crashes,dynamic_crashes2] = ma
             upper = dynamic_crashes(i,1)+ proximity_margin;
             lower = dynamic_crashes(i,1)- proximity_margin;
               
-            to_remove = find(suddens(:,1) < upper & suddens(:,1)> dynamic_crashes(i,1)-5 & suddens(:,3) == -1);
+            to_remove = find(suddens(:,1) < upper & suddens(:,1)> lower & suddens(:,3) == -1);
             suddens(to_remove,:) = [];
             to_remove = find(turns(:,1) < upper & turns(:,1) > lower);
             turns(to_remove,:) = [];
