@@ -12,7 +12,6 @@ var gauge_tot;
 var gauge_acc;
 var gauge_bra;
 var gauge_ste;
-var gauge_ovr;
 
 // ----------------------------
 // PAGE CODE
@@ -90,8 +89,7 @@ function get_evaluation_data_succ(reply) {
                 eval_data[eval_data.length-1].pointstotal,
                 eval_data[eval_data.length-1].pointsacceleration,
                 eval_data[eval_data.length-1].pointsbraking,
-                eval_data[eval_data.length-1].pointssteering,
-                eval_data[eval_data.length-1].pointsspeed);
+                eval_data[eval_data.length-1].pointssteering);
         charts_draw(eval_data);
     }
         
@@ -133,31 +131,26 @@ function gauge_build() {
     gauge_acc = new Gauge(document.getElementById("gauge-acc")).setOptions(opts);
     gauge_bra = new Gauge(document.getElementById("gauge-bra")).setOptions(opts);
     gauge_ste = new Gauge(document.getElementById("gauge-ste")).setOptions(opts);
-    gauge_ovr = new Gauge(document.getElementById("gauge-ovr")).setOptions(opts);    
     gauge_tot.setTextField(document.getElementById("textfield-tot"));
     gauge_acc.setTextField(document.getElementById("textfield-acc"));
     gauge_bra.setTextField(document.getElementById("textfield-bra"));
     gauge_ste.setTextField(document.getElementById("textfield-ste"));
-    gauge_ovr.setTextField(document.getElementById("textfield-ovr"));
     gauge_tot.maxValue = 100;
     gauge_acc.maxValue = 100;
     gauge_bra.maxValue = 100;
     gauge_ste.maxValue = 100;
-    gauge_ovr.maxValue = 100;
     gauge_tot.set(0);
     gauge_bra.set(0);
     gauge_acc.set(0);
     gauge_ste.set(0);
-    gauge_ovr.set(0);
 }
 
 // Set gauge to last trip data
-function gauge_set(tot, acc, bra, ste, ovr) {
+function gauge_set(tot, acc, bra, ste) {
     gauge_tot.set(tot);
     gauge_bra.set(acc);
     gauge_acc.set(bra);
     gauge_ste.set(ste);
-    gauge_ovr.set(ovr);
 }
 
 // -------------------------------------
@@ -169,7 +162,6 @@ function charts_draw(eval_data) {
     chart_acc_draw(eval_data);
     chart_bra_draw(eval_data);
     chart_ste_draw(eval_data);
-    chart_ovr_draw(eval_data);
 }
 
 // build chart tot
@@ -214,17 +206,6 @@ function chart_ste_draw(eval_data) {
     }
 
     build_chart("chart-ste", data_points);
-}
-
-// build chart ovr
-function chart_ovr_draw(eval_data) {
-    var data_points = [];
-    for(var i = 0; i < eval_data.length; i++) {
-        data_points[i] = { x : Number(eval_data[i].number), 
-                          y : Number(eval_data[i].pointsspeed) };
-    }
-
-    build_chart("chart-ovr", data_points);
 }
 
 // -------------------------------------

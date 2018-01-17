@@ -188,7 +188,7 @@ function send_crash_infos($query_result) {
                 "number" : ' . ($i+1) . ',
                 "crashtime" : "' . $row['crashtime'] . '",
                 "intensity" : "' . $row['intensity'] . '",
-                "stationary" : "' . $row['stationary'] . '"
+                "stationary" : ' . $row['stationary'] . '
             },';
     }
         

@@ -188,7 +188,7 @@ function insert_crash($trip_id, $crash) {
                                         '" . $crash[$i]['stationary'] . "'), ";
     }
 
-    $query_string = substr($query_string, 0, -1);
+    $query_string = substr($query_string, 0, -2);
     $query_string = $query_string . ';';
 
     $my_result = $my_database->send_query($query_string);

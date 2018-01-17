@@ -252,9 +252,9 @@ function counter_animate(selector, num) {
 }
 
 function counter_get_color(num) {
-    if(num < 2)
+    if(num < 30)
         return $.Color("#1BC98E");
-    else if (num >= 2 && num < 5)
+    else if (num >= 30 && num < 70)
         return $.Color("rgb(201, 175, 27)");
     else
         return $.Color("#E64759");
