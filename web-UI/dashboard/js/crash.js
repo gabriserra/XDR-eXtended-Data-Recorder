@@ -54,6 +54,7 @@ function prepare_page(userdata) {
     $('.nav-user-a').attr("href", php_logout);
     $('.nav-user-a').attr("title", userdata.username + " - Logout");
     $('.nav-avatar').attr("src", img_svr_path + userdata.avatar);
+    $('a.fa.fa-times-circle-o').attr("href", rel_fron_path);
     toggle_tooltip();
 }
 
@@ -94,9 +95,7 @@ function datepickerupdate_event_trigger() {
 // AJAX-REP
 // fill with notify icon after user view change
 function datepicker_fill(reply) {
-    if(reply.error == true)
-        alert(reply.message);
-    else
+    if(reply.error != true)
         for(var i = 0; i < $('.datepicker-days tbody td').length; i++)
             if(reply.crashdates.includes($('.datepicker-days tbody td').eq(i).attr("data-day")))   
                 $( ".datepicker-days tbody td" ).eq(i).addClass( "notify");

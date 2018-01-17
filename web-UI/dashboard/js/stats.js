@@ -54,6 +54,7 @@ function prepare_page(userdata) {
     $('.nav-user-a').attr("href", php_logout);
     $('.nav-user-a').attr("title", userdata.username + " - Logout");
     $('.nav-avatar').attr("src", img_svr_path + userdata.avatar);
+    $('a.fa.fa-times-circle-o').attr("href", rel_fron_path);
     toggle_tooltip();
 }
 
@@ -251,9 +252,9 @@ function counter_animate(selector, num) {
 }
 
 function counter_get_color(num) {
-    if(num < 2)
+    if(num < 30)
         return $.Color("#1BC98E");
-    else if (num >= 2 && num < 5)
+    else if (num >= 30 && num < 70)
         return $.Color("rgb(201, 175, 27)");
     else
         return $.Color("#E64759");

@@ -67,7 +67,7 @@ function retrieve_crash_dates($init_date, $last_date) {
 function get_crashes_info($date) {
     global $my_database;
 
-    $query_string = "SELECT DATE_FORMAT(crashtime, '%m/%d/%Y') as  crashtime, intensity, stationary
+    $query_string = "SELECT DATE_FORMAT(crashtime, '%m/%d/%Y - %h:%i:%s') as  crashtime, intensity, stationary
                      FROM (`xdr_trip` AS t INNER JOIN `xdr_crash` AS c ON t.`id` = c.`id`)
                      WHERE `email` = '" . get_user_email() . "'
                      AND DATE_FORMAT(crashtime, '%m/%d/%Y') = '" . $date . "'";

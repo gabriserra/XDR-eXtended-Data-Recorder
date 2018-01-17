@@ -45,14 +45,12 @@ function send_trip_info($query_result) {
     echo '{  
         "error" : false, 
         "lasttripdata" : { 
-            "meters" : "' . $query_result['meters'] . '",
             "starttime" : "' . $query_result['starttime'] . '",
             "secondslength" : "' . $query_result['secondslength'] . '",
             "pointstotal" : "' . $query_result['pointstotal'] . '",
             "pointsacceleration" : "' . $query_result['pointsacceleration'] . '",
             "pointsbraking" : "' . $query_result['pointsbraking'] . '",
-            "pointssteering" : "' . $query_result['pointssteering'] . '",
-            "pointsspeed" : "' . $query_result['pointsspeed'] . '"}
+            "pointssteering" : "' . $query_result['pointssteering'] . '"}
         }';
     exit(0);
 }
@@ -77,8 +75,7 @@ function send_evaluation_data($query_result) {
                 "pointstotal" : "' . $row['pointstotal'] . '",
                 "pointsacceleration" : "' . $row['pointsacceleration'] . '",
                 "pointsbraking" : "' . $row['pointsbraking'] . '",
-                "pointssteering" : "' . $row['pointssteering'] . '",
-                "pointsspeed" : "' . $row['pointsspeed'] . '"
+                "pointssteering" : "' . $row['pointssteering'] . '"
             },';
     }
         
@@ -188,7 +185,7 @@ function send_crash_infos($query_result) {
                 "number" : ' . ($i+1) . ',
                 "crashtime" : "' . $row['crashtime'] . '",
                 "intensity" : "' . $row['intensity'] . '",
-                "stationary" : "' . $row['stationary'] . '"
+                "stationary" : ' . $row['stationary'] . '
             },';
     }
         
