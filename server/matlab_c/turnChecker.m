@@ -14,9 +14,9 @@ function turns = turnChecker(accx, accy, giroz, turn_peaks_threshold)
       n_candidates = 0;
       turns = 0;
       
-      %peaks search
-      for i = 1 : size(accy,1)
-        if(turn_complete == 0 && abs(accy(i)) > turn_peaks_threshold)
+      % Peaks search
+      for i = 1 : size(giroz,1)
+        if(turn_complete == 0 && abs(giroz(i)) > turn_peaks_threshold)
             n_candidates = n_candidates + 1;
             turn_complete = 1;
             
@@ -28,7 +28,7 @@ function turns = turnChecker(accx, accy, giroz, turn_peaks_threshold)
          end
          
         %turn interval computing
-        if(turn_complete == 1 && ((accy(i) < 0 && direction == 1) || (((abs(accy(i)) < noise_threshold || accy(i) > 0 ) && direction == -1) ) || i == size(accy,1)))
+        if(turn_complete == 1 && ((giroz(i) < 0 && direction == 1) || (((abs(giroz(i)) < noise_threshold || giroz(i) > 0 ) && direction == -1) ) || i == size(giroz,1)))
             turn_complete = 0;
         end     
       end  
@@ -38,8 +38,8 @@ function turns = turnChecker(accx, accy, giroz, turn_peaks_threshold)
           turn_complete = 0;
           index = 1;
           
-          for i = 1 : size(accy,1)
-            if(turn_complete == 0 && abs(accy(i)) > turn_peaks_threshold)
+          for i = 1 : size(giroz,1)
+            if(turn_complete == 0 && abs(giroz(i)) > turn_peaks_threshold)
                 turns(index, 1) = i;
                 turn_complete = 1;
 
@@ -51,7 +51,7 @@ function turns = turnChecker(accx, accy, giroz, turn_peaks_threshold)
              end
 
             % Turn interval computing
-            if(turn_complete == 1 && ((accy(i) < 0 && direction == 1) || (((abs(accy(i)) < noise_threshold || accy(i) > 0 ) && direction == -1) ) || i == size(accy,1)))
+            if(turn_complete == 1 && ((giroz(i) < 0 && direction == 1) || (((abs(giroz(i)) < noise_threshold || giroz(i) > 0 ) && direction == -1) ) || i == size(giroz,1)))
                 turns(index,3) = i - turns(index, 1);
                 turns(index,2) = abs(mean(accx(turns(index, 1) : i)));
                 turn_complete = 0;

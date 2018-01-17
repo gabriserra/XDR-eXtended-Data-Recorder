@@ -97,7 +97,7 @@ void parseHttpReply(char * reply) {
 // MAIN: Sender body
 //------------------------------------------------------------------------------
 
-int main() {
+int main(int argc, char **argv) {
 	FILE* fp;
 	char json_content[1024];
 	
@@ -115,34 +115,37 @@ int main() {
 	if (fdmax < sockt_TCP)
 		fdmax = sockt_TCP;
 	
-	callMatlabScript("../log/log_2018-01-15_10-57-23.csv");
+	if(argc > 1) {
+		callMatlabScript(argv[1]);
 	
-	fp = fopen("../matlab_c/.tmp.txt", "r");
-	fgets(json_content, 1024, fp);
-	fclose(fp);
+		fp = fopen("../matlab_c/.tmp.txt", "r");
+		fgets(json_content, 1024, fp);
+		fclose(fp);
 
-	printf("%s\n", json_content);
-	char buffer[1024];
-	sprintf(buffer, "%s%lu%s%s%s", HEADER_HTTP, strlen(json_content),"\n\n", json_content, FOOTER_HTTP);
-	TCPsend(buffer);
+		char buffer[2048];
+		sprintf(buffer, "%s%lu%s%s%s", HEADER_HTTP, strlen(json_content),"\n\n", json_content, FOOTER_HTTP);
+		TCPsend(buffer);
 	
-	read_fds = master;
-	if(select(fdmax+1, &read_fds, NULL, NULL, NULL) < 0) {
-		printf("ERROR IN TCP SELECT\n");
-		fflush(stdout);
-		return 0;
-	}
+		read_fds = master;
+		if(select(fdmax+1, &read_fds, NULL, NULL, NULL) < 0) {
+			printf("ERROR IN TCP SELECT\n");
+			fflush(stdout);
+			return 0;
+		}
 	
-	char buffer_2[1024];
+		char buffer_2[1024];
 	
-	for(i = 0; i <= fdmax; i++){
-		if(FD_ISSET(i, &read_fds)){
-			switch(i) {
-				default:
-					recvBytes = TCPrecv_string(buffer_2);
+		for(i = 0; i <= fdmax; i++){
+			if(FD_ISSET(i, &read_fds)){
+				switch(i) {
+					default:
+						recvBytes = TCPrecv_string(buffer_2);
+				}
 			}
 		}
-	}
 	
-	parseHttpReply(buffer_2);
+		parseHttpReply(buffer_2);
+	}
+	else
+		printf("FATAL ERROR: NO LOG INDICATED\n\n");
 }

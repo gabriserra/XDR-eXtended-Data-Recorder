@@ -10,7 +10,7 @@
 function crash = dynamicCrashChecker(accx, dynamic_upper, dynamic_lower)  
     crash = 0;
     % Intervallo di tempo
-    dynamic_upper_size = 50;
+    dynamic_upper_size = 20;
     dynamic_lower_size = 3;
     
     %find peaks

@@ -10,7 +10,7 @@
 function [acc, brake] = accBrakeChecker(accx, acc_threshold, brake_threshold)  
     n_candidates = 0;
     acc_brake_complete = 0;
-    acc_brake_lower_size = 15;
+    acc_brake_lower_size = 30;
     acc = 0;
     brake = 0;
     acc_brake = 0;
