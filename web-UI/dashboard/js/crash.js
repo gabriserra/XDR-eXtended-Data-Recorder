@@ -95,9 +95,7 @@ function datepickerupdate_event_trigger() {
 // AJAX-REP
 // fill with notify icon after user view change
 function datepicker_fill(reply) {
-    if(reply.error == true)
-        alert(reply.message);
-    else
+    if(reply.error != true)
         for(var i = 0; i < $('.datepicker-days tbody td').length; i++)
             if(reply.crashdates.includes($('.datepicker-days tbody td').eq(i).attr("data-day")))   
                 $( ".datepicker-days tbody td" ).eq(i).addClass( "notify");
