@@ -108,7 +108,7 @@ function get_lasttrip_err() {
 function counter_set(starttime, secondslength) {
     hour_minute = starttime.substr(11, 5);
     $('#counter-length').html(secondslength+'<small class="unit green">M</small>');
-    $('#counter-starttime').html(hour_minute+'<small class="unit green">HH:MM</small>');
+    $('#counter-starttime').html(hour_minute);
 }
 
 // -------------------------------------
