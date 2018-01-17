@@ -15,7 +15,6 @@ header('Content-type: application/json');
         "email" : 
             "user@example.it",
         "trip" : {
-            "meters" : 50,
             "starttime" : "2018-01-07 07:30:00",
             "secondslength" : 120 
         },
@@ -31,8 +30,7 @@ header('Content-type: application/json');
             "pointstotal" : 2,
             "pointsacceleration" : 5,
             "pointsbraking" : 1,
-            "pointssteering" : 3,
-            "pointsspeed" : 8 
+            "pointssteering" : 3
         },
         "crash" : [
             {
@@ -118,10 +116,9 @@ function insert_trip($email, $trip) {
     global $my_database;
 
     $query_string = 
-        "INSERT INTO `xdr_trip` (`id`, `email`, `meters`, `starttime`, `secondslength`) 
+        "INSERT INTO `xdr_trip` (`id`, `email`, `starttime`, `secondslength`) 
         VALUES (NULL, 
                 '" . $email . "', 
-                '" . $trip['meters'] . "', 
                 '" . $trip['starttime'] . "',
                 '" . $trip['secondslength'] . "');";
 
@@ -158,13 +155,12 @@ function insert_evaluation($trip_id, $evaluation) {
     global $my_database;
 
     $query_string = 
-        "INSERT INTO `xdr_evaluation` (`id`, `pointstotal`, `pointsacceleration`, `pointsbraking`, `pointssteering`, `pointsspeed`) 
+        "INSERT INTO `xdr_evaluation` (`id`, `pointstotal`, `pointsacceleration`, `pointsbraking`, `pointssteering`) 
         VALUES ('" . $trip_id . "', 
                 '" . $evaluation['pointstotal'] . "', 
                 '" . $evaluation['pointsacceleration'] . "', 
                 '" . $evaluation['pointsbraking'] . "',
-                '" . $evaluation['pointssteering'] . "',
-                '" . $evaluation['pointsspeed'] . "');";
+                '" . $evaluation['pointssteering'] . "');";
 
     $my_result = $my_database->send_query($query_string);
 
@@ -233,10 +229,6 @@ function calculate_new_resume($resume, $trip, $evaluation) {
                                      $evaluation['pointssteering'] * $triplen_hour) 
                                         / $total_driven_hour;
 
-    $new_resume['pointsspeed'] = ($resume['pointsspeed'] * $driven_hour +
-                                  $evaluation['pointsspeed'] * $triplen_hour) 
-                                    / $total_driven_hour;
-
     $new_resume['drivenhours'] = $total_driven_hour;
 
     return $new_resume;
@@ -251,7 +243,6 @@ function update_resume_data($email, $new_resume) {
                         `pointsacceleration` = '" . $new_resume['pointsacceleration'] . "',
                         `pointsbraking` = '" . $new_resume['pointsbraking'] . "',
                         `pointssteering` = '" . $new_resume['pointssteering'] . "',
-                        `pointsspeed` = '" . $new_resume['pointsspeed'] . "',
                         `drivenhours` = '" . $new_resume['drivenhours'] . "'
                     WHERE `xdr_resume`.`email` = '" . $email . "';";
     

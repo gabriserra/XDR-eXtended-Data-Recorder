@@ -58,18 +58,17 @@ CREATE TABLE `xdr_evaluation` (
   `pointstotal` int(11) NOT NULL DEFAULT '0',
   `pointsacceleration` int(11) NOT NULL DEFAULT '0',
   `pointsbraking` int(11) NOT NULL DEFAULT '0',
-  `pointssteering` int(11) NOT NULL DEFAULT '0',
-  `pointsspeed` int(11) NOT NULL DEFAULT '0'
+  `pointssteering` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dump dei dati per la tabella `evaluation`
 --
 
-INSERT INTO `xdr_evaluation` (`id`, `pointstotal`, `pointsacceleration`, `pointsbraking`, `pointssteering`, `pointsspeed`) VALUES
-(1, 50, 49, 51, 48, 52),
-(2, 49, 51, 49, 52, 48),
-(3, 40, 50, 40, 55, 80);
+INSERT INTO `xdr_evaluation` (`id`, `pointstotal`, `pointsacceleration`, `pointsbraking`, `pointssteering`) VALUES
+(1, 50, 49, 51, 48),
+(2, 49, 51, 49, 52),
+(3, 40, 50, 40, 55);
 
 -- --------------------------------------------------------
 
@@ -83,7 +82,6 @@ CREATE TABLE `xdr_resume` (
   `pointsacceleration` int(11) NOT NULL DEFAULT '0',
   `pointsbraking` int(11) NOT NULL DEFAULT '0',
   `pointssteering` int(11) NOT NULL DEFAULT '0',
-  `pointsspeed` int(11) NOT NULL DEFAULT '0',
   `drivenhours` float NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -91,8 +89,8 @@ CREATE TABLE `xdr_resume` (
 -- Dump dei dati per la tabella `resume`
 --
 
-INSERT INTO `xdr_resume` (`email`, `pointstotal`, `pointsacceleration`, `pointsbraking`, `pointssteering`, `pointsspeed`, `drivenhours`) VALUES
-('gabriele_serra@hotmail.it', 61, 41, 39, 82, 82, 3.5);
+INSERT INTO `xdr_resume` (`email`, `pointstotal`, `pointsacceleration`, `pointsbraking`, `pointssteering`, `drivenhours`) VALUES
+('gabriele_serra@hotmail.it', 61, 41, 39, 82, 3.5);
 
 -- --------------------------------------------------------
 
@@ -128,7 +126,6 @@ INSERT INTO `xdr_stat` (`id`, `numberacc`, `worstacc`, `numberbra`, `worstbra`, 
 CREATE TABLE `xdr_trip` (
   `id` int(11) NOT NULL,
   `email` varchar(254) NOT NULL,
-  `meters` int(11) NOT NULL DEFAULT '0',
   `starttime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `secondslength` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -137,10 +134,10 @@ CREATE TABLE `xdr_trip` (
 -- Dump dei dati per la tabella `trip`
 --
 
-INSERT INTO `xdr_trip` (`id`, `email`, `meters`, `starttime`, `secondslength`) VALUES
-(1, 'gabriele_serra@hotmail.it', 50, '2018-01-07 06:30:00', 120),
-(2, 'gabriele_serra@hotmail.it', 100, '2018-01-07 12:32:00', 90),
-(3, 'gabriele_serra@hotmail.it', 90, '2018-01-05 04:15:00', 180);
+INSERT INTO `xdr_trip` (`id`, `email`, `starttime`, `secondslength`) VALUES
+(1, 'gabriele_serra@hotmail.it', '2018-01-07 06:30:00', 120),
+(2, 'gabriele_serra@hotmail.it', '2018-01-07 12:32:00', 90),
+(3, 'gabriele_serra@hotmail.it', '2018-01-05 04:15:00', 180);
 
 -- --------------------------------------------------------
 

@@ -12,7 +12,6 @@ var gauge_tot;
 var gauge_acc;
 var gauge_bra;
 var gauge_ste;
-var gauge_ovr;
 
 // ----------------------------
 // PAGE CODE
@@ -93,9 +92,8 @@ function get_lasttrip_succ(reply) {
                     trip_data.pointstotal,
                     trip_data.pointsacceleration,
                     trip_data.pointsbraking,
-                    trip_data.pointssteering,
-                    trip_data.pointsspeed);
-        counter_set(trip_data.meters, trip_data.starttime, trip_data.secondslength);
+                    trip_data.pointssteering);
+        counter_set(trip_data.starttime, trip_data.secondslength);
     }
         
 }
@@ -107,9 +105,8 @@ function get_lasttrip_err() {
 }
 
 // Prepare counter with last trip data
-function counter_set(meters, starttime, secondslength) {
+function counter_set(starttime, secondslength) {
     hour_minute = starttime.substr(11, 5);
-    $('#counter-meter').html(meters+'<small class="unit green">M</small>');
     $('#counter-length').html(secondslength+'<small class="unit green">M</small>');
     $('#counter-starttime').html(hour_minute+'<small class="unit green">HH:MM</small>');
 }
@@ -144,31 +141,26 @@ function gauge_build() {
     gauge_acc = new Gauge(document.getElementById("gauge-acc")).setOptions(opts);
     gauge_bra = new Gauge(document.getElementById("gauge-bra")).setOptions(opts);
     gauge_ste = new Gauge(document.getElementById("gauge-ste")).setOptions(opts);
-    gauge_ovr = new Gauge(document.getElementById("gauge-ovr")).setOptions(opts);    
     gauge_tot.setTextField(document.getElementById("textfield-tot"));
     gauge_acc.setTextField(document.getElementById("textfield-acc"));
     gauge_bra.setTextField(document.getElementById("textfield-bra"));
     gauge_ste.setTextField(document.getElementById("textfield-ste"));
-    gauge_ovr.setTextField(document.getElementById("textfield-ovr"));
     gauge_tot.maxValue = 100;
     gauge_acc.maxValue = 100;
     gauge_bra.maxValue = 100;
     gauge_ste.maxValue = 100;
-    gauge_ovr.maxValue = 100;
     gauge_tot.set(0);
     gauge_bra.set(0);
     gauge_acc.set(0);
     gauge_ste.set(0);
-    gauge_ovr.set(0);
 }
 
 // Set gauge to last trip data
-function gauge_set(tot, acc, bra, ste, ovr) {
+function gauge_set(tot, acc, bra, ste) {
     gauge_tot.set(tot);
     gauge_bra.set(acc);
     gauge_acc.set(bra);
     gauge_ste.set(ste);
-    gauge_ovr.set(ovr);
 }
 
 // -------------------------------------
