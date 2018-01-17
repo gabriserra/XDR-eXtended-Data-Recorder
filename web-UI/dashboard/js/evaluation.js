@@ -62,6 +62,7 @@ function prepare_page(userdata) {
     $('.nav-user-a').attr("href", php_logout);
     $('.nav-user-a').attr("title", userdata.username + " - Logout");
     $('.nav-avatar').attr("src", img_svr_path + userdata.avatar);
+    $('a.fa.fa-times-circle-o').attr("href", rel_fron_path);
     toggle_tooltip();
 }
 

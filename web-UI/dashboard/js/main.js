@@ -65,6 +65,7 @@ function prepare_page(userdata) {
     $('.cover-img').css('background-image', 'url(' + img_svr_path + userdata.cover + ')');
     $('.card-name').html(userdata.name + " " + userdata.surname);
     $('.card-text').html(userdata.bio);
+    $('a.fa.fa-times-circle-o').attr("href", rel_fron_path);
     toggle_tooltip();
 }
 

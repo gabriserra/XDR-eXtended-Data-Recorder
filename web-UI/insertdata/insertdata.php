@@ -34,11 +34,18 @@ header('Content-type: application/json');
             "pointssteering" : 3,
             "pointsspeed" : 8 
         },
-        "crash" : {
-            "crashtime" : "2018-01-07 07:30:00",
-            "intensity" : 5,
-            "stationary" : 0
-        }
+        "crash" : [
+            {
+                "crashtime" : "2018-01-07 07:30:00",
+                "intensity" : 5,
+                "stationary" : 0
+            },
+            {
+                "crashtime" : "2018-01-10 10:25:00",
+                "intensity" : 3,
+                "stationary" : 1
+            },
+        ]
     }';
 */
 
@@ -172,12 +179,17 @@ function insert_crash($trip_id, $crash) {
     if($crash == null)
         return;
 
-    $query_string = 
-        "INSERT INTO `xdr_crash` (`id`, `crashtime`, `intensity`, `stationary`) 
-        VALUES ('" . $trip_id . "', 
-                '" . $crash['crashtime'] . "', 
-                '" . $crash['intensity'] . "', 
-                '" . $crash['stationary'] . "');";
+    $query_string = "INSERT INTO `xdr_crash` (`id`, `crashtime`, `intensity`, `stationary`) VALUES ";
+
+    for($i = 0; $i < count($crash); $i++) {
+        $query_string = $query_string . "('" . $trip_id . "', 
+                                        '" . $crash[$i]['crashtime'] . "', 
+                                        '" . $crash[$i]['intensity'] . "', 
+                                        '" . $crash[$i]['stationary'] . "'), ";
+    }
+
+    $query_string = substr($query_string, 0, -1);
+    $query_string = $query_string . ';';
 
     $my_result = $my_database->send_query($query_string);
 
