@@ -52,7 +52,7 @@ function get_succ(reply) {
 // Action done in case of failure
 function get_err() {
     alert("Server unreachable.");
-    window.location.replace(rel_fron_path);
+    //window.location.replace(rel_fron_path);
 }
 
 // Prepare page with custom user data
