@@ -24,7 +24,7 @@ XDR-eXtended-Data-Recorder/
     ├── frontend
     └── insertdata
 
-Arduino -> arduino code and external modules libraries
+Arduino/XDR -> arduino code and external modules libraries
 MATLAB -> ..
 server
     log -> raw data log that comes from the car

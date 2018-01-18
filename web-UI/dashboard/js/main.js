@@ -44,15 +44,15 @@ function get_user_data() {
 function get_succ(reply) {
     if (reply.error == false)
         prepare_page(reply.message);
-    //else
-        //window.location.replace(rel_fron_path);
+    else
+        window.location.replace(rel_fron_path);
 }
 
 // AJAX-ERR
 // Action done in case of failure
 function get_err() {
-    //alert("Server unreachable.");
-    //window.location.replace(rel_fron_path);
+    alert("Server unreachable.");
+    window.location.replace(rel_fron_path);
 }
 
 // Prepare page with custom user data
