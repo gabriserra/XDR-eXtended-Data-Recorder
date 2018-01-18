@@ -1,1 +1,1 @@
-content={"email":"ciabbi94@live.it","trip":{"starttime":"2018-01-17 17:47:10","secondslength":20},"stat":{"numberacc":0,"worstacc":0,"numberbra":1,"worstbra":8,"numbercur":5,"worstcur":5},"evaluation":{"pointstotal":82,"pointsacceleration":100,"pointsbraking":47,"pointssteering":100}}
+content={"email":"ciabbi94@live.i","trip":{"starttime":"2018-01-18 19:48:50","secondslength":23},"stat":{"numberacc":2,"worstacc":6,"numberbra":2,"worstbra":13,"numbercur":4,"worstcur":19},"evaluation":{"pointstotal":95,"pointsacceleration":100,"pointsbraking":100,"pointssteering":85}}

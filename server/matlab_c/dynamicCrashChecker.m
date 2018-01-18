@@ -10,7 +10,7 @@
 function crash = dynamicCrashChecker(accx, dynamic_upper, dynamic_lower)  
     crash = 0;
     % Intervallo di tempo
-    dynamic_upper_size = 20;
+    dynamic_upper_size = 30;
     dynamic_lower_size = 3;
     
     %find peaks
@@ -21,19 +21,21 @@ function crash = dynamicCrashChecker(accx, dynamic_upper, dynamic_lower)
 
         % search dynamic crash ending
         for i = 1 : size(peaks, 1)  
-            ends = find(accx(peaks(i) : size(accx)) > 0);
+            ends = find(accx(peaks(i) : size(accx)) > dynamic_upper);
+            ends = ends(1,1);
             crash(i,1) = peaks(i);
             
             if(isempty(ends))
                 crash(i,3) = size(accx,1) - crash(i,1);
             else
-                crash(i,3) = ends(1);
+                crash(i,3) = ends;
             end
             crash(i,2) = max(abs(accx(crash(i,1) : crash(i,1) + crash(i,3))));
         end
 
         crash = crash(crash(:,3) <= dynamic_upper_size, :);
         crash = crash(crash(:,3) >= dynamic_lower_size, :);
+        
         
         i = 1;
         %filter near pairs of peaks

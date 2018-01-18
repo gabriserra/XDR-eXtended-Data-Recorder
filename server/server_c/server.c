@@ -227,6 +227,7 @@ int main() {
 						STARTED = FALSE;
 						if (fp != NULL)
 							fclose(fp);
+						if(CONN_CREATED == TRUE)
 						processData();
 						if (end())
 							return 0;

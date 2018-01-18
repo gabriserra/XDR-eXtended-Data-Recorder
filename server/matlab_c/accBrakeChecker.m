@@ -62,6 +62,7 @@ function [acc, brake] = accBrakeChecker(accx, acc_threshold, brake_threshold)
         acc_brake = acc_brake(acc_brake(:,3) >= acc_brake_lower_size, :);
         acc = acc_brake(acc_brake(:,4) > 0, 1:3);
         brake = acc_brake(acc_brake(:,4) < 0, 1:3);
+        
         if(isempty(acc))
               acc = 0;
         end

@@ -7,7 +7,7 @@ function content = createJsonStructure(email, start_time, duration, acc, brake, 
     content.trip = trip;
     if (acc ~= 0)
         size_acc = size(acc,1);
-        max_acc = round(map_slope*max(abs(acc(:,2))));
+        max_acc = round(200*max(abs(acc(:,2))));
     else
         size_acc = 0;
         max_acc = 0;
@@ -15,7 +15,7 @@ function content = createJsonStructure(email, start_time, duration, acc, brake, 
     
     if (brake ~= 0)
         size_brake = size(brake,1);
-        max_brake = round(map_slope*max(abs(brake(:,2))));
+        max_brake = round(200*max(abs(brake(:,2))));
     else
         size_brake = 0;
         max_brake = 0;
@@ -23,7 +23,7 @@ function content = createJsonStructure(email, start_time, duration, acc, brake, 
     
     if (turns ~= 0)
         size_turns = size(turns,1);
-        max_turns = round(map_slope*max(abs(turns(:,2))));
+        max_turns = round(300*max(abs(turns(:,2))));
     else
         size_turns = 0;
         max_turns = 0;
@@ -34,7 +34,7 @@ function content = createJsonStructure(email, start_time, duration, acc, brake, 
 
     ev = struct('pointstotal', evaluation(4), 'pointsacceleration', evaluation(1), 'pointsbraking', evaluation(2), 'pointssteering', evaluation(3));
     content.evaluation = ev;
-    
+
     index = 1;
     if (static_crashes ~= 0)
         for i = 1 : size(static_crashes,1)
@@ -51,6 +51,7 @@ function content = createJsonStructure(email, start_time, duration, acc, brake, 
     end
     
     if(exist('crash', 'var'))
+        crash(index) = struct('crashtime', '', 'intensity', '', 'stationary', '');
         content.crash = crash;
     end
     

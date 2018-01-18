@@ -85,8 +85,8 @@ void parseHttpReply(char * reply) {
 	}
 	
 	if((start = strstr(reply, "{ \"error\" : true")) != NULL) {
-		start = strstr(reply, "\"message\" : \"") + 8;
-		printf("ERROR WHILE INSERTING DATA IN DATABSE: %s\n\n", start);
+		start = strstr(reply, "\"message\" : \"") + 13;
+		printf("ERROR WHILE INSERTING DATA IN DATABASE: %s\n\n", start);
 	}
 	else if((start = strstr(reply, "{ \"error\" : false")) != NULL) {
 		printf("UPLOAD ON THE WEB SERVER SUCCESFULLY\n\n");

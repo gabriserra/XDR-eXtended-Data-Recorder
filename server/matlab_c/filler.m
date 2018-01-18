@@ -31,5 +31,6 @@ function filled = filler(unfilled)
         end
     end
     filled(:,1) = filled(:,1) - filled(1,1);
+    filled(:,3) = filled(:,3) - filled(1,3);
 end
 

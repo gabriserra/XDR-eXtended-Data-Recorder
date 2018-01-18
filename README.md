@@ -12,11 +12,10 @@ This work has been realized in University of Pisa/Scuola Superiore Sant'Anna in 
 ## Path and dependency
 ```
 XDR-eXtended-Data-Recorder/
-├──Arduino
-├──MATLAB
-│   ├── TO BE ORGANIZED
+├──arduino
 ├──server
 │   ├── log
+|   ├── matlab_c
 │   ├── sender_c
 │   ├── server_c
 └──web-UI
@@ -24,11 +23,12 @@ XDR-eXtended-Data-Recorder/
     ├── frontend
     └── insertdata
 
-Arduino -> arduino code and external modules libraries
-MATLAB -> ..
+arduino -> arduino code and external modules libraries
 server
     log -> raw data log that comes from the car
-    sender_c -> receive data from the car?
+    matlab_c -> process the recevied data and produced the json sent to the web server
+    sender_c -> launch matlab scripts and send to the web server the results in json
+    server_c -> receive data from the car, save them in the log file and launches the sender
 web-UI
     dashboard -> user dashboard client/server code
     frontend -> frontend page client/server code
