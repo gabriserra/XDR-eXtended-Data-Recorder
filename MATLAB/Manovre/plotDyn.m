@@ -1,7 +1,7 @@
 %urto153
 start=375;
 interval=7;
-width = 1.5;
+width = 2;
 acc_threshold = -0.05;
 brake_threshold = -0.5;
 figure;
@@ -19,4 +19,4 @@ t.FontSize=11;
 hline(brake_threshold,'r');
 plot([0 425],[brake_threshold brake_threshold],'r--','LineWidth',width);
 hold on; 
-plot(start-1-50:start+interval-50,trip(start-1:start+interval,3),'g','LineWidth',width,'Color',[.31 .58 .26]);
+plot(start-1-50:start+interval-50,trip(start-1:start+interval,3),'g','LineWidth',width);

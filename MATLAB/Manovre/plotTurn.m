@@ -3,7 +3,7 @@ start=3131;
 interval=81;
 start2 = 3369;
 interval2=133;
-width = 1.5; 
+width = 2; 
 
 turn_lower_size = 15;
 acc_threshold =0.035;
@@ -19,6 +19,6 @@ t.FontSize=11;
 plot([0 size(trip,1)-2750],[acc_threshold acc_threshold],'r--','LineWidth',width);
 
 hold on; 
-plot(start-2750:start+interval-2750+1,trip(start-1:start+interval,4),'LineWidth',1,'Color',[.31 .58 .26]);
+plot(start-2750:start+interval-2750+1,trip(start-1:start+interval,4),'g','LineWidth',1);
 hold on;
-plot(start2-2750:start2+interval2-2750+1,trip(start2-1:start2+interval2,4),'LineWidth',1,'Color',[.31 .58 .26]);
+plot(start2-2750:start2+interval2-2750+1,trip(start2-1:start2+interval2,4),'g','LineWidth',1);

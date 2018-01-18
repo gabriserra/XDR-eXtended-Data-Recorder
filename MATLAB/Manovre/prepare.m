@@ -1,4 +1,4 @@
-subtrip = kicks15;
+subtrip = urto153;
 subtrip2 = urto153;
 subtrip3 = kicks;
 subtrip4 = turn_norm;
