@@ -52,7 +52,7 @@ function get_succ(reply) {
 // Action done in case of failure
 function get_err() {
     alert("Server unreachable.");
-    //window.location.replace(rel_fron_path);
+    window.location.replace(rel_fron_path);
 }
 
 // Prepare page with custom user data
@@ -89,7 +89,6 @@ function get_lasttrip_succ(reply) {
     if (reply.error == false) {
         trip_data = reply.lasttripdata;
         gauge_set(trip_data.pointstotal, 
-                    trip_data.pointstotal,
                     trip_data.pointsacceleration,
                     trip_data.pointsbraking,
                     trip_data.pointssteering);
@@ -107,7 +106,7 @@ function get_lasttrip_err() {
 // Prepare counter with last trip data
 function counter_set(starttime, secondslength) {
     hour_minute = starttime.substr(11, 5);
-    $('#counter-length').html(secondslength+'<small class="unit green">M</small>');
+    $('#counter-length').html(secondslength+'<small class="unit green">s</small>');
     $('#counter-starttime').html(hour_minute);
 }
 
