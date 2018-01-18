@@ -86,7 +86,6 @@ function get_evaluation_data_succ(reply) {
     if (reply.error == false) {
         eval_data = reply.evaluationdata;
         gauge_set(eval_data[eval_data.length-1].pointstotal, 
-                eval_data[eval_data.length-1].pointstotal,
                 eval_data[eval_data.length-1].pointsacceleration,
                 eval_data[eval_data.length-1].pointsbraking,
                 eval_data[eval_data.length-1].pointssteering);

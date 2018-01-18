@@ -70,11 +70,11 @@ function retrieve_stats_dates($init_date, $last_date) {
 function get_stat_list($date) {
     global $my_database;
 
-    $query_string = "SELECT t.id, DATE_FORMAT(starttime, '%h:%i') as  triptime
+    $query_string = "SELECT t.id, DATE_FORMAT(starttime, '%k:%i') as  triptime
                      FROM (`xdr_trip` AS t INNER JOIN `xdr_stat` AS s ON t.`id` = s.`id`)
                      WHERE `email` = '" . get_user_email() . "'
                      AND DATE_FORMAT(starttime, '%m/%d/%Y') = '" . $date . "'
-                     ORDER BY triptime ASC";
+                     ORDER BY triptime DESC";
     
     $my_result = $my_database->send_query($query_string);
 
