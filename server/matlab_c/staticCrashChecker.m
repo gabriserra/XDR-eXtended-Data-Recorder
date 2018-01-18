@@ -15,6 +15,7 @@ function crash = staticCrashChecker(accx, static_lower)
     
     %find all peaks
     peaks = find(abs(accx) > static_lower);
+
     i = 1;
     while(i <= size(peaks,1) && ~isempty(peaks))
         if(abs(accx(peaks(i) - 2)) > static_threshold || abs(accx(peaks(i) - 3)) > static_threshold || abs(accx(peaks(i) - 4)) > static_threshold || abs(accx(peaks(i) - 5)) > static_threshold)

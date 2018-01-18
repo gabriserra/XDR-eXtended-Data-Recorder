@@ -1,45 +1,57 @@
 function content = createJsonStructure(email, start_time, duration, acc, brake, turns, dynamic_crashes, static_crashes, evaluation)
-    if (acc == 0)
-        acc = ones(1,2);
-    end
-    if (brake == 0)
-        brake = ones(1,2);
-    end
-    if (turns == 0)
-        turns = ones(1,2);
-    end
-    if (dynamic_crashes == 0)
-        static_crashes = ones(1,2);
-    end
-    if (static_crashes == 0)
-        static_crashes = ones(1,2);
-    end
-
-    trip = struct('meters', 0, 'starttime', start_time, 'secondslength', duration);
+    map_slope = 50;
     
-    stat = struct('numberacc', size(acc,1), 'worstacc', max(acc(:,2)), 'numberbra', size(brake,1), 'worstbra', max(brake(:,2)), 'numbercur', size(turns, 1), 'worstcur', max(turns(:,2)));
+    content.email = email;
 
-    evaluation = struct('pointstotal', evaluation(4), 'pointsacceleration', evaluation(1), 'pointsbraking', evaluation(2), 'pointssteering', evaluation(3), 'pointsspeed', -1);
+    trip = struct('starttime', start_time, 'secondslength', duration);
+    content.trip = trip;
+    if (acc ~= 0)
+        size_acc = size(acc,1);
+        max_acc = round(map_slope*max(abs(acc(:,2))));
+    else
+        size_acc = 0;
+        max_acc = 0;
+    end
+    
+    if (brake ~= 0)
+        size_brake = size(brake,1);
+        max_brake = round(map_slope*max(abs(brake(:,2))));
+    else
+        size_brake = 0;
+        max_brake = 0;
+    end
+    
+    if (turns ~= 0)
+        size_turns = size(turns,1);
+        max_turns = round(map_slope*max(abs(turns(:,2))));
+    else
+        size_turns = 0;
+        max_turns = 0;
+    end
 
+    stat = struct('numberacc', size_acc, 'worstacc', max_acc, 'numberbra', size_brake, 'worstbra', max_brake, 'numbercur', size_turns, 'worstcur', max_turns);
+    content.stat = stat;
+
+    ev = struct('pointstotal', evaluation(4), 'pointsacceleration', evaluation(1), 'pointsbraking', evaluation(2), 'pointssteering', evaluation(3));
+    content.evaluation = ev;
+    
     index = 1;
     if (static_crashes ~= 0)
         for i = 1 : size(static_crashes,1)
-            crash(i) = struct('crashtime', start_time + milliseconds(static_crashes(i,1)), 'intensity', static_crashes(i,2), 'stationary', 1);
+            crash(i) = struct('crashtime', start_time + milliseconds(static_crashes(i,1)), 'intensity', round(map_slope*abs(static_crashes(i,2))), 'stationary', 1);
             index = index + 1;
         end
-    else
-        static_crashes = -ones(1,2);
-        crash(index) = struct('crashtime', static_crashes(1), 'intensity', static_crashes(2), 'stationary', 1);
     end
     
     if (dynamic_crashes ~= 0)
         for i = 1 : size(dynamic_crashes,1)
-            crash(index) = struct('crashtime', start_time + milliseconds(dynamic_crashes(i,1)), 'intensity', dynamic_crashes(i,2), 'stationary', 0);
+            crash(index) = struct('crashtime', start_time + milliseconds(dynamic_crashes(i,1)), 'intensity', round(map_slope*abs(dynamic_crashes(i,2))), 'stationary', 0);
             index = index + 1;
         end
-    else
-        dynamic_crashes = -ones(1,2);
-        crash(index) = struct('crashtime', dynamic_crashes(1), 'intensity', dynamic_crashes(2), 'stationary', 0);
     end
-    content = struct('email', email, 'trip', trip, 'stat', stat, 'evaluation', evaluation, 'crash', crash);
+    
+    if(exist('crash', 'var'))
+        content.crash = crash;
+    end
+    
 end

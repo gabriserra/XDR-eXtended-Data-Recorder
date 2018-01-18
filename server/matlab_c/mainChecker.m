@@ -3,13 +3,14 @@ function [acc, brake, turns, static_crashes, dynamic_crashes] = mainChecker(data
     accy = datain(:,4);
     giroz = datain(:,5);
     
-    acc_small_threshold = 0.04;
-    brake_small_threshold = -0.1;
+    acc_small_threshold = 0.03;
+    brake_small_threshold = -0.03;
     
     % Sudden acceleration/braking
     [acc, brake] = accBrakeChecker(accx, acc_small_threshold, brake_small_threshold);
     
-    turn_search_threshold = 0.035;
+    % turn_search_threshold = 0.05;
+    turn_search_threshold = 10;
     
     %turns
     turns = turnChecker(accx, accy, giroz, turn_search_threshold);
@@ -19,7 +20,7 @@ function [acc, brake, turns, static_crashes, dynamic_crashes] = mainChecker(data
     %Crashes
     static_crashes = staticCrashChecker(n_datain(:,3), static_crashes_search_threshold);
     
-    dynamic_crashes_small_threshold = -0.05;
+    dynamic_crashes_small_threshold = -0.15;
     dynamic_crashes_large_threshold = -0.5;
     
     dynamic_crashes = dynamicCrashChecker(accx, dynamic_crashes_small_threshold, dynamic_crashes_large_threshold);
@@ -53,7 +54,7 @@ function [acc, brake, turns, static_crashes, dynamic_crashes] = mainChecker(data
         upper = static_crashes(i,1) + proximity_margin * 2;
         lower = static_crashes(i,1) - proximity_margin * 2;
         if (dynamic_crashes ~= 0)
-            dynamic_crashes = dynamic_crashes(dynamic_crashes(:,1) > upper | dynamic_crashes(:,1) < lower, :);
+            dynamic_crashes = dynamic_crashes(dynamic_crashes(:,1) >= upper | dynamic_crashes(:,1) <= lower, :);
             if(isempty(dynamic_crashes))
                 dynamic_crashes = 0;
             end
