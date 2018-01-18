@@ -10,6 +10,7 @@ interval4 = 1;
 acc_threshold = 0.04; 
 brake_threshold = -0.1;
 figure;
+width=1.5;
 plot(n_trip(250:size(n_trip,1),3),'LineWidth',width,'Color',[0 0 .701]);
 hold on;
 %hline(0,'black');
