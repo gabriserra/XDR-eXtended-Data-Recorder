@@ -2,7 +2,15 @@
 XDR is a system able to evaluate people driving behaviors from a safety perspective.
 
 ## Working demo
-<a href="https://gabriserra.github.io/XDR-eXtended-Data-Recorder/">Working demo</a> is hosted on Github for the client side, while it makes use of an external server. Your browser must therefore support and allow <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS</a>.
+<a href="https://gabriserra.github.io/XDR-eXtended-Data-Recorder/">Working demo</a> is hosted on Github for the client side, while it makes use of an external server. Your browser must therefore support and allow <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS">CORS</a>. Recently CORS and third-party cookies are not well seen by web browser. In order to toggle ON, it is necessary to:
+### Firefox on MacOS/Windows
+Enabled by default
+### Google Chrome on MacOS/Windows
+Enabled by default
+### Safari MacOS
+Preferences -> Privacy -> Prevent cross-site tracking (toggle OFF). 
+### Safari iOS
+Settings -> Safari -> Prevent cross-site tracking (toggle OFF).
 
 ## About 
 This work has been realized in University of Pisa/Scuola Superiore Sant'Anna in the context of Industrial Application exam.
