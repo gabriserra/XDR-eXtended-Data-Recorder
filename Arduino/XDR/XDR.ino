@@ -14,18 +14,6 @@
 // GLOBAL VARIABLES
 //------------------------------------------------------------------------------
 
-//const char *SSID     = "TIM-90340813_2.4Hz";
-//const char *PASSWORD = "bJMzBlXdf10x3E8RfgTG98oE";
-
-//const char *SSID     = "Alice-73100401";
-//const char *PASSWORD = "u3b1kz4btdvt4gzokiik6eff";
-
-//const char *SSID     = "XDR";
-//const char *PASSWORD = "BSBXDRBSB";
-
-//const char *SSID     = "iPhone di Silvio";
-//const char *PASSWORD = "12345678";
-
 const char *SSID     = "Mi Phone";
 const char *PASSWORD = "";
 
