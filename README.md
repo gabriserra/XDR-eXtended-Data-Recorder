@@ -31,25 +31,24 @@ XDR-eXtended-Data-Recorder/
     ├── frontend
     └── insertdata
 
-<<<<<<< HEAD
+=======
 arduino -> arduino code and external modules libraries
 =======
 Arduino/XDR -> arduino code and external modules libraries
+=======
 MATLAB -> ..
->>>>>>> fe100541d858262ec6cd1cf6204a9e2629b3d2bd
+=======
 server
     log -> raw data log that comes from the car
     matlab_c -> process the recevied data and produced the json sent to the web server
     sender_c -> launch matlab scripts and send to the web server the results in json
     server_c -> receive data from the car, save them in the log file and launches the sender
+=======
 web-UI
     dashboard -> user dashboard client/server code
     frontend -> frontend page client/server code
     insertdata -> PHP endpoint to store data in external DB
 ```
-
-## Video
-?
 
 ## Authors
 * <b>Silvio Bacci</b>
